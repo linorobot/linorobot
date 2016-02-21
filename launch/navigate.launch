@@ -1,0 +1,29 @@
+<launch>
+  <node pkg="xv_11_laser_driver" type="neato_laser_publisher" name="xv_11_node">
+    <param name="port" value="/dev/ttyACM0"/>
+    <param name="firmware_version" value="2"/>
+    <param name="frame_id" value="laser"/>
+  </node>
+
+  <arg name="model"/>
+  <arg name="gui" default="false"/>
+  <param name="robot_description" textfile="$(find linorobot)/urdf/linorobot.urdf"/>
+  <param name="use_gui" value="False"/>
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher"/>
+
+  <arg name="map_file" default="$(find linorobot)/maps/house.yaml"/>
+  <node pkg="map_server" name="map_server"  type="map_server" args="$(arg map_file)" />
+
+  <include file="$(find linorobot)/launch/amcl.launch" />
+
+  <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
+    <rosparam file="$(find linorobot)/param/costmap_common_params.yaml" command="load" ns="global_costmap" />
+    <rosparam file="$(find linorobot)/param/costmap_common_params.yaml" command="load" ns="local_costmap" />
+    <rosparam file="$(find linorobot)/param/local_costmap_params.yaml" command="load" />
+    <rosparam file="$(find linorobot)/param/global_costmap_params.yaml" command="load" />
+    <rosparam file="$(find linorobot)/param/base_local_planner_params.yaml" command="load" />
+    <rosparam file="$(find linorobot)/param/move_base_params.yaml" command="load" />
+    <!--<rosparam file="$(find linorobot)/param/global_planner_params.yaml" command="load" />
+    <rosparam file="$(find linorobot)/param/navfn_global_planner_params.yaml" command="load" />-->
+  </node>
+</launch>
