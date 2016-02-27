@@ -1,7 +1,6 @@
 <launch>
   <!--serial communication between arduino and pc via usb /-->
   <node name="arduino_serial_node" pkg="rosserial_python" type="serial_node.py" output="screen">
-    <!--change "/dev/ttyACM0" to your board's serial port /-->
     <param name="port" value="/dev/linobase" />
     <param name="baud" value="57600" />
   </node>

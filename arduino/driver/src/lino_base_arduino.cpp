@@ -34,9 +34,11 @@
 #define ENCODER_OPTIMIZE_INTERRUPTS
 #include <Encoder.h>
 
+
 #define IMU_PUBLISH_RATE 10 //hz
 #define VEL_PUBLISH_RATE 10 //hz
 #define COMMAND_RATE 10 //hz
+#define DEBUG_RATE 5
 
 
 typedef struct
@@ -74,6 +76,7 @@ unsigned long previous_command_time = 0;
 unsigned long previous_control_time = 0;
 unsigned long publish_vel_time = 0;
 unsigned long previous_imu_time = 0;
+unsigned long previous_debug_time = 0;
 
 bool is_first = true;
 
@@ -165,6 +168,19 @@ void loop()
     }
     previous_imu_time = millis();
   }
+  
+  if(DEBUG)
+  {
+    if ((millis() - previous_debug_time) >= (1000 / DEBUG_RATE))
+    {
+      sprintf (buffer, "Encoder Left: %d", left_encoder.read());
+      nh.loginfo(buffer);
+      sprintf (buffer, "Encoder Right: %d", right_encoder.read());
+      nh.loginfo(buffer);
+      previous_debug_time = millis();
+    }
+  }
+
 
   nh.spinOnce();
 }
