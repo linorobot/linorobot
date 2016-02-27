@@ -12,7 +12,6 @@
     <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher"/>
 
     <node pkg="gmapping" type="slam_gmapping" name="slam_gmapping" output="screen">
-        <!--remap from="scan" to="base_scan"/-->
         <param name="base_frame" value="/base_link" />
         <param name="odom_frame" value="/odom" />
         <param name="map_update_interval" value="15.0"/>

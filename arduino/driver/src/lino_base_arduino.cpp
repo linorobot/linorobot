@@ -296,8 +296,6 @@ void publish_linear_velocity(unsigned long time)
   nh.spinOnce();
 }
 
-
-
 void calculate_pwm(Motor * mot)
 {
   // this function takes a Motor object argument,
