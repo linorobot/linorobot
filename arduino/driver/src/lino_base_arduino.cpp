@@ -43,21 +43,24 @@
 
 typedef struct
 {
-  double previous_pid_error;
-  double total_pid_error;
-  long previous_encoder_ticks; //done
-  double current_rpm; // done
-  double required_rpm;// done
-  int pwm;
+  double previous_pid_error; //last measured pid error
+  double total_pid_error; //overall pid error of the motor
+  long previous_encoder_ticks; //last measured encoder ticks
+  double current_rpm; //current speed of the motor
+  double required_rpm;//desired speed of the motor 
+  int pwm;//desired speed of the motor mapped to PWM
 }
 Motor;
 
+//create a Motor object
 Motor left_motor;
 Motor right_motor;
 
+//create an Encoder object
 Encoder left_encoder(left_encoder_a, left_encoder_b);
 Encoder right_encoder(right_encoder_a, right_encoder_b);
 
+//function prototypes
 void drive_robot(int, int);
 void check_imu();
 void publish_imu();
@@ -65,12 +68,11 @@ void publish_linear_velocity(unsigned long);
 void read_motor_rpm_(Motor * mot, long current_encoder_ticks, unsigned long dt );
 void calculate_pwm(Motor * mot);
 
+//callback function prototypes
 void command_callback( const geometry_msgs::Twist& cmd_msg);
 void pid_callback( const lino_pid::linoPID& pid);
 
-#define sign(x) (x > 0) - (x < 0)
-
-unsigned long lastMilli = 0;       // loop timing
+unsigned long lastMilli = 0;       
 unsigned long lastMilliPub = 0;
 unsigned long previous_command_time = 0;
 unsigned long previous_control_time = 0;
@@ -128,6 +130,7 @@ void setup()
 
 void loop()
 {
+  //this block publishes velocity based on defined rate
   if ((millis() - publish_vel_time) >= (1000 / VEL_PUBLISH_RATE))
   {
     unsigned long current_time = millis();
@@ -135,40 +138,49 @@ void loop()
     publish_vel_time = millis();
   }
 
+  //this block drives the robot based on defined rate
   if ((millis() - previous_control_time) >= (1000 / COMMAND_RATE))
   {
     unsigned long current_time = millis();
     unsigned long dt = current_time - previous_control_time;
+    //calculate motor's current speed
     read_motor_rpm_(&left_motor, left_encoder.read(), dt);
     read_motor_rpm_(&right_motor, right_encoder.read(), dt);
+    //calculate how much PWM is needed based on required RPM
     calculate_pwm(&left_motor);
     calculate_pwm(&right_motor);    
+    //move the wheels based on the PWM calculated
     drive_robot(left_motor.pwm, right_motor.pwm);
     previous_control_time = millis();
   }
 
+  //this block stops the motor when no command is received
   if ((millis() - previous_command_time) >= 400)
   {
     left_motor.required_rpm = 0;
     right_motor.required_rpm = 0;
     right_motor.pwm = 0;
     left_motor.pwm = 0;
-    drive_robot(0, 0);
+    drive_robot(left_motor.pwm, right_motor.pwm);
   }
 
+  //this block publishes the IMU data based on defined rate
   if ((millis() - previous_imu_time) >= (1000 / IMU_PUBLISH_RATE))
   {
+    //sanity check if the IMU exits
     if (is_first)
     {
       check_imu();
     }
     else
     {
+      //publish the IMU data
       publish_imu();
     }
     previous_imu_time = millis();
   }
   
+  //this block displays the encoder readings. change DEBUG to 0 if you don't want to display
   if(DEBUG)
   {
     if ((millis() - previous_debug_time) >= (1000 / DEBUG_RATE))
@@ -181,12 +193,14 @@ void loop()
     }
   }
 
-
+  //call all the callbacks waiting to be called
   nh.spinOnce();
 }
 
 void pid_callback( const lino_pid::linoPID& pid) 
 {
+  //callback function every time PID constants are received from lino_pid for tuning
+  //this callback receives pid object where P,I, and D constants are stored
   Kp = pid.p;
   Kd = pid.d;
   Ki = pid.i;
@@ -196,6 +210,9 @@ void pid_callback( const lino_pid::linoPID& pid)
 
 void command_callback( const geometry_msgs::Twist& cmd_msg)
 {
+  //callback function every time linear and angular speed is received from 'cmd_vel' topic
+  //this callback function receives cmd_msg object where linear and angular speed are stored
+
   previous_command_time = millis();
   double linear_vel = cmd_msg.linear.x;
   double angular_vel = cmd_msg.angular.z;
@@ -203,16 +220,19 @@ void command_callback( const geometry_msgs::Twist& cmd_msg)
   double linear_vel_mins = linear_vel * 60;
   //convert rad/s to rad/min
   double angular_vel_mins = angular_vel * 60;
+  //calculate the wheel's circumference
   double circumference = pi * wheel_diameter;
-  // Vt = ω * radius
+  //calculate the tangential velocity of the wheel if the robot's rotating where Vt = ω * radius
   double tangential_vel = angular_vel_mins * (track_width / 2);
 
+  //calculate and assign desired RPM for each motor
   left_motor.required_rpm = (linear_vel_mins / circumference) - (tangential_vel / circumference);
   right_motor.required_rpm = (linear_vel_mins / circumference) + (tangential_vel / circumference);
 }
 
 void drive_robot( int command_left, int command_right)
 {
+  //this functions spins the left and right wheel based on a defined speed in PWM  
   //change left motor direction
   //forward
   if (command_left >= 0)
@@ -224,6 +244,7 @@ void drive_robot( int command_left, int command_right)
   {
     digitalWrite(left_motor_direction, LOW);
   }
+  //spin the motor
   analogWrite(left_motor_pwm, abs(command_left));
   
   //change right motor direction
@@ -237,28 +258,40 @@ void drive_robot( int command_left, int command_right)
   {
     digitalWrite(right_motor_direction, LOW);
   }
-
+  //spin the motor
   analogWrite(right_motor_pwm, abs(command_right));
 }
 
 void read_motor_rpm_(Motor * mot, long current_encoder_ticks, unsigned long dt )
 {
+  // this function calculates the motor's RPM based on encoder ticks and delta time
+  
+  //convert the time from milliseconds to minutes
   dt = 60000 / dt;
+  //calculate change in number of ticks from the encoder
   double delta_ticks = current_encoder_ticks - mot->previous_encoder_ticks;
+  //calculate wheel's speed (RPM)
   mot->current_rpm = (delta_ticks / double(encoder_pulse * gear_ratio)) * dt;
   mot->previous_encoder_ticks = current_encoder_ticks;
 }
 
 void publish_linear_velocity(unsigned long time)
 {
-  double average_rpm = (left_motor.current_rpm + right_motor.current_rpm) / 2; // rpm
-  double average_rps = average_rpm / 60; // rps
+  // this function publishes the linear speed of the robot
+  
+  //calculate the average RPM 
+  double average_rpm = (left_motor.current_rpm + right_motor.current_rpm) / 2; // RPM
+  //convert revolutions per minute to revolutions per second
+  double average_rps = average_rpm / 60; // RPS
+  //calculate linear speed
   double linear_velocity = (average_rps * (wheel_diameter * pi)); // m/s 
-     
+  
+  //fill in the object 
   raw_vel_msg.header.stamp = nh.now();
   raw_vel_msg.vector.x = linear_velocity;
   raw_vel_msg.vector.y = 0.00;
   raw_vel_msg.vector.z = double(time) / 1000;
+  //publish raw_vel_msg object to ROS
   raw_vel_pub.publish(&raw_vel_msg);
   nh.spinOnce();
 }
@@ -267,21 +300,28 @@ void publish_linear_velocity(unsigned long time)
 
 void calculate_pwm(Motor * mot)
 {
+  // this function takes a Motor object argument,
+  // implements a PID controller and calculates the PWM required to drive the motor
   double pid;
   double new_rpm;
   double error;
   
+  //calculate the error ()
   error = mot->required_rpm - mot->current_rpm;
+  //calculate the overall error
   mot->total_pid_error += error;
+  //PID controller
   pid = Kp * error  + Ki * mot->total_pid_error + Kd * (error - mot->previous_pid_error);
   mot->previous_pid_error = error;
-  
+  //adds the calculated PID value to the required rpm for error compensation
   new_rpm = constrain(double(mot->pwm) * max_rpm / 255 + pid, -max_rpm, max_rpm);
+  //maps rpm to PWM signal, where 255 is the max possible value from an 8 bit controller
   mot->pwm = (new_rpm / max_rpm) * 255;
 }
 
 void check_imu()
 {
+  //this function checks if IMU is present
   raw_imu_msg.accelerometer = check_accelerometer();
   raw_imu_msg.gyroscope = check_gyroscope();
   raw_imu_msg.magnetometer = check_magnetometer();
@@ -306,25 +346,29 @@ void check_imu()
 
 void publish_imu()
 {
+  //this function publishes raw IMU reading
   raw_imu_msg.header.stamp = nh.now();
   raw_imu_msg.header.frame_id = "imu_link";
+  //measure accelerometer
   if (raw_imu_msg.accelerometer)
   {
     measure_acceleration();
     raw_imu_msg.raw_linear_acceleration = raw_acceleration;
   }
 
+  //measure gyroscope
   if (raw_imu_msg.gyroscope)
   {
     measure_gyroscope();
     raw_imu_msg.raw_angular_velocity = raw_rotation;
   }
-
+  
+  //measure magnetometer
   if (raw_imu_msg.magnetometer)
   {
     measure_magnetometer();
     raw_imu_msg.raw_magnetic_field = raw_magnetic_field;
   }
-  
+  //publish raw_imu_msg object to ROS
   raw_imu_pub.publish(&raw_imu_msg);
 }
