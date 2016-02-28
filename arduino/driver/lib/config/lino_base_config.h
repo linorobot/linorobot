@@ -1,7 +1,7 @@
 #ifndef LINO_BASE_CONFIG_H
 #define LINO_BASE_CONFIG_H
 
-#define DEBUG 1
+#define DEBUG 0
 
 #define k_p 0.4 // P constant
 #define k_i 0.0 // I constant

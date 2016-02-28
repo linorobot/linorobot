@@ -34,12 +34,10 @@
 #define ENCODER_OPTIMIZE_INTERRUPTS
 #include <Encoder.h>
 
-
 #define IMU_PUBLISH_RATE 10 //hz
 #define VEL_PUBLISH_RATE 10 //hz
 #define COMMAND_RATE 10 //hz
 #define DEBUG_RATE 5
-
 
 typedef struct
 {

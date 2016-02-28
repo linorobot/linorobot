@@ -150,7 +150,8 @@ include_directories(
 add_executable(lino_base_node src/lino_base_node.cpp)
 target_link_libraries(lino_base_node ${catkin_LIBRARIES})
 
-
+add_executable(base_laser_tf src/base_laser_tf.cpp)
+target_link_libraries(base_laser_tf ${catkin_LIBRARIES})
 #############
 ## Install ##
 #############

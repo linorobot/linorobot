@@ -5,11 +5,13 @@
       <param name="frame_id" value="laser"/>
     </node>
 
-    <arg name="model"/>
+    <!--<arg name="model"/>
     <arg name="gui" default="false"/>
     <param name="robot_description" textfile="$(find linorobot)/urdf/linorobot.urdf"/>
     <param name="use_gui" value="False"/>
-    <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher"/>
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher"/>-->
+    
+    <node name="base_laser_tf_broadcaster_node" pkg="linorobot" type="base_laser_tf"/> 
 
     <node pkg="gmapping" type="slam_gmapping" name="slam_gmapping" output="screen">
         <param name="base_frame" value="/base_link" />

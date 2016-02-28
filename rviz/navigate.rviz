@@ -4,11 +4,12 @@ Panels:
     Name: Displays
     Property Tree Widget:
       Expanded:
+        - /Status1
+        - /Grid1
         - /TF1/Frames1
         - /TF1/Tree1
         - /LaserScan1
         - /Global Map1/Planner1
-        - /Local Map1
         - /Local Map1/Planner1
         - /Local Map1/Trajectory Cloud1
       Splitter Ratio: 0.5
@@ -63,61 +64,6 @@ Visualization Manager:
         Expand Link Details: false
         Expand Tree: false
         Link Tree Style: Links in Alphabetic Order
-        base_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        caster_wheel:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        laser:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        left_pole_one:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        left_pole_two:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        perception_deck:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        right_pole_one:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        right_pole_two:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        wheel_left:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        wheel_right:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        wheel_track:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
       Name: RobotModel
       Robot Description: robot_description
       TF Prefix: ""
@@ -125,19 +71,35 @@ Visualization Manager:
       Value: true
       Visual Enabled: true
     - Class: rviz/TF
-      Enabled: false
+      Enabled: true
       Frame Timeout: 15
       Frames:
         All Enabled: false
+        base_link:
+          Value: true
+        imu_link:
+          Value: true
+        laser:
+          Value: true
+        map:
+          Value: true
+        odom:
+          Value: true
       Marker Scale: 1
       Name: TF
       Show Arrows: true
       Show Axes: true
       Show Names: false
       Tree:
-        {}
+        map:
+          odom:
+            base_link:
+              laser:
+                {}
+            imu_link:
+              {}
       Update Interval: 0
-      Value: false
+      Value: true
     - Alpha: 1
       Autocompute Intensity Bounds: true
       Autocompute Value Bounds:
@@ -153,7 +115,7 @@ Visualization Manager:
       Enabled: true
       Invert Rainbow: false
       Max Color: 255; 255; 255
-      Max Intensity: 701
+      Max Intensity: 1230
       Min Color: 0; 0; 0
       Min Intensity: 6
       Name: LaserScan
@@ -164,35 +126,6 @@ Visualization Manager:
       Size (m): 0.05
       Style: Squares
       Topic: /scan
-      Use Fixed Frame: true
-      Use rainbow: true
-      Value: true
-    - Alpha: 1
-      Autocompute Intensity Bounds: true
-      Autocompute Value Bounds:
-        Max Value: 10
-        Min Value: -10
-        Value: true
-      Axis: Z
-      Channel Name: intensity
-      Class: rviz/PointCloud2
-      Color: 255; 0; 0
-      Color Transformer: FlatColor
-      Decay Time: 0
-      Enabled: true
-      Invert Rainbow: false
-      Max Color: 255; 255; 255
-      Max Intensity: 4096
-      Min Color: 0; 0; 0
-      Min Intensity: 0
-      Name: Bumper Hit
-      Position Transformer: XYZ
-      Queue Size: 10
-      Selectable: true
-      Size (Pixels): 3
-      Size (m): 0.08
-      Style: Spheres
-      Topic: /mobile_base/sensors/bumper_pointcloud
       Use Fixed Frame: true
       Use rainbow: true
       Value: true
@@ -357,7 +290,7 @@ Visualization Manager:
   Value: true
   Views:
     Current:
-      Angle: -8.24004
+      Angle: -8.10503
       Class: rviz/TopDownOrtho
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.06
@@ -366,7 +299,7 @@ Visualization Manager:
         Value: false
       Name: Current View
       Near Clip Distance: 0.01
-      Scale: 85.5946
+      Scale: 76.6311
       Target Frame: <Fixed Frame>
       Value: TopDownOrtho (rviz)
       X: -1.35336
@@ -388,5 +321,5 @@ Window Geometry:
   Views:
     collapsed: false
   Width: 1918
-  X: 0
-  Y: 32
+  X: 1998
+  Y: 55
