@@ -54,11 +54,7 @@
 
 #include <ros/time.h>
 
-#if defined(WIRE_T3)
-#include <i2c_t3.h>
-#else
 #include <Wire.h>
-#endif
 
 #include "imu_configuration.h"
 #include "lino_base_config.h"
