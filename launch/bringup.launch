@@ -19,4 +19,3 @@
 
   <node name="lino_base_node" pkg="linorobot" type="lino_base_node"></node>
 </launch>
-

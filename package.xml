@@ -8,7 +8,7 @@
 
   <url type="website">http://www.linorobot.org</url>
 
-   <author email="jimenojmm@gmail.com">Juan Miguel Jimeno</author> 
+   <author email="jimenojmm@gmail.com">Juan Miguel Jimeno</author>
 
   <buildtool_depend>catkin</buildtool_depend>
   <build_depend>geometry_msgs</build_depend>

@@ -4,7 +4,6 @@
       <param name="firmware_version" value="2"/>
       <param name="frame_id" value="laser"/>
     </node>
-    
-    <node name="base_laser_tf_broadcaster_node" pkg="linorobot" type="base_laser_tf"/> 
-    
+
+    <node pkg="tf" type="static_transform_publisher" name="base_link_to_laser" args="0.065 0 0.196 0 0 0  /base_link /laser  100"/>
 </launch>

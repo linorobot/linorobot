@@ -3,38 +3,37 @@
 
 #define DEBUG 0
 
-#define k_p 0.4 // P constant
-#define k_i 0.0 // I constant
-#define k_d 1.0 // D constant
-
-#define pi 3.1415926 
-#define two_pi 6.2831853
+#define K_P 0.4 // P constant
+#define K_I 0.0 // I constant
+#define K_D 1.0 // D constant
 
 //define your motors' specs here
-#define encoder_pulse 55 //encoder's number of ticks per revolution 
-#define gear_ratio 30 //motor's gear ratio
-#define max_rpm 330 //motor's maximum RPM
 
-//define your robot base's specs here
-#define wheel_diameter 0.069 //wheel's diameter in meters
-#define wheel_width 0.027 //wheel's width in meters
-#define track_width 0.22 // width of the plate you are using
+const int MAX_RPM = 330; //motor's maximum RPM
+const int COUNTS_PER_REV = 1650; //wheel encoder's no of ticks per rev(gear_ratio * pulse_per_rev)
+const float WHEEL_DIAMETER = 0.069; //wheel's diameter in meters
 
-//don't change this if you followed the schematic diagram
+#define TRACK_WIDTH 0.22 // width of the plate you are using
+
 //ENCODER PINS
-#define left_encoder_a 7 
-#define left_encoder_b 6  
-#define right_encoder_a 8  
-#define right_encoder_b 9 
+// left side encoders pins
+#define MOTOR1_ENCODER_A 3 //front_A
+#define MOTOR1_ENCODER_B 2 //front_B
+
+// right side encoders pins
+#define MOTOR2_ENCODER_A 6 //front_A
+#define MOTOR2_ENCODER_B 7 //front_B
 
 //don't change this if you followed the schematic diagram
 //MOTOR PINS
-//Left Motor
-#define left_motor_direction 20
-#define left_motor_pwm 21
+//left side motor pins
+#define MOTOR1_PWM 23
+#define MOTOR1_IN_A 17
+#define MOTOR1_IN_B 16
 
-//Right Motor
-#define right_motor_direction 22
-#define right_motor_pwm 23
+//right side motor pins
+#define MOTOR2_PWM 21
+#define MOTOR2_IN_A 13
+#define MOTOR2_IN_B 12
 
 #endif
