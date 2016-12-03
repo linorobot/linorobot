@@ -29,23 +29,20 @@ void Motor::calculate_rpm(long current_encoder_ticks)
 
 int Motor::calculate_pwm()
 {
-    //this function implements a PID controller and calculates the PWM required to drive the motor
-    double pid;
-    double new_rpm;
-    double error;
+  // this function implements a PID controller and calculates the PWM required
+  // to drive the motor
+  double error;
+  double pwm;
+  // calculate Proportional
+  error = required_rpm - current_rpm;
 
-    //calculate the error ()
-    error = required_rpm - current_rpm;
-    //calculate the overall error
-    _total_pid_error += error;
-    //PID controller
-    pid = Kp * error  + Ki * _total_pid_error + Kd * (error - _previous_pid_error);
-    _previous_pid_error = error;
-    //adds the calculated PID value to the required rpm for error compensation
-    new_rpm = constrain( ( ((double)_prev_pwm / 255) * max_rpm) + pid, -max_rpm, max_rpm);
-    //maps rpm to PWM signal, where 255 is the max possible value from an 8 bit controller
-    _prev_pwm = (new_rpm / max_rpm) * 255;
-    return _prev_pwm;
+  pwm = (Kp * error) + (Ki * _total_pid_error) + (Kd * (error - _previous_pid_error));
+
+  _prev_pwm = pwm;
+  _previous_pid_error = error;
+
+  //make sure calculated pwm value is within PWM range
+  return constrain(pwm, -255, 255);
 }
 
 void Motor::spin(int pwm)
@@ -62,4 +59,18 @@ void Motor::spin(int pwm)
         digitalWrite(_motor_pinB , HIGH);
     }
     analogWrite(_pwm_pin , abs(pwm));
+}
+
+void Motor::stop()
+{
+  required_rpm = 0;
+  //speed up PID in stopping the motor once PWM hits 30
+  if (_prev_pwm <= 30 || _prev_pwm >= 30)
+  {
+    //reset PID variables
+    _total_pid_error = 0;
+    _prev_pwm = 0;
+    _previous_pid_error = 0;
+    spin(0);
+  }
 }

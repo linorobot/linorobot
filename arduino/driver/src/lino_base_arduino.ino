@@ -248,11 +248,8 @@ void move_base()
 
 void stop_base()
 {
-  motor1.required_rpm = 0;
-  motor2.required_rpm = 0;
-
-  motor1.spin(0);
-  motor2.spin(0);
+  motor1.stop();
+  motor2.stop();
 }
 
 void publish_linear_velocity()

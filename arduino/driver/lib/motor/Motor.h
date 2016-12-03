@@ -21,6 +21,7 @@ class Motor
         void calculate_rpm(long current_encoder_ticks);
         int calculate_pwm();
         void spin(int pwm);
+        void stop();
 
     private:
         int _pwm_pin;
@@ -31,7 +32,7 @@ class Motor
         double _total_pid_error;
         long _previous_encoder_ticks;
         unsigned long _previous_rpm_time;
-        int _prev_pwm;
+        double _prev_pwm;
 };
 
 #endif
