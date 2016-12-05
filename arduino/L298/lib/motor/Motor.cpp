@@ -33,12 +33,16 @@ int Motor::calculate_pwm()
   // to drive the motor
   double error;
   double pwm;
-  // calculate Proportional
+
   error = required_rpm - current_rpm;
+    _total_pid_error += error;
+
+  if(error == 0)
+  {
+    _total_pid_error = 0;
+  }
 
   pwm = (Kp * error) + (Ki * _total_pid_error) + (Kd * (error - _previous_pid_error));
-
-  _prev_pwm = pwm;
   _previous_pid_error = error;
 
   //make sure calculated pwm value is within PWM range
@@ -59,18 +63,4 @@ void Motor::spin(int pwm)
         digitalWrite(_motor_pinB , HIGH);
     }
     analogWrite(_pwm_pin , abs(pwm));
-}
-
-void Motor::stop()
-{
-  required_rpm = 0;
-  //speed up PID in stopping the motor once PWM hits 30
-  if (_prev_pwm <= 30 || _prev_pwm >= 30)
-  {
-    //reset PID variables
-    _total_pid_error = 0;
-    _prev_pwm = 0;
-    _previous_pid_error = 0;
-    spin(0);
-  }
 }
