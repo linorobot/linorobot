@@ -211,7 +211,7 @@ void do_kinematics()
   //calculate the wheel's circumference
   double circumference = PI * WHEEL_DIAMETER;
   //calculate the tangential velocity of the wheel if the robot's rotating where Vt = ω * radius
-  double tangential_vel = angular_vel_mins * (TRACK_WIDTH / 2);
+  double tangential_vel = angular_vel_mins * BASE_WIDTH;
 
   //calculate and assign desired RPM for each motor
   //left side

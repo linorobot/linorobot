@@ -13,7 +13,7 @@ const int MAX_RPM = 330; //motor's maximum RPM
 const int COUNTS_PER_REV = 1650; //wheel encoder's no of ticks per rev(gear_ratio * pulse_per_rev)
 const float WHEEL_DIAMETER = 0.069; //wheel's diameter in meters
 
-#define TRACK_WIDTH 0.22 // width of the plate you are using
+#define BASE_WIDTH 0.22 // width of the plate you are using
 
 //ENCODER PINS
 // left side encoders pins
