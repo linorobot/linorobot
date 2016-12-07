@@ -34,7 +34,8 @@ int Motor::calculate_pwm()
   double error;
   double pwm;
 
-  error = required_rpm - current_rpm;
+  //required_rpm is constrained to max_rpm to prevent pid from having too much error
+  error = constrain(required_rpm, -max_rpm, max_rpm) - current_rpm;
     _total_pid_error += error;
 
   if(error == 0)
