@@ -224,8 +224,8 @@ void moveBase()
 
 void stopBase()
 {
-  g_req_linear_vel_x = 0;
-  g_req_angular_vel_z = 0;
+  g_req_linear_vel_x = 0.0;
+  g_req_angular_vel_z = 0.0;
 }
 
 void publishLinearVelocity()
@@ -239,7 +239,7 @@ void publishLinearVelocity()
 
   //fill in the object
   raw_vel_msg.linear_x = vel.linear_x;
-  raw_vel_msg.linear_x = 0.0;
+  raw_vel_msg.linear_y = 0.0;
   raw_vel_msg.angular_z = vel.angular_z;
 
   //publish raw_vel_msg object to ROS
