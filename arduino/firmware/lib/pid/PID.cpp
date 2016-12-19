@@ -20,7 +20,7 @@ double PID::compute(float setpoint, float measured_value)
   integral_ += error;
   derivative_ = error - prev_error_;
 
-  if(error == 0)
+  if(setpoint == 0 && error == 0)
   {
     integral_ = 0;
   }
