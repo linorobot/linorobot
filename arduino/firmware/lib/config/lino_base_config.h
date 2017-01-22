@@ -6,9 +6,15 @@
 
 #define DEBUG 0
 
+/*BTS7960 PID
 #define K_P 0.05 // P constant
-#define K_I 0.9 // I constant
+#define K_I 0.5 // I constant
 #define K_D 0.1 // D constant
+*/
+
+#define K_P 0.6 // P constant
+#define K_I 0.3 // I constant
+#define K_D 0.5 // D constant
 
 // define your robot' specs here
 #define MAX_RPM 45 // motor's maximum RPM
@@ -19,8 +25,8 @@
 
 // ENCODER PINS
 // left side encoders pins
-#define MOTOR1_ENCODER_A 17 // front_A
-#define MOTOR1_ENCODER_B 16 // front_B
+#define MOTOR1_ENCODER_A 15 // front_A
+#define MOTOR1_ENCODER_B 14 // front_B
 
 // right side encoders pins
 #define MOTOR2_ENCODER_A 12 // front_A
@@ -28,14 +34,14 @@
 
 #ifdef L298_DRIVER
   //left side motor pins
-  #define MOTOR1_PWM 23
-  #define MOTOR1_IN_A 17
-  #define MOTOR1_IN_B 16
+  #define MOTOR1_PWM 21
+  #define MOTOR1_IN_A 20
+  #define MOTOR1_IN_B 1
 
   //right side motor pins
-  #define MOTOR2_PWM 21
-  #define MOTOR2_IN_A 13
-  #define MOTOR2_IN_B 12
+  #define MOTOR2_PWM 5
+  #define MOTOR2_IN_A 8
+  #define MOTOR2_IN_B 6
 #endif
 
 #ifdef BTS7960_DRIVER
