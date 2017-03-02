@@ -159,7 +159,7 @@ void loop()
   //this block publishes velocity based on defined rate
   if ((millis() - g_publish_vel_time) >= (1000 / VEL_PUBLISH_RATE))
   {
-    publishLinearVelocity();
+    publishVelocities();
     g_publish_vel_time = millis();
   }
 
@@ -228,7 +228,7 @@ void stopBase()
   g_req_angular_vel_z = 0.0;
 }
 
-void publishLinearVelocity()
+void publishVelocities()
 {
   //update the current speed of each motor based on encoder's count
   motor1.updateSpeed(motor1_encoder.read());
