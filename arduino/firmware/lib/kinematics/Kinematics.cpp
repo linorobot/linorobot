@@ -103,7 +103,7 @@ Kinematics::velocities Kinematics::getVelocities(int motor1, int motor2)
   //convert revolutions per minute to revolutions per second
   double average_rps_a = average_rpm_a / 60;
   vel.angular_z =  (average_rps_a * (wheel_diameter_ * PI)) / base_width_;
-
+  vel.linear_y = 0.0;
   return vel;
 }
 

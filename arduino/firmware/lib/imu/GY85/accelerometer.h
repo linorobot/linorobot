@@ -10,7 +10,7 @@ geometry_msgs::Vector3 readIMUaccelerometer();
 geometry_msgs::Vector3 acceleration;
 
 #if defined(ADXL345)
-  #include "accelerometer_ADXL345.h"
+    #include "accelerometer_ADXL345.h"
 #endif
 
 #endif  // _ACCELEROMETER_H_

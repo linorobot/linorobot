@@ -1,6 +1,11 @@
 #ifndef LINO_BASE_CONFIG_H
 #define LINO_BASE_CONFIG_H
 
+#define BASE_2WD
+// #define BASE_4WD
+// #define BASE_ACKERMANN
+// #define BASE_MECANUM
+
 #define GY85_IMU
 // #define MP6050_IMU
 
@@ -26,35 +31,62 @@
 #define PWM_BITS 8 // PWM Resolution of the microcontroller
 #define BASE_WIDTH 0.43 // width of the plate you are using
 
-// ENCODER PINS
-// left side encoders pins
-#define MOTOR1_ENCODER_A 15 // front_A
-#define MOTOR1_ENCODER_B 14 // front_B
+/*
+ROBOT ORIENTATION
+    FRONT
+    1  2  (2WD/ACKERMANN)
+    3  4  (4WD/MECANUM)  
+    BACK
+*/
 
-// right side encoders pins
-#define MOTOR2_ENCODER_A 12 // front_A
-#define MOTOR2_ENCODER_B 11 // front_B
+/// ENCODER PINS
+#define MOTOR1_ENCODER_A 15 
+#define MOTOR1_ENCODER_B 14 
 
+#define MOTOR2_ENCODER_A 12 
+#define MOTOR2_ENCODER_B 11 
+
+#define MOTOR3_ENCODER_A 17 
+#define MOTOR3_ENCODER_B 16 
+
+#define MOTOR4_ENCODER_A 10 
+#define MOTOR4_ENCODER_B 9 
+
+//MOTOR PINS
 #ifdef L298_DRIVER
-  //left side motor pins
   #define MOTOR1_PWM 21
   #define MOTOR1_IN_A 20
   #define MOTOR1_IN_B 1
 
-  //right side motor pins
   #define MOTOR2_PWM 5
   #define MOTOR2_IN_A 8
   #define MOTOR2_IN_B 6
+
+  #define MOTOR3_PWM 22
+  #define MOTOR3_IN_A 23
+  #define MOTOR3_IN_B 0
+
+  #define MOTOR4_PWM 4
+  #define MOTOR4_IN_A 2
+  #define MOTOR4_IN_B 3
 #endif
 
 #ifdef BTS7960_DRIVER
-  // left side motor pins
   #define MOTOR1_IN_A 21
   #define MOTOR1_IN_B 20
 
-  // right side motor pins
   #define MOTOR2_IN_A 5
   #define MOTOR2_IN_B 8
+
+  #define MOTOR3_IN_A 22
+  #define MOTOR3_IN_B 23
+
+  #define MOTOR4_IN_A 4
+  #define MOTOR4_IN_B 2
+#endif
+
+#ifdef BASE_ACKERMANN
+    #define STEERING_PIN 22
 #endif
 
 #endif

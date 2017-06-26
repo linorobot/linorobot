@@ -39,12 +39,12 @@ float setpoint = 30;
 float measured_value = 0;
 void setup() 
 {
-  Serial.begin(9600);
+    Serial.begin(9600);
 }
 
 void loop() 
 {
-  Serial.println(pid.compute(setpoint, measured_value));
-  delay(1000);
-  measured_value++;
+    Serial.println(pid.compute(setpoint, measured_value));
+    delay(1000);
+    measured_value++;
 }

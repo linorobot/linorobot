@@ -9,7 +9,7 @@ geometry_msgs::Vector3 readIMUmagnetometer();
 geometry_msgs::Vector3 magnetic_field;
 
 #if defined(HMC5883L)
-  #include "magnetometer_HMC5883L.h"
+    #include "magnetometer_HMC5883L.h"
 #endif
 
 #endif  // _MAGNETOMETER_H_

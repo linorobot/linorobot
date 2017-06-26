@@ -10,9 +10,9 @@ geometry_msgs::Vector3 angular_velocity;
 geometry_msgs::Vector3 readIMUgyroscope();
 
 #if defined(ITG3205)
-  #include "gyroscope_ITG3205.h"
+    #include "gyroscope_ITG3205.h"
 #elif defined(L3G4200D)
-  #include "gyroscope_L3G4200D.h"
+    #include "gyroscope_L3G4200D.h"
 #endif
 
 #endif  // _GYROSCOPE_H_

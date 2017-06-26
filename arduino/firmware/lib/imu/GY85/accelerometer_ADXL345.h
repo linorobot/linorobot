@@ -15,36 +15,36 @@
 
 bool initAccelerometer()
 {
-  if (check_ID(ADXL345_ACCELEROMETER_ADDRESS,ADXL345_DEVID) == ADXL345_DEVICE_ID)
-  {
-    write_to_register(ADXL345_ACCELEROMETER_ADDRESS,ADXL345_POWER_CTL,0x08);  //D3, enables measuring
-    delay(5);
-    write_to_register(ADXL345_ACCELEROMETER_ADDRESS,ADXL345_DATA_FORMAT,0x09); //D3 and D0, enables FULL_RES and +/-4g
-    delay(5);
-    write_to_register(ADXL345_ACCELEROMETER_ADDRESS,ADXL345_BW_RATE,0x09); //Set the bw to 0 Hz
-    delay(5);
-    return true;
-  }
-  else
-    return false;
+    if (check_ID(ADXL345_ACCELEROMETER_ADDRESS,ADXL345_DEVID) == ADXL345_DEVICE_ID)
+    {
+        write_to_register(ADXL345_ACCELEROMETER_ADDRESS,ADXL345_POWER_CTL,0x08);  //D3, enables measuring
+        delay(5);
+        write_to_register(ADXL345_ACCELEROMETER_ADDRESS,ADXL345_DATA_FORMAT,0x09); //D3 and D0, enables FULL_RES and +/-4g
+        delay(5);
+        write_to_register(ADXL345_ACCELEROMETER_ADDRESS,ADXL345_BW_RATE,0x09); //Set the bw to 0 Hz
+        delay(5);
+        return true;
+    }
+    else
+        return false;
 }
 
 geometry_msgs::Vector3 readIMUaccelerometer()
 {
-  acc_reads = 0;
-  send_value(ADXL345_ACCELEROMETER_ADDRESS, ADXL345_DATAX0);
-  Wire.requestFrom(ADXL345_ACCELEROMETER_ADDRESS, 6);
-  while(Wire.available())
-  {
-    acc_buffer[acc_reads] = Wire.read();
-    acc_reads++;
-  }
+    acc_reads = 0;
+    send_value(ADXL345_ACCELEROMETER_ADDRESS, ADXL345_DATAX0);
+    Wire.requestFrom(ADXL345_ACCELEROMETER_ADDRESS, 6);
+    while(Wire.available())
+    {
+        acc_buffer[acc_reads] = Wire.read();
+        acc_reads++;
+    }
 
-  acceleration.x =  ((float)ACC_X_INVERT*(int16_t)((int)acc_buffer[2*ACC_X_AXIS+1]<<8 | acc_buffer[2*ACC_X_AXIS]) / ADXL345_SCALE);
-  acceleration.y =  ((float)ACC_Y_INVERT*(int16_t)((int)acc_buffer[2*ACC_Y_AXIS+1]<<8 | acc_buffer[2*ACC_Y_AXIS]) / ADXL345_SCALE);
-  acceleration.z =  ((float)ACC_Z_INVERT*(int16_t)((int)acc_buffer[2*ACC_Z_AXIS+1]<<8 | acc_buffer[2*ACC_Z_AXIS]) / ADXL345_SCALE);
+    acceleration.x =  ((float)ACC_X_INVERT*(int16_t)((int)acc_buffer[2*ACC_X_AXIS+1]<<8 | acc_buffer[2*ACC_X_AXIS]) / ADXL345_SCALE);
+    acceleration.y =  ((float)ACC_Y_INVERT*(int16_t)((int)acc_buffer[2*ACC_Y_AXIS+1]<<8 | acc_buffer[2*ACC_Y_AXIS]) / ADXL345_SCALE);
+    acceleration.z =  ((float)ACC_Z_INVERT*(int16_t)((int)acc_buffer[2*ACC_Z_AXIS+1]<<8 | acc_buffer[2*ACC_Z_AXIS]) / ADXL345_SCALE);
 
-  return acceleration;
+    return acceleration;
 }
 
 #endif  // _ACCELEROMETER_ADXL345_H_
