@@ -1,7 +1,7 @@
 <launch>
-  <!--serial communication between arduino and pc via usb /-->
-  <node name="rosserial_lino" pkg="rosserial_python" type="serial_node.py" output="screen">
-    <param name="port" value="/dev/ttyACM0" />
-    <param name="baud" value="57600" />
-  </node>
+    <!--serial communication between arduino and pc via usb /-->
+    <node name="rosserial_lino" pkg="rosserial_python" type="serial_node.py" output="screen">
+        <param name="port" value="/dev/ttyACM0" />
+        <param name="baud" value="57600" />
+    </node>
 </launch>
