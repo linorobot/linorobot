@@ -1,6 +1,9 @@
 #ifndef LINO_BASE_CONFIG_H
 #define LINO_BASE_CONFIG_H
 
+#define GY85_IMU
+// #define MP6050_IMU
+
 #define L298_DRIVER
 // #define BTS7960_DRIVER
 

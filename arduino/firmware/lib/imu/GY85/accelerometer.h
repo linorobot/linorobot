@@ -4,10 +4,10 @@
 uint8_t acc_reads = 0;
 byte acc_buffer[6];
 
-bool checkAccelerometer();
+bool initAccelerometer();
 
-void measureAcceleration();
-geometry_msgs::Vector3 raw_acceleration;
+geometry_msgs::Vector3 readIMUaccelerometer();
+geometry_msgs::Vector3 acceleration;
 
 #if defined(ADXL345)
   #include "accelerometer_ADXL345.h"

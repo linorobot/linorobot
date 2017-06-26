@@ -4,10 +4,10 @@
 uint8_t gyro_reads = 0;
 byte gyro_buffer[6];
 
-bool check_gyroscope();
+bool initGyroscope();
 
-geometry_msgs::Vector3 raw_rotation;
-void measure_gyroscope();
+geometry_msgs::Vector3 angular_velocity;
+geometry_msgs::Vector3 readIMUgyroscope();
 
 #if defined(ITG3205)
   #include "gyroscope_ITG3205.h"

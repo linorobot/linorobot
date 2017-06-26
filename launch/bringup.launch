@@ -1,21 +1,25 @@
 <launch>
   <!--serial communication between arduino and pc via usb /-->
-  <node name="arduino_serial_node" pkg="rosserial_python" type="serial_node.py" output="screen">
-    <param name="port" value="/dev/linobase" />
+  <node name="rosserial_lino" pkg="rosserial_python" type="serial_node.py" output="screen">
+    <param name="port" value="/dev/ttyACM0" />
     <param name="baud" value="57600" />
   </node>
 
- <node pkg="ros_arduino_imu" type="raw_imu_bridge_node" name="raw_imu_bridge" output="screen" respawn="false">
-   <rosparam>
-   imu/gyroscope_bias: {x: -0.013545, y: 0.056887, z: 0.012693 }
-   imu/accelerometer_bias: {x: -0.422578, y: 0.053516, z: -0.310391 }
-    </rosparam>
-   <param name="imu/perform_calibration" value="false" />
- </node>
+  <node pkg="imu_calib" type="apply_calib" name="apply_calib" output="screen" respawn="false">
+    <param name="calib_file" value="$(find linorobot)/param/imu_calib.yaml" />
+  </node>
 
   <node pkg="imu_filter_madgwick" type="imu_filter_node" name="imu_filter_madgwick" output="screen" respawn="false" >
     <param name="fixed_frame" value="odom" />
+    <param name="use_mag" value="true" />
+    <param name="publish_tf" value="true" />
+    <param name="use_magnetic_field_msg" value="true" /> 
   </node>
 
+  <!--<node pkg="imu_complementary_filter" type="complementary_filter_node" name="imu_complementary_filter" output="screen" respawn="false" >
+    <param name="fixed_frame" value="odom" />
+    <param name="use_mag" value="true" />
+    <param name="publish_tf" value="true" />
+  </node>-->
   <node name="lino_base_node" pkg="linorobot" type="lino_base_node"></node>
 </launch>

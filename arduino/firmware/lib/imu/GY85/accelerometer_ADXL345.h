@@ -13,7 +13,7 @@
 #define ADXL345_DEVICE_ID 0xE5
 #define ADXL345_SCALE 25.60000
 
-bool checkAccelerometer()
+bool initAccelerometer()
 {
   if (check_ID(ADXL345_ACCELEROMETER_ADDRESS,ADXL345_DEVID) == ADXL345_DEVICE_ID)
   {
@@ -29,7 +29,7 @@ bool checkAccelerometer()
     return false;
 }
 
-void measureAcceleration()
+geometry_msgs::Vector3 readIMUaccelerometer()
 {
   acc_reads = 0;
   send_value(ADXL345_ACCELEROMETER_ADDRESS, ADXL345_DATAX0);
@@ -40,10 +40,11 @@ void measureAcceleration()
     acc_reads++;
   }
 
-  raw_acceleration.x =  ((float)ACC_X_INVERT*(int16_t)((int)acc_buffer[2*ACC_X_AXIS+1]<<8 | acc_buffer[2*ACC_X_AXIS]) / ADXL345_SCALE);
-  raw_acceleration.y =  ((float)ACC_Y_INVERT*(int16_t)((int)acc_buffer[2*ACC_Y_AXIS+1]<<8 | acc_buffer[2*ACC_Y_AXIS]) / ADXL345_SCALE);
-  raw_acceleration.z =  ((float)ACC_Z_INVERT*(int16_t)((int)acc_buffer[2*ACC_Z_AXIS+1]<<8 | acc_buffer[2*ACC_Z_AXIS]) / ADXL345_SCALE);
+  acceleration.x =  ((float)ACC_X_INVERT*(int16_t)((int)acc_buffer[2*ACC_X_AXIS+1]<<8 | acc_buffer[2*ACC_X_AXIS]) / ADXL345_SCALE);
+  acceleration.y =  ((float)ACC_Y_INVERT*(int16_t)((int)acc_buffer[2*ACC_Y_AXIS+1]<<8 | acc_buffer[2*ACC_Y_AXIS]) / ADXL345_SCALE);
+  acceleration.z =  ((float)ACC_Z_INVERT*(int16_t)((int)acc_buffer[2*ACC_Z_AXIS+1]<<8 | acc_buffer[2*ACC_Z_AXIS]) / ADXL345_SCALE);
 
+  return acceleration;
 }
 
 #endif  // _ACCELEROMETER_ADXL345_H_

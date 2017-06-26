@@ -9,7 +9,7 @@
 #define ITG3205_DLPF_FS 0x16
 #define ITG3205_SCALE 0.00121414209  //rad/s
 
-bool checkGyroscope()
+bool initGyroscope()
 {
   if ((check_ID(ITG3205_GYRO_ADDRESS,ITG3205_WHO_AM_I) & 0x7E) == ITG3205_GYRO_ADDRESS)
   {
@@ -27,7 +27,7 @@ bool checkGyroscope()
     return false;
 }
 
-void measureGyroscope()
+geometry_msgs::Vector3 readIMUgyroscope()
 {
   gyro_reads = 0;;
   send_value(ITG3205_GYRO_ADDRESS,0x1D);
@@ -37,10 +37,10 @@ void measureGyroscope()
     gyro_buffer[gyro_reads] = Wire.read();
     gyro_reads++;
   }
-  raw_rotation.x = (float)(GYRO_X_INVERT*(int16_t)(((int)gyro_buffer[2*GYRO_X_AXIS] <<8) | gyro_buffer[2*GYRO_X_AXIS+1])) * ITG3205_SCALE;  //rad/s
-  raw_rotation.y = (float)(GYRO_Y_INVERT*(int16_t)(((int)gyro_buffer[2*GYRO_Y_AXIS] <<8) | gyro_buffer[2*GYRO_Y_AXIS+1])) * ITG3205_SCALE;
-  raw_rotation.z = (float)(GYRO_Z_INVERT*(int16_t)(((int)gyro_buffer[2*GYRO_Z_AXIS] <<8) | gyro_buffer[2*GYRO_Z_AXIS+1])) * ITG3205_SCALE;
+  angular_velocity.x = (float)(GYRO_X_INVERT*(int16_t)(((int)gyro_buffer[2*GYRO_X_AXIS] <<8) | gyro_buffer[2*GYRO_X_AXIS+1])) * ITG3205_SCALE;  //rad/s
+  angular_velocity.y = (float)(GYRO_Y_INVERT*(int16_t)(((int)gyro_buffer[2*GYRO_Y_AXIS] <<8) | gyro_buffer[2*GYRO_Y_AXIS+1])) * ITG3205_SCALE;
+  angular_velocity.z = (float)(GYRO_Z_INVERT*(int16_t)(((int)gyro_buffer[2*GYRO_Z_AXIS] <<8) | gyro_buffer[2*GYRO_Z_AXIS+1])) * ITG3205_SCALE;
 
-
+  return angular_velocity;
 }
 #endif  // _GYROSCOPE_ITFG3205_H_

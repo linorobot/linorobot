@@ -1,11 +1,8 @@
 /*
  Copyright (c) 2016, Juan Jimeno
-
  All rights reserved.
-
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
-
  * Redistributions of source code must retain the above copyright notice,
  this list of conditions and the following disclaimer.
  * Redistributions in binary form must reproduce the above copyright
@@ -14,7 +11,6 @@
  * Neither the name of  nor the names of its contributors may be used to
  endorse or promote products derived from this software without specific
  prior written permission.
-
  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -45,19 +41,19 @@
 #include <lino_msgs/PID.h>
 
 //header files for imu
-#include <ros_arduino_msgs/RawImu.h>
 #include <geometry_msgs/Vector3.h>
+#include <lino_msgs/Imu.h>
 
 #include <ros/time.h>
 
 #include <Wire.h>
 
-#include "imu_configuration.h"
 #include "lino_base_config.h"
 #include "Encoder.h"
 #include "Motor.h"
 #include "Kinematics.h"
 #include "PID.h"
+#include "imu.h"
 
 #define ENCODER_OPTIMIZE_INTERRUPTS
 
@@ -98,14 +94,10 @@ double g_req_angular_vel_z = 0;
 double g_req_linear_vel_x = 0;
 
 unsigned long g_prev_command_time = 0;
-unsigned long g_prev_control_time = 0;
-unsigned long g_publish_vel_time = 0;
-unsigned long g_prev_imu_time = 0;
-unsigned long g_prev_debug_time = 0;
+
 
 bool g_is_first = true;
 
-char g_buffer[50];
 
 //callback function prototypes
 void commandCallback(const geometry_msgs::Twist& cmd_msg);
@@ -116,7 +108,7 @@ ros::NodeHandle nh;
 ros::Subscriber<geometry_msgs::Twist> cmd_sub("cmd_vel", commandCallback);
 ros::Subscriber<lino_msgs::PID> pid_sub("pid", PIDCallback);
 
-ros_arduino_msgs::RawImu raw_imu_msg;
+lino_msgs::Imu raw_imu_msg;
 ros::Publisher raw_imu_pub("raw_imu", &raw_imu_msg);
 
 lino_msgs::Velocities raw_vel_msg;
@@ -136,18 +128,22 @@ void setup()
     nh.spinOnce();
   }
   nh.loginfo("LINOBASE CONNECTED");
-
-  Wire.begin();
-  delay(5);
+  delay(1);
 }
 
 void loop()
 {
+  static unsigned long prev_control_time = 0;
+  static unsigned long publish_vel_time = 0;
+  static unsigned long prev_imu_time = 0;
+  static unsigned long prev_debug_time = 0;
+  static bool imu_is_initialized;
+
   //this block drives the robot based on defined rate
-  if ((millis() - g_prev_control_time) >= (1000 / COMMAND_RATE))
+  if ((millis() - prev_control_time) >= (1000 / COMMAND_RATE))
   {
     moveBase();
-    g_prev_control_time = millis();
+    prev_control_time = millis();
   }
 
   //this block stops the motor when no command is received
@@ -157,35 +153,39 @@ void loop()
   }
 
   //this block publishes velocity based on defined rate
-  if ((millis() - g_publish_vel_time) >= (1000 / VEL_PUBLISH_RATE))
+  if ((millis() - publish_vel_time) >= (1000 / VEL_PUBLISH_RATE))
   {
     publishVelocities();
-    g_publish_vel_time = millis();
+    publish_vel_time = millis();
   }
 
   //this block publishes the IMU data based on defined rate
-  if ((millis() - g_prev_imu_time) >= (1000 / IMU_PUBLISH_RATE))
+  if ((millis() - prev_imu_time) >= (1000 / IMU_PUBLISH_RATE))
   {
     //sanity check if the IMU exits
-    if (g_is_first)
+    if (!imu_is_initialized)
     {
-      checkIMU();
+      imu_is_initialized = initIMU();
+      if(imu_is_initialized)
+        nh.loginfo("IMU Initialized");
+      else
+        nh.logfatal("IMU failed to initialize. Check your IMU connection.");
     }
     else
     {
       //publish the IMU data
       publishIMU();
     }
-    g_prev_imu_time = millis();
+    prev_imu_time = millis();
   }
 
   //this block displays the encoder readings. change DEBUG to 0 if you don't want to display
   if(DEBUG)
   {
-    if ((millis() - g_prev_debug_time) >= (1000 / DEBUG_RATE))
+    if ((millis() - prev_debug_time) >= (1000 / DEBUG_RATE))
     {
       printDebug();
-      g_prev_debug_time = millis();
+      prev_debug_time = millis();
     }
   }
   //call all the callbacks waiting to be called
@@ -237,7 +237,7 @@ void publishVelocities()
   Kinematics::velocities vel;
   vel = kinematics.getVelocities(motor1.rpm, motor2.rpm);
 
-  //fill in the object
+  //pass velocities to publisher object
   raw_vel_msg.linear_x = vel.linear_x;
   raw_vel_msg.linear_y = 0.0;
   raw_vel_msg.angular_z = vel.angular_z;
@@ -246,67 +246,24 @@ void publishVelocities()
   raw_vel_pub.publish(&raw_vel_msg);
 }
 
-void checkIMU()
-{
-  //this function checks if IMU is present
-  raw_imu_msg.accelerometer = checkAccelerometer();
-  raw_imu_msg.gyroscope = checkGyroscope();
-  raw_imu_msg.magnetometer = checkMagnetometer();
-
-  if (!raw_imu_msg.accelerometer)
-  {
-    nh.logerror("Accelerometer NOT FOUND!");
-  }
-
-  if (!raw_imu_msg.gyroscope)
-  {
-    nh.logerror("Gyroscope NOT FOUND!");
-  }
-
-  if (!raw_imu_msg.magnetometer)
-  {
-    nh.logerror("Magnetometer NOT FOUND!");
-  }
-
-  g_is_first = false;
-}
-
 void publishIMU()
 {
-  if (raw_imu_msg.accelerometer && raw_imu_msg.gyroscope && raw_imu_msg.magnetometer)
-  {
-    //this function publishes raw IMU reading
-    raw_imu_msg.header.stamp = nh.now();
-    raw_imu_msg.header.frame_id = "imu_link";
+  //pass accelerometer data to imu object
+  raw_imu_msg.linear_acceleration = readAccelerometer();
+  
+  //pass gyroscope data to imu object
+  raw_imu_msg.angular_velocity = readGyroscope();
 
-    //measure accelerometer
-    if (raw_imu_msg.accelerometer)
-    {
-      measureAcceleration();
-      raw_imu_msg.raw_linear_acceleration = raw_acceleration;
-    }
-
-    //measure gyroscope
-    if (raw_imu_msg.gyroscope)
-    {
-      measureGyroscope();
-      raw_imu_msg.raw_angular_velocity = raw_rotation;
-    }
-
-    //measure magnetometer
-    if (raw_imu_msg.magnetometer)
-    {
-      measureMagnetometer();
-      raw_imu_msg.raw_magnetic_field = raw_magnetic_field;
-    }
-
+  //pass accelerometer data to imu object
+  raw_imu_msg.magnetic_field = readMagnetometer();
     //publish raw_imu_msg object to ROS
-    raw_imu_pub.publish(&raw_imu_msg);
-  }
+  raw_imu_pub.publish(&raw_imu_msg);
 }
 
 void printDebug()
 {
+  char g_buffer[50];
+
   sprintf (g_buffer, "Encoder Left: %ld", motor1_encoder.read());
   nh.loginfo(g_buffer);
   sprintf (g_buffer, "Encoder Right: %ld", motor2_encoder.read());
