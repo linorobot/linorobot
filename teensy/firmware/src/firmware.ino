@@ -317,6 +317,8 @@ void publishVelocities()
     #endif
 
     #if defined BASE_4WD || defined BASE_MECANUM
+        motor1.updateSpeed(motor1_encoder.read());
+        motor2.updateSpeed(motor2_encoder.read());
         motor3.updateSpeed(motor3_encoder.read());
         motor4.updateSpeed(motor4_encoder.read());
         vel = kinematics.getVelocities(motor1.rpm, motor2.rpm, motor3.rpm, motor4.rpm);
