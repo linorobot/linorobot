@@ -1,9 +1,7 @@
 <launch>
-    <node pkg="xv_11_laser_driver" type="neato_laser_publisher" name="xv_11_node">
-      <param name="port" value="/dev/linolidar"/>
-      <param name="firmware_version" value="2"/>
-      <param name="frame_id" value="laser"/>
-    </node>
+    <include file="$(find linorobot)/launch/lidar/$(env LINOLIDAR).launch" />
 
     <node pkg="tf" type="static_transform_publisher" name="base_link_to_laser" args="0.065 0 0.196 0 0 0  /base_link /laser  100"/>
 </launch>
+
+

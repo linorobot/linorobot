@@ -6,7 +6,7 @@
     </node>
 
     <node pkg="imu_calib" type="apply_calib" name="apply_calib" output="screen" respawn="false">
-        <param name="calib_file" value="$(find linorobot)/param/imu_calib.yaml" />
+        <param name="calib_file" value="$(find linorobot)/param/imu/imu_calib.yaml" />
     </node>
 
     <node pkg="imu_filter_madgwick" type="imu_filter_node" name="imu_filter_madgwick" output="screen" respawn="false" >
@@ -21,5 +21,6 @@
         <param name="use_mag" value="true" />
         <param name="publish_tf" value="true" />
     </node>-->
+    
     <node name="lino_base_node" pkg="linorobot" type="lino_base_node"></node>
 </launch>
