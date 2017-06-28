@@ -5,22 +5,21 @@ project(linorobot)
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
-  geometry_msgs
-  ros_arduino_msgs
-  roscpp
-  rospy
-  rosserial_python
-  sensor_msgs
-  std_msgs
-  tf
-  tf
+    roscpp 
+    rospy 
+    tf
+    nav_msgs 
+    lino_msgs 
+    geometry_msgs 
+    sensor_msgs 
+    std_msgs
 )
 
 catkin_package(
-#  INCLUDE_DIRS include
-#  LIBRARIES linorobot
-#  CATKIN_DEPENDS geometry_msgs ros_arduino_msgs roscpp rospy rosserial_python sensor_msgs std_msgs tf tf
-#  DEPENDS system_lib
+  #INCLUDE_DIRS include
+  LIBRARIES linorobot
+  CATKIN_DEPENDS roscpp rospy tf nav_msgs lino_msgs geometry_msgs sensor_msgs std_msgs 
+  DEPENDS system_lib
 )
 ###########
 ## Build ##
