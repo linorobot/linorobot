@@ -1,5 +1,9 @@
 # linorobot
-Linorobot is an Open Source robotic project that aims to provide students, developers, and researchers a low-cost platform in creating new exciting applications on top of ROS.
+Linorobot is a suite of Open Source ROS compatible robots for that aims to provide students, developers, and researchers a low-cost platform in creating new exciting applications on top of ROS.
+
+# Tutorial
+
+You can read the full tutorial here: http://linorobot.org
 
 ## Multiplatform
 Supports multiple types of robot base:
