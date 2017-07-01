@@ -47,6 +47,8 @@ or wire it on your own. Wiring diagrams are also provided.
 **Technically this should also work with any ARM dev board at least (1GB RAM) that runs Ubuntu Trusty or Xenial.
 
 ## Installation
+![alt text](https://github.com/linorobot/lino_docs/blob/master/imgs/installationshot.png?raw=true)
+
 ```
 $ git clone https://github.com/linorobot/lino_install && cd lino_install
 $ ./install
