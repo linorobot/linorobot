@@ -14,6 +14,9 @@ Supports multiple types of robot base:
 
 ![alt text](https://github.com/linorobot/lino_docs/blob/master/imgs/family.png?raw=true)
 
+Works on:
+- ROS Indigo (Ubuntu 14.04)
+- ROS Kinetic (Ubuntu 16.04)
 
 ## Hardware
 Fabricate your own Teensy 3.1/3.2 shield,
