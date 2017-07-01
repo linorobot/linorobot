@@ -51,7 +51,7 @@ or wire it on your own. Wiring diagrams are also provided.
 
 ```
 $ git clone https://github.com/linorobot/lino_install && cd lino_install
-$ ./install
+$ ./install <base> <sensor>
 ```
 
 ## Firmware
