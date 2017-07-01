@@ -12,29 +12,29 @@ Supports multiple types of robot base:
 
 
 ## Hardware
-Fabricate your own Teensy 3.1/3.2 shield. 
+Fabricate your own Teensy 3.1/3.2 shield,
 
 ![alt text](https://github.com/linorobot/lino_docs/blob/master/imgs/shield.JPG?raw=true)![alt text](https://github.com/linorobot/lino_docs/blob/master/imgs/shield2.JPG?raw=true)
 
 or wire it on your own. Wiring diagrams are also provided.
 ![alt text](https://github.com/linorobot/lino_docs/blob/master/imgs/schematicsfamilyphoto.png?raw=true)
 
-### Supported IMUs:
+#### Supported IMUs:
 - GY-85
 - MPU6050 (to be released)
 
-### Supported Motor Drivers:
+#### Supported Motor Drivers:
 - L298
 - BTS7960   
 **This should easily work with other motor drivers as long as the pins are compatible.
 
-### Supported ROS Compatible Sensors:
+#### Supported ROS Compatible Sensors:
 - XV11 Lidar
 - RPLidar
 - Intel RealSense R200 (to be released)
 - Kinect (to be released)
 
-### Tested on Linux compatible ARM dev boards:    
+#### Tested on Linux compatible ARM dev boards:    
 - Raspberry Pi 3   
 - Jetson TK1   
 - Jetson TX1   
@@ -52,7 +52,7 @@ $ ./install
 Flexible and configurable components.
 linorobot_ws/teensy/firmware/lib/config/lino_base_config.h
 
-### Robot base configuration:
+#### Robot base configuration:
 ```
 //uncomment the base you're building
 #define LINO_BASE DIFF_2WD
@@ -61,21 +61,21 @@ linorobot_ws/teensy/firmware/lib/config/lino_base_config.h
 // #define LINO_BASE HOLO_4W
 ```
 
-### IMU configuration:
+#### IMU configuration:
 ```
 //uncomment the IMU you're using
 #define GY85_IMU
 // #define MP6050_IMU (not supported yet)
 ```
 
-### Motor driver configuration:
+#### Motor driver configuration:
 ```
 //uncomment the motor driver you're using
 #define MOTOR_DRIVER L298
 // #define MOTOR_DRIVER BTS7960
 ```
 
-### Motor configuration:
+#### Motor configuration:
 ```
 //define your robot' specs here
 #define MAX_RPM 330 // motor's maximum RPM
@@ -88,12 +88,12 @@ linorobot_ws/teensy/firmware/lib/config/lino_base_config.h
 ## Creating a Map
 ![alt text](https://github.com/linorobot/lino_docs/blob/master/imgs/slam.png?raw=true)
 
-### Launch base driver:
+#### Launch base driver:
 ```
 $ roslaunch linorobot bringup.launch
 ```
 
-### Launch mapping packages:
+#### Launch mapping packages:
 ```
 roslaunch linorobot slam.launch
 ```
@@ -101,12 +101,12 @@ roslaunch linorobot slam.launch
 ## Autonomous Navigation
 [![IMAGE ALT TEXT](http://img.youtube.com/vi/aqzMq-jMd-c/maxresdefault.jpg)](https://www.youtube.com/embed/aqzMq-jMd-c "Linorobot Autonomous Navigation")
 
-### Launch base driver:
+#### Launch base driver:
 ```
 $ roslaunch linorobot bringup.launch
 ```
 
-### Launch navigation packages:
+#### Launch navigation packages:
 ```
 roslaunch linorobot navigate.launch
 ```
