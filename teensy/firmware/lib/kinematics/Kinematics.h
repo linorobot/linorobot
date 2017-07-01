@@ -33,24 +33,33 @@
 class Kinematics
 {
     public:
+        enum base {DIFF_2WD, DIFF_4WD, ACKERMANN, HOLO_4W};
+
         struct output
         {
-        int motor1;
-        int motor2;
-        int motor3;
-        int motor4;
+            int motor1;
+            int motor2;
+            int motor3;
+            int motor4;
         };
         struct velocities
         {
-        float linear_x;
-        float linear_y;
-        float angular_z;
+            float linear_x;
+            float linear_y;
+            float angular_z;
         };
+
         Kinematics(int motor_max_rpm, float wheel_diameter, float base_width, int pwm_bits);
         velocities getVelocities(int motor1, int motor2);
         velocities getVelocities(int motor1, int motor2, int motor3, int motor4);
-        output getRPM(float linear_x, float linear_y, float angular_z);
-        output getPWM(float linear_x, float linear_y, float angular_z);
+        velocities getVelocities(base base_platform, int motor1, int motor2, int motor3, int motor4);
+
+        output calculateRPM(float linear_x, float linear_y, float angular_z);
+        output calculateRPM(base base_platform, float linear_x, float linear_y, float angular_z);
+
+        output calculatePWM(float linear_x, float linear_y, float angular_z);
+        output calculatePWM(base base_platform, float linear_x, float linear_y, float angular_z);
+
         int rpmToPWM(int rpm);
 
     private:

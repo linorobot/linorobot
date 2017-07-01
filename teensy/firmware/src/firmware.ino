@@ -31,24 +31,22 @@
 #else
 #include <WProgram.h>
 #endif
+
 #include <Wire.h>
+#include <Servo.h>
 
 #include "ros.h"
-
+#include "ros/time.h"
 //header file for publishing velocities for odom
 #include "lino_msgs/Velocities.h"
-
 //header file for cmd_subscribing to "cmd_vel"
 #include "geometry_msgs/Twist.h"
-
 //header file for pid server
 #include "lino_msgs/PID.h"
-
-//header files for imu
+//header files for sub-imu
 #include "geometry_msgs/Vector3.h"
+//header file for imu
 #include "lino_msgs/Imu.h"
-
-#include "ros/time.h"
 
 #include "lino_base_config.h"
 #include "Encoder.h"
@@ -57,54 +55,30 @@
 #include "PID.h"
 #include "Imu.h"
 
-#define ENCODER_OPTIMIZE_INTERRUPTS
-
 #define IMU_PUBLISH_RATE 10 //hz
 #define VEL_PUBLISH_RATE 10 //hz
 #define COMMAND_RATE 15 //hz
 #define DEBUG_RATE 5
 
+#define ENCODER_OPTIMIZE_INTERRUPTS
+
 Encoder motor1_encoder(MOTOR1_ENCODER_A,MOTOR1_ENCODER_B);
 Encoder motor2_encoder(MOTOR2_ENCODER_A,MOTOR2_ENCODER_B); 
+Encoder motor3_encoder(MOTOR3_ENCODER_A,MOTOR3_ENCODER_B); 
+Encoder motor4_encoder(MOTOR4_ENCODER_A,MOTOR4_ENCODER_B); 
 
-PID motor1_pid(-255, 255, K_P, K_I, K_D);
-PID motor2_pid(-255, 255, K_P, K_I, K_D);
+Servo steering_servo;
 
-#ifdef L298_DRIVER
-    Motor motor1(MOTOR1_PWM, MOTOR1_IN_A, MOTOR1_IN_B); //front-left
-    Motor motor2(MOTOR2_PWM, MOTOR2_IN_A, MOTOR2_IN_B); // front-right
-#endif
+Motor motor1(Motor::MOTOR_DRIVER, COUNTS_PER_REV, MOTOR1_PWM, MOTOR1_IN_A, MOTOR1_IN_B);
+Motor motor2(Motor::MOTOR_DRIVER, COUNTS_PER_REV, MOTOR2_PWM, MOTOR2_IN_A, MOTOR2_IN_B); 
+Motor motor3(Motor::MOTOR_DRIVER, COUNTS_PER_REV, MOTOR3_PWM, MOTOR3_IN_A, MOTOR3_IN_B);
+Motor motor4(Motor::MOTOR_DRIVER, COUNTS_PER_REV, MOTOR4_PWM, MOTOR4_IN_A, MOTOR4_IN_B);
 
-#ifdef BTS7960_DRIVER
-    Motor motor1(MOTOR1_IN_A, MOTOR1_IN_B); // front
-    Motor motor2(MOTOR2_IN_A, MOTOR2_IN_B); // front
-#endif
-
-#if defined BASE_4WD || defined BASE_MECANUM
-    Encoder motor3_encoder(MOTOR3_ENCODER_A,MOTOR3_ENCODER_B); 
-    Encoder motor4_encoder(MOTOR4_ENCODER_A,MOTOR4_ENCODER_B); 
-
-    PID motor3_pid(-255, 255, K_P, K_I, K_D);
-    PID motor4_pid(-255, 255, K_P, K_I, K_D);
-
-    #ifdef L298_DRIVER
-        Motor motor3(MOTOR3_PWM, MOTOR3_IN_A, MOTOR3_IN_B); // rear-left
-        Motor motor4(MOTOR4_PWM, MOTOR4_IN_A, MOTOR4_IN_B); // rear-right
-    #endif
-
-    #ifdef BTS7960_DRIVER
-        Motor motor3(MOTOR3_IN_A, MOTOR3_IN_B); // front
-        Motor motor4(MOTOR4_IN_A, MOTOR4_IN_B); // frear
-    #endif
-#endif
-
-#ifdef BASE_ACKERMANN
-    #include <Servo.h>
-    Servo steering_servo;
-#endif
-
-//COUNTS_PER_REV = 0 if no encoder
-int Motor::counts_per_rev_ = COUNTS_PER_REV;
+float PWM_MAX = pow(2, PWM_BITS) - 1;
+PID motor1_pid(-PWM_MAX, PWM_MAX, K_P, K_I, K_D);
+PID motor2_pid(-PWM_MAX, PWM_MAX, K_P, K_I, K_D);
+PID motor3_pid(-PWM_MAX, PWM_MAX, K_P, K_I, K_D);
+PID motor4_pid(-PWM_MAX, PWM_MAX, K_P, K_I, K_D);
 
 Kinematics kinematics(MAX_RPM, WHEEL_DIAMETER, BASE_WIDTH, PWM_BITS);
 
@@ -131,10 +105,8 @@ ros::Publisher raw_vel_pub("raw_vel", &raw_vel_msg);
 
 void setup()
 {
-    #ifdef BASE_ACKERMANN
-        steering_servo.attach(STEERING_PIN);
-        steering_servo.write(90); // set servo to mid-point
-    #endif 
+    steering_servo.attach(STEERING_PIN);
+    steering_servo.write(90); 
     
     nh.initNode();
     nh.getHardware()->setBaud(57600);
@@ -218,11 +190,8 @@ void PIDCallback(const lino_msgs::PID& pid)
     //this callback receives pid object where P,I, and D constants are stored
     motor1_pid.updateConstants(pid.p, pid.i, pid.d);
     motor2_pid.updateConstants(pid.p, pid.i, pid.d);
-
-    #if defined BASE_4WD || defined BASE_MECANUM
-        motor3_pid.updateConstants(pid.p, pid.i, pid.d);
-        motor4_pid.updateConstants(pid.p, pid.i, pid.d);
-    #endif
+    motor3_pid.updateConstants(pid.p, pid.i, pid.d);
+    motor4_pid.updateConstants(pid.p, pid.i, pid.d);
 }
 
 void commandCallback(const geometry_msgs::Twist& cmd_msg)
@@ -240,29 +209,20 @@ void moveBase()
 {
     Kinematics::output req_rpm;
 
-    //get the required rpm for each motor based on required velocities
-    #if defined BASE_2WD || defined BASE_4WD
-        req_rpm = kinematics.getRPM(g_req_linear_vel_x, 0.0 , g_req_angular_vel_z);
-    #endif
-
-    #ifdef BASE_ACKERMANN
-        steer();
-        req_rpm = kinematics.getRPM(g_req_linear_vel_x, 0.0, 0.0);
-    #endif
-
-    #ifdef BASE_MECANUM
-        req_rpm = kinematics.getRPM(g_req_linear_vel_x, g_req_linear_vel_y, g_req_angular_vel_z);
-    #endif
+    //get the required rpm for each motor based on required velocities, and base used
+    req_rpm = kinematics.calculateRPM(Kinematics::LINO_BASE, g_req_linear_vel_x, g_req_linear_vel_y, g_req_angular_vel_z);
 
     //the required rpm is capped at -/+ MAX_RPM to prevent the PID from having too much error
     //the PWM value sent to the motor driver is the calculated PID based on required RPM vs measured RPM
-    motor1.spin(motor1_pid.compute(constrain(req_rpm.motor1, -MAX_RPM, MAX_RPM), motor1.rpm));
-    motor2.spin(motor2_pid.compute(constrain(req_rpm.motor2, -MAX_RPM, MAX_RPM), motor2.rpm));
+    motor1.spin(motor1_pid.compute(req_rpm.motor1, motor1.getRPM()));
+    motor2.spin(motor2_pid.compute(req_rpm.motor2, motor2.getRPM()));
+    motor3.spin(motor3_pid.compute(req_rpm.motor3, motor3.getRPM()));  
+    motor4.spin(motor4_pid.compute(req_rpm.motor4, motor4.getRPM()));    
 
-    #if defined BASE_4WD || defined BASE_MECANUM
-        motor3.spin(motor3_pid.compute(constrain(req_rpm.motor3, -MAX_RPM, MAX_RPM), motor3.rpm));  
-        motor4.spin(motor4_pid.compute(constrain(req_rpm.motor4, -MAX_RPM, MAX_RPM), motor4.rpm));    
-    #endif  
+    //steer if Ackermann base
+    #if LINO_BASE == ACKERMANN
+        steer();
+    #endif
 }
 
 void stopBase()
@@ -272,56 +232,17 @@ void stopBase()
     g_req_angular_vel_z = 0.0;
 }
 
-void steer()
-{
-    #ifdef BASE_ACKERMANN
-        float steering_angle;
-        float steering_angle_deg;
-
-        float req_steering_angle = g_req_angular_vel_z;
-
-        //convert steering angle from rad to deg
-        steering_angle_deg = req_steering_angle * (180 / PI);
-
-        if(steering_angle_deg > 0)
-        {
-            //steer left 
-            steering_angle = mapFloat(steering_angle_deg, 0, 90, 90, 0);
-
-        }
-        else if(steering_angle_deg < 0)
-        {
-            //steer right
-            steering_angle = mapFloat(steering_angle_deg, 0, -90, 90, 180);
-        }
-        else
-        {
-            //return steering wheel to middle if there's no command
-            steering_angle = 90;
-        }
-        
-        steering_servo.write(steering_angle);
-    #endif
-}
-
 void publishVelocities()
 {
     Kinematics::velocities vel;
 
-    //update the current speed of each motor based on encoder's count
-    #if defined BASE_2WD || defined BASE_ACKERMANN
-        motor1.updateSpeed(motor1_encoder.read());
-        motor2.updateSpeed(motor2_encoder.read());
-        vel = kinematics.getVelocities(motor1.rpm, motor2.rpm);
-    #endif
-
-    #if defined BASE_4WD || defined BASE_MECANUM
-        motor1.updateSpeed(motor1_encoder.read());
-        motor2.updateSpeed(motor2_encoder.read());
-        motor3.updateSpeed(motor3_encoder.read());
-        motor4.updateSpeed(motor4_encoder.read());
-        vel = kinematics.getVelocities(motor1.rpm, motor2.rpm, motor3.rpm, motor4.rpm);
-    #endif
+    motor1.updateSpeed(motor1_encoder.read());
+    motor2.updateSpeed(motor2_encoder.read());
+    motor3.updateSpeed(motor3_encoder.read());
+    motor4.updateSpeed(motor4_encoder.read());
+    
+    //calculate the robot's speed based on rpm reading from each motor and platform used.
+    vel = kinematics.getVelocities(Kinematics::LINO_BASE, motor1.getRPM(), motor2.getRPM(), motor3.getRPM(), motor4.getRPM());
 
     //pass velocities to publisher object
     raw_vel_msg.linear_x = vel.linear_x;
@@ -342,8 +263,47 @@ void publishIMU()
 
     //pass accelerometer data to imu object
     raw_imu_msg.magnetic_field = readMagnetometer();
+
     //publish raw_imu_msg object to ROS
     raw_imu_pub.publish(&raw_imu_msg);
+}
+
+void steer()
+{
+    //steering function for ACKERMANN base
+    //this converts angular velocity(rad) to steering angle(degree)
+    float steering_angle;
+    float steering_angle_deg;
+
+    float req_steering_angle = g_req_angular_vel_z;
+
+    //convert steering angle from rad to deg
+    steering_angle_deg = req_steering_angle * (180 / PI);
+
+    if(steering_angle_deg > 0)
+    {
+        //steer left 
+        steering_angle = mapFloat(steering_angle_deg, 0, 90, 90, 0);
+
+    }
+    else if(steering_angle_deg < 0)
+    {
+        //steer right
+        steering_angle = mapFloat(steering_angle_deg, 0, -90, 90, 180);
+    }
+    else
+    {
+        //return steering wheel to middle if there's no command
+        steering_angle = 90;
+    }
+    
+    //steer the robot
+    steering_servo.write(steering_angle);
+}
+
+float mapFloat(long x, long in_min, long in_max, long out_min, long out_max)
+{
+    return (float)(x - in_min) * (out_max - out_min) / (float)(in_max - in_min) + out_min;
 }
 
 void printDebug()
@@ -354,16 +314,8 @@ void printDebug()
     nh.loginfo(buffer);
     sprintf (buffer, "Encoder FrontRight: %ld", motor2_encoder.read());
     nh.loginfo(buffer);
-
-    #if defined BASE_4WD || defined BASE_MECANUM
-        sprintf (buffer, "Encoder RearLeft: %ld", motor3_encoder.read());
-        nh.loginfo(buffer);
-        sprintf (buffer, "Encoder RearRight: %ld", motor4_encoder.read());
-        nh.loginfo(buffer);
-    #endif
-}
-
-float mapFloat(long x, long in_min, long in_max, long out_min, long out_max)
-{
-    return (float)(x - in_min) * (out_max - out_min) / (float)(in_max - in_min) + out_min;
+    sprintf (buffer, "Encoder RearLeft: %ld", motor3_encoder.read());
+    nh.loginfo(buffer);
+    sprintf (buffer, "Encoder RearRight: %ld", motor4_encoder.read());
+    nh.loginfo(buffer);
 }

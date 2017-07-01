@@ -37,7 +37,7 @@ Kinematics::Kinematics(int motor_max_rpm, float wheel_diameter, float base_width
     pwm_res_ = pow(2, pwm_bits) - 1;
 }
 
-Kinematics::output Kinematics::getRPM(float linear_x, float linear_y, float angular_z)
+Kinematics::output Kinematics::calculateRPM(float linear_x, float linear_y, float angular_z)
 {
     //convert m/s to m/min
     linear_vel_x_mins_ = linear_x * 60;
@@ -58,34 +58,85 @@ Kinematics::output Kinematics::getRPM(float linear_x, float linear_y, float angu
     //calculate for the target motor RPM and direction
     //front-left motor
     rpm.motor1 = x_rpm_ - y_rpm_ - tan_rpm_;
-    //rear-left motor
-    rpm.motor3 = x_rpm_ + y_rpm_ - tan_rpm_;
+    rpm.motor1 = constrain(rpm.motor1, -max_rpm_, max_rpm_);
 
     //front-right motor
     rpm.motor2 = x_rpm_ + y_rpm_ + tan_rpm_;
+    rpm.motor2 = constrain(rpm.motor2, -max_rpm_, max_rpm_);
+
+    //rear-left motor
+    rpm.motor3 = x_rpm_ + y_rpm_ - tan_rpm_;
+    rpm.motor3 = constrain(rpm.motor3, -max_rpm_, max_rpm_);
+
     //rear-right motor
     rpm.motor4 = x_rpm_ - y_rpm_ + tan_rpm_;
+    rpm.motor4 = constrain(rpm.motor4, -max_rpm_, max_rpm_);
 
     return rpm;
 }
 
-Kinematics::output Kinematics::getPWM(float linear_x, float linear_y, float angular_z)
+Kinematics::output Kinematics::calculateRPM(base base_platform, float linear_x, float linear_y, float angular_z)
+{
+    Kinematics::output rpm;
+
+    if(base_platform == DIFF_2WD || base_platform == DIFF_4WD)
+    {
+        rpm = calculateRPM(linear_x, 0.0 , angular_z);
+    }
+    else if(base_platform == ACKERMANN)
+    {
+        rpm = calculateRPM(linear_x, 0.0, 0.0);
+    }
+    else if(base_platform == HOLO_4W)
+    {
+        rpm = calculateRPM(linear_x, linear_y, angular_z);
+    }
+
+    return rpm;
+}
+
+Kinematics::output Kinematics::calculatePWM(float linear_x, float linear_y, float angular_z)
 {
     Kinematics::output rpm;
     Kinematics::output pwm;
 
-    rpm = getRPM(linear_x, linear_y, angular_z);
+    rpm = calculateRPM(linear_x, linear_y, angular_z);
 
     //convert from RPM to PWM
     //front-left motor
     pwm.motor1 = rpmToPWM(rpm.motor1);
+    pwm.motor1 = constrain(pwm.motor1, -pwm_res_, pwm_res_);
     //rear-left motor
     pwm.motor2 = rpmToPWM(rpm.motor2);
+    pwm.motor2 = constrain(pwm.motor2, -pwm_res_, pwm_res_);
 
     //front-right motor
     pwm.motor3 = rpmToPWM(rpm.motor3);
+    pwm.motor3 = constrain(pwm.motor3, -pwm_res_, pwm_res_);
+
     //rear-right motor
     pwm.motor4 = rpmToPWM(rpm.motor4);
+    pwm.motor4 = constrain(pwm.motor4, -pwm_res_, pwm_res_);
+
+    return pwm;
+}
+
+Kinematics::output Kinematics::calculatePWM(base base_platform, float linear_x, float linear_y, float angular_z)
+{
+    Kinematics::output pwm;
+
+    if(base_platform == DIFF_2WD || base_platform == DIFF_4WD)
+    {
+        pwm = calculatePWM(linear_x, 0.0 , angular_z);
+    }
+    else if(base_platform == ACKERMANN)
+    {
+        pwm = calculatePWM(linear_x, 0.0, 0.0);
+    }
+    else if(base_platform == HOLO_4W)
+    {
+        pwm = calculatePWM(linear_x, linear_y, angular_z);
+    }
 
     return pwm;
 }
@@ -130,8 +181,24 @@ Kinematics::velocities Kinematics::getVelocities(int motor1, int motor2, int mot
     return vel;
 }
 
+Kinematics::velocities Kinematics::getVelocities(base base_platform, int motor1, int motor2, int motor3, int motor4)
+{
+    Kinematics::velocities vel;
+
+    if(base_platform == DIFF_2WD || base_platform == ACKERMANN)
+    {   
+        vel = getVelocities(motor1, motor2);
+    }
+    else if(base_platform == DIFF_4WD || base_platform == HOLO_4W)
+    {
+        vel = getVelocities(motor1, motor2, motor3, motor4);
+    }
+
+    return vel;
+}
+
 int Kinematics::rpmToPWM(int rpm)
 {
   //remap scale of target RPM vs MAX_RPM to PWM
-    return (((double) rpm / (double) max_rpm_) * 255);
+    return (((double) rpm / (double) max_rpm_) * pwm_res_);
 }

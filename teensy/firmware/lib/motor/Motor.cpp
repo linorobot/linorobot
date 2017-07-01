@@ -1,28 +1,33 @@
 #include "Arduino.h"
 #include "Motor.h"
 
-Motor::Motor(int pwm_pin, int motor_pinA, int motor_pinB)
+Motor::Motor(driver motor_driver, int counts_per_rev, int pwm_pin, int motor_pinA, int motor_pinB)
 {
-    motor_driver_ = L298;
+    motor_driver_ = motor_driver;
+    counts_per_rev_ = counts_per_rev;
 
-    pinMode(pwm_pin, OUTPUT);
-    pinMode(motor_pinA, OUTPUT);
-    pinMode(motor_pinB, OUTPUT);
+    switch (motor_driver)
+    {
+        case L298:
+            pinMode(pwm_pin, OUTPUT);
+            pinMode(motor_pinA, OUTPUT);
+            pinMode(motor_pinB, OUTPUT);
 
-    pwm_pin_ = pwm_pin;
-    motor_pinA_ = motor_pinA;
-    motor_pinB_ = motor_pinB;
-}
+            pwm_pin_ = pwm_pin;
+            motor_pinA_ = motor_pinA;
+            motor_pinB_ = motor_pinB;
 
-Motor::Motor(int motor_pinA, int motor_pinB)
-{
-    motor_driver_ = BTS7960;
+            break;
 
-    pinMode(motor_pinA, OUTPUT);
-    pinMode(motor_pinB, OUTPUT);
+        case BTS7960:
+            pinMode(motor_pinA, OUTPUT);
+            pinMode(motor_pinB, OUTPUT);
 
-    motor_pinA_ = motor_pinA;
-    motor_pinB_ = motor_pinB;
+            motor_pinA_ = motor_pinA;
+            motor_pinB_ = motor_pinB;
+
+            break;
+    }
 }
 
 void Motor::updateSpeed(long encoder_ticks)
@@ -36,44 +41,53 @@ void Motor::updateSpeed(long encoder_ticks)
     double delta_ticks = encoder_ticks - prev_encoder_ticks_;
 
     //calculate wheel's speed (RPM)
-    rpm = (delta_ticks / counts_per_rev_) / dtm;
+    rpm_ = (delta_ticks / counts_per_rev_) / dtm;
 
     prev_update_time_ = current_time;
     prev_encoder_ticks_ = encoder_ticks;
 }
 
+int Motor::getRPM()
+{
+    return rpm_;
+}
+
 void Motor::spin(int pwm)
 {
-    if(motor_driver_ == L298)
+    switch (motor_driver_)
     {
-        if(pwm > 0)
-        {
-            digitalWrite(motor_pinA_, HIGH);
-            digitalWrite(motor_pinB_, LOW);
-        }
-        else if(pwm < 0)
-        {
-            digitalWrite(motor_pinA_, LOW);
-            digitalWrite(motor_pinB_, HIGH);
-        }
-        analogWrite(pwm_pin_, abs(pwm));
-    }
-    else if(motor_driver_ == BTS7960)
-    {
-        if (pwm > 0)
-        {
-            analogWrite(motor_pinA_, 0);
-            analogWrite(motor_pinB_, abs(pwm));
-        }
-        else if (pwm < 0)
-        {
-            analogWrite(motor_pinB_, 0);
-            analogWrite(motor_pinA_, abs(pwm));
-        }
-        else
-        {
-            analogWrite(motor_pinB_, 0);
-            analogWrite(motor_pinA_, 0);
-        }
+        case L298:
+            if(pwm > 0)
+            {
+                digitalWrite(motor_pinA_, HIGH);
+                digitalWrite(motor_pinB_, LOW);
+            }
+            else if(pwm < 0)
+            {
+                digitalWrite(motor_pinA_, LOW);
+                digitalWrite(motor_pinB_, HIGH);
+            }
+            analogWrite(pwm_pin_, abs(pwm));
+
+            break;
+
+        case BTS7960:
+            if (pwm > 0)
+            {
+                analogWrite(motor_pinA_, 0);
+                analogWrite(motor_pinB_, abs(pwm));
+            }
+            else if (pwm < 0)
+            {
+                analogWrite(motor_pinB_, 0);
+                analogWrite(motor_pinA_, abs(pwm));
+            }
+            else
+            {
+                analogWrite(motor_pinB_, 0);
+                analogWrite(motor_pinA_, 0);
+            }
+
+            break;
     }
 }
