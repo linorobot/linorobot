@@ -79,17 +79,17 @@ ROBOT ORIENTATION
   #define MOTOR1_IN_B 20
 
   #define MOTOR2_IN_A 5
-  #define MOTOR2_IN_B 8
+  #define MOTOR2_IN_B 6
 
   #define MOTOR3_IN_A 22
   #define MOTOR3_IN_B 23
 
   #define MOTOR4_IN_A 4
-  #define MOTOR4_IN_B 2
+  #define MOTOR4_IN_B 3
 #endif
 
 #ifdef BASE_ACKERMANN
-    #define STEERING_PIN 22
+    #define STEERING_PIN 7
 #endif
 
 #endif
