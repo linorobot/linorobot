@@ -3,7 +3,7 @@ Linorobot is a suite of Open Source ROS compatible robots that aims to provide s
 
 ## Tutorial
 
-You can read the full tutorial here: http://linorobot.org
+You can read the full tutorial how to build your robot [here](https://github.com/grassjelly/linorobot/wiki/1.-Getting-Started).
 
 ## Multiplatform
 Supports multiple types of robot base:
@@ -92,6 +92,12 @@ linorobot_ws/teensy/firmware/lib/config/lino_base_config.h
 #define WHEEL_DIAMETER 0.10 // wheel's diameter in meters
 #define PWM_BITS 8 // PWM Resolution of the microcontroller
 #define BASE_WIDTH 0.235 // width of the plate you are using
+```
+
+#### Uploading the codes:
+```
+$ cd ~/linorobot_ws/src/linorobot/teensy/firmware
+$ platformio run --target upload
 ```
 
 ## Creating a Map
