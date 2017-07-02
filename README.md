@@ -12,7 +12,7 @@ Supports multiple types of robot base:
 - Ackermann Steering 
 - Mecanum drive
 
-![alt text](https://github.com/linorobot/lino_docs/blob/master/imgs/family.png?raw=true)
+![alt text](https://github.com/linorobot/lino_docs/blob/master/imgs/readme/family.png?raw=true)
 
 Works on:
 - ROS Indigo (Ubuntu 14.04)
@@ -21,10 +21,10 @@ Works on:
 ## Hardware
 Fabricate your own Teensy 3.1/3.2 shield,
 
-![alt text](https://github.com/linorobot/lino_docs/blob/master/imgs/shield.JPG?raw=true)![alt text](https://github.com/linorobot/lino_docs/blob/master/imgs/shield2.JPG?raw=true)
+![alt text](https://github.com/linorobot/lino_docs/blob/master/imgs/readme/shield.JPG?raw=true)![alt text](https://github.com/linorobot/lino_docs/blob/master/imgs/readme/shield2.JPG?raw=true)
 
 or wire it on your own. Wiring diagrams are also provided.
-![alt text](https://github.com/linorobot/lino_docs/blob/master/imgs/schematicsfamilyphoto.png?raw=true)
+![alt text](https://github.com/linorobot/lino_docs/blob/master/imgs/readme/schematicsfamilyphoto.png?raw=true)
 
 #### Supported IMUs:
 - GY-85
@@ -50,7 +50,7 @@ or wire it on your own. Wiring diagrams are also provided.
 **Technically this should also work with any ARM dev board at least (1GB RAM) that runs Ubuntu Trusty or Xenial.
 
 ## Installation
-![alt text](https://github.com/linorobot/lino_docs/blob/master/imgs/installationshot.png?raw=true)
+![alt text](https://github.com/linorobot/lino_docs/blob/master/imgs/readme/installationshot.png?raw=true)
 
 ```
 $ git clone https://github.com/linorobot/lino_install && cd lino_install
@@ -101,7 +101,7 @@ $ platformio run --target upload
 ```
 
 ## Creating a Map
-![alt text](https://github.com/linorobot/lino_docs/blob/master/imgs/slam.png?raw=true)
+![alt text](https://github.com/linorobot/lino_docs/blob/master/imgs/readme/slam.png?raw=true)
 
 #### Launch base driver:
 ```
