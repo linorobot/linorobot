@@ -53,8 +53,8 @@ or wire it on your own. Wiring diagrams are also provided.
 ![alt text](https://github.com/linorobot/lino_docs/blob/master/imgs/readme/installationshot.png?raw=true)
 
 ```
-$ git clone https://github.com/linorobot/lino_install && cd lino_install
-$ ./install <base> <sensor>
+git clone https://github.com/linorobot/lino_install && cd lino_install
+./install <base> <sensor>
 ```
 
 ## Firmware
@@ -96,8 +96,8 @@ linorobot_ws/teensy/firmware/lib/config/lino_base_config.h
 
 #### Uploading the codes:
 ```
-$ cd ~/linorobot_ws/src/linorobot/teensy/firmware
-$ platformio run --target upload
+cd ~/linorobot_ws/src/linorobot/teensy/firmware
+platformio run --target upload
 ```
 
 ## Creating a Map
@@ -105,7 +105,7 @@ $ platformio run --target upload
 
 #### Launch base driver:
 ```
-$ roslaunch linorobot bringup.launch
+roslaunch linorobot bringup.launch
 ```
 
 #### Launch mapping packages:
@@ -118,7 +118,7 @@ roslaunch linorobot slam.launch
 
 #### Launch base driver:
 ```
-$ roslaunch linorobot bringup.launch
+roslaunch linorobot bringup.launch
 ```
 
 #### Launch navigation packages:
