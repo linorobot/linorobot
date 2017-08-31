@@ -1,17 +1,15 @@
 <launch>
-  <include file="$(find linorobot)/launch/laser.launch" />
+    <!-- Run Linorobot compatible laser drivers -->
+    <include file="$(find linorobot)/launch/laser.launch" />
 
-  <arg name="map_file" default="$(find linorobot)/maps/house.yaml"/>
-  <node pkg="map_server" name="map_server"  type="map_server" args="$(arg map_file)" />
+    <!-- Map server -->
+    <arg name="map_file" default="$(find linorobot)/maps/house.yaml"/>
+    <node pkg="map_server" name="map_server"  type="map_server" args="$(arg map_file)" />
 
-  <include file="$(find linorobot)/launch/amcl.launch" />
-
-  <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
-    <rosparam file="$(find linorobot)/param/costmap_common_params.yaml" command="load" ns="global_costmap" />
-    <rosparam file="$(find linorobot)/param/costmap_common_params.yaml" command="load" ns="local_costmap" />
-    <rosparam file="$(find linorobot)/param/local_costmap_params.yaml" command="load" />
-    <rosparam file="$(find linorobot)/param/global_costmap_params.yaml" command="load" />
-    <rosparam file="$(find linorobot)/param/base_local_planner_params.yaml" command="load" />
-    <rosparam file="$(find linorobot)/param/move_base_params.yaml" command="load" />
-  </node>
+    <!-- AMCL used for localization -->
+    <include file="$(find linorobot)/launch/amcl.launch" />
+    
+    <!-- Calls navigation stack packages for compatible Linorobto base -->
+    <!-- Takes reference from env variable LINOBASE. ie. export LINOBASE=2wd -->
+    <include file="$(find linorobot)/launch/move_base/move_base_$(env LINOBASE).launch" />
 </launch>

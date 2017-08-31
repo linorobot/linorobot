@@ -1,0 +1,14 @@
+<launch>
+    <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
+        <rosparam file="$(find linorobot)/param/navigation/costmap_common_params.yaml" command="load" ns="global_costmap" />
+        <rosparam file="$(find linorobot)/param/navigation/costmap_common_params.yaml" command="load" ns="local_costmap" />
+        <rosparam file="$(find linorobot)/param/navigation/local_costmap_params.yaml" command="load" />
+        <rosparam file="$(find linorobot)/param/navigation/global_costmap_params.yaml" command="load" />
+        <!-- Use TEB local planner specific configs -->
+        <rosparam file="$(find linorobot)/param/navigation/base_local_planner_ackermann_params.yaml" command="load" />
+        <rosparam file="$(find linorobot)/param/navigation/move_base_params.yaml" command="load" />
+
+        <!-- Run TEB local planner  -->
+        <param name="base_local_planner" value="teb_local_planner/TebLocalPlannerROS" />
+    </node>
+</launch>
