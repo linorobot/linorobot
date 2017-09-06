@@ -8,12 +8,12 @@
 // #define LINO_BASE HOLO_4W
 
 //uncomment the motor driver you're using
-#define USE_L298
-// #define USE_BTS7960
+#define USE_L298_DRIVER
+// #define USE_BTS7960_DRIVER
 
 //uncomment the IMU you're using
-#define GY85_IMU
-// #define MP6050_IMU (not supported yet)
+#define USE_GY85_IMU
+// #define USE_MP6050_IMU (not supported yet)
 
 #define DEBUG 1
 
@@ -63,7 +63,7 @@ ROBOT ORIENTATION
 #define MOTOR4_ENCODER_B 10
 
 //MOTOR PINS
-#ifdef USE_L298
+#ifdef USE_L298_DRIVER
   #define MOTOR_DRIVER L298
 
   #define MOTOR1_PWM 21
@@ -83,7 +83,7 @@ ROBOT ORIENTATION
   #define MOTOR4_IN_B 3
 #endif 
 
-#ifdef USE_BTS7960
+#ifdef USE_BTS7960_DRIVER
   #define MOTOR_DRIVER BTS7960  
 
   #define MOTOR1_PWM 1 //DON'T TOUCH THIS! This is just a placeholder

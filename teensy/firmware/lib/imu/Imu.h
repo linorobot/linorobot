@@ -1,11 +1,11 @@
 #ifndef _IMU_H_
 #define _IMU_H_
 
-#ifdef GY85_IMU
+#ifdef USE_GY85_IMU
     #include "GY85/gy85_configuration.h"
 #endif
 
-#ifdef MP6050_IMU
+#ifdef USE_MP6050_IMU
     #include "MP6050/test.h"
 #endif
 
