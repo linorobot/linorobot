@@ -8,14 +8,14 @@
 // #define LINO_BASE HOLO_4W
 
 //uncomment the motor driver you're using
-#define MOTOR_DRIVER L298
-// #define MOTOR_DRIVER BTS7960
+#define USE_L298
+// #define USE_BTS7960
 
 //uncomment the IMU you're using
 #define GY85_IMU
 // #define MP6050_IMU (not supported yet)
 
-#define DEBUG 0
+#define DEBUG 1
 
 #define K_P 0.6 // P constant
 #define K_I 0.3 // I constant
@@ -50,20 +50,22 @@ ROBOT ORIENTATION
 */
 
 /// ENCODER PINS
-#define MOTOR1_ENCODER_A 15 
+#define MOTOR1_ENCODER_A 15
 #define MOTOR1_ENCODER_B 14 
 
-#define MOTOR2_ENCODER_A 12 
-#define MOTOR2_ENCODER_B 11 
+#define MOTOR2_ENCODER_A 11
+#define MOTOR2_ENCODER_B 12 
 
-#define MOTOR3_ENCODER_A 17 
+#define MOTOR3_ENCODER_A 17
 #define MOTOR3_ENCODER_B 16 
 
-#define MOTOR4_ENCODER_A 10 
-#define MOTOR4_ENCODER_B 9 
+#define MOTOR4_ENCODER_A 9
+#define MOTOR4_ENCODER_B 10
 
 //MOTOR PINS
-#if MOTOR_DRIVER == L298
+#ifdef USE_L298
+  #define MOTOR_DRIVER L298
+
   #define MOTOR1_PWM 21
   #define MOTOR1_IN_A 20
   #define MOTOR1_IN_B 1
@@ -79,17 +81,24 @@ ROBOT ORIENTATION
   #define MOTOR4_PWM 4
   #define MOTOR4_IN_A 2
   #define MOTOR4_IN_B 3
+#endif 
 
-#elif MOTOR_DRIVER == BTS7960
+#ifdef USE_BTS7960
+  #define MOTOR_DRIVER BTS7960  
+
+  #define MOTOR1_PWM 1 //DON'T TOUCH THIS! This is just a placeholder
   #define MOTOR1_IN_A 21
   #define MOTOR1_IN_B 20
 
+  #define MOTOR2_PWM 8 //DON'T TOUCH THIS! This is just a placeholder
   #define MOTOR2_IN_A 5
   #define MOTOR2_IN_B 6
 
+  #define MOTOR3_PWM 0 //DON'T TOUCH THIS! This is just a placeholder
   #define MOTOR3_IN_A 22
   #define MOTOR3_IN_B 23
 
+  #define MOTOR4_PWM 2 //DON'T TOUCH THIS! This is just a placeholder
   #define MOTOR4_IN_A 4
   #define MOTOR4_IN_B 3
 #endif
