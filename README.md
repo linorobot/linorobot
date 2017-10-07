@@ -38,7 +38,7 @@ or wire it on your own. Wiring diagrams are also provided.
 #### Supported ROS Compatible Sensors:
 - XV11 Lidar
 - RPLidar
-- Intel RealSense R200 (to be released)
+- Intel RealSense R200
 - Kinect
 
 #### Tested on Linux compatible ARM dev boards:    
