@@ -39,7 +39,7 @@ or wire it on your own. Wiring diagrams are also provided.
 - XV11 Lidar
 - RPLidar
 - Intel RealSense R200 (to be released)
-- Kinect (to be released)
+- Kinect
 
 #### Tested on Linux compatible ARM dev boards:    
 - Raspberry Pi 3   
