@@ -19,12 +19,12 @@ Works on:
 - ROS Kinetic (Ubuntu 16.04)
 
 ## Hardware
-Fabricate your own Teensy 3.1/3.2 shield,
+Fabricate your own Teensy 3.1/3.2 [shield,](https://github.com/linorobot/lino_docs/tree/master/schematics)
 
 ![alt text](https://github.com/linorobot/lino_docs/blob/master/imgs/readme/shield.JPG?raw=true)![alt text](https://github.com/linorobot/lino_docs/blob/master/imgs/readme/shield2.JPG?raw=true)
 
 or wire it on your own. Wiring diagrams are also provided.
-![alt text](https://github.com/linorobot/lino_docs/blob/master/imgs/readme/schematicsfamilyphoto.png?raw=true)
+[![alt text](https://github.com/linorobot/lino_docs/blob/master/imgs/readme/schematicsfamilyphoto.png?raw=true)](https://github.com/linorobot/linorobot/wiki/2.-Base-Controller)
 
 #### Supported IMUs:
 - GY-85
