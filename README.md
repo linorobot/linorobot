@@ -31,8 +31,9 @@ or wire it on your own. Wiring diagrams are also provided.
 - MPU6050 (to be released)
 
 #### Supported Motor Drivers:
-- L298
-- BTS7960   
+- [L298](http://www.st.com/content/ccc/resource/technical/document/datasheet/82/cc/3f/39/0a/29/4d/f0/CD00000240.pdf/files/CD00000240.pdf/jcr:content/translations/en.CD00000240.pdf) (MAX: 35V, 2A)
+- [BTS7960](https://www.infineon.com/dgdl/Infineon-BTN7960-DS-v01_01-en.pdf?fileId=db3a304316f66ee80117642084e76a7c
+) (MAX: 24V, 43A)   
 **This should easily work with other motor drivers as long as the pins are compatible.
 
 #### Supported ROS Compatible Sensors:
