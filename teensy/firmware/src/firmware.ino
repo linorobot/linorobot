@@ -54,7 +54,7 @@ PID motor2_pid(-PWM_MAX, PWM_MAX, K_P, K_I, K_D);
 PID motor3_pid(-PWM_MAX, PWM_MAX, K_P, K_I, K_D);
 PID motor4_pid(-PWM_MAX, PWM_MAX, K_P, K_I, K_D);
 
-Kinematics kinematics(MAX_RPM, WHEEL_DIAMETER, BASE_WIDTH, PWM_BITS);
+Kinematics kinematics(Kinematics::LINO_BASE, MAX_RPM, WHEEL_DIAMETER, BASE_WIDTH, PWM_BITS);
 
 double g_req_linear_vel_x = 0;
 double g_req_linear_vel_y = 0;
@@ -184,7 +184,7 @@ void moveBase()
     Kinematics::output req_rpm;
 
     //get the required rpm for each motor based on required velocities, and base used
-    req_rpm = kinematics.calculateRPM(Kinematics::LINO_BASE, g_req_linear_vel_x, g_req_linear_vel_y, g_req_angular_vel_z);
+    req_rpm = kinematics.getRPM(g_req_linear_vel_x, g_req_linear_vel_y, g_req_angular_vel_z);
 
     //the required rpm is capped at -/+ MAX_RPM to prevent the PID from having too much error
     //the PWM value sent to the motor driver is the calculated PID based on required RPM vs measured RPM
@@ -216,7 +216,7 @@ void publishVelocities()
     motor4.updateSpeed(motor4_encoder.read());
     
     //calculate the robot's speed based on rpm reading from each motor and platform used.
-    vel = kinematics.getVelocities(Kinematics::LINO_BASE, motor1.getRPM(), motor2.getRPM(), motor3.getRPM(), motor4.getRPM());
+    vel = kinematics.getVelocities(motor1.getRPM(), motor2.getRPM(), motor3.getRPM(), motor4.getRPM());
 
     //pass velocities to publisher object
     raw_vel_msg.linear_x = vel.linear_x;

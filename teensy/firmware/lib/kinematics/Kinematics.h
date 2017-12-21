@@ -49,24 +49,24 @@ class Kinematics
             float angular_z;
         };
 
-        Kinematics(int motor_max_rpm, float wheel_diameter, float base_width, int pwm_bits);
-        velocities getVelocities(int motor1, int motor2);
+        Kinematics(base base_platform, int motor_max_rpm, float wheel_diameter, float base_width, int pwm_bits);
         velocities getVelocities(int motor1, int motor2, int motor3, int motor4);
-        velocities getVelocities(base base_platform, int motor1, int motor2, int motor3, int motor4);
+        output getRPM(float linear_x, float linear_y, float angular_z);
+        output getPWM(float linear_x, float linear_y, float angular_z);
 
-        output calculateRPM(float linear_x, float linear_y, float angular_z);
-        output calculateRPM(base base_platform, float linear_x, float linear_y, float angular_z);
-
-        output calculatePWM(float linear_x, float linear_y, float angular_z);
-        output calculatePWM(base base_platform, float linear_x, float linear_y, float angular_z);
-
-        int rpmToPWM(int rpm);
 
     private:
+        base base_platform_;
+        velocities calculateVelocities(int motor1, int motor2);
+        velocities calculateVelocities(int motor1, int motor2, int motor3, int motor4);
+        output calculateRPM(float linear_x, float linear_y, float angular_z);
+        output calculatePWM(float linear_x, float linear_y, float angular_z);
+        int rpmToPWM(int rpm);
+        
         float linear_vel_x_mins_;
         float linear_vel_y_mins_;
         float angular_vel_z_mins_;
-        float wheel_circumference_;
+        float circumference_;
         float tangential_vel_;
         float x_rpm_;
         float y_rpm_;
