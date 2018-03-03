@@ -4,7 +4,6 @@
     #include <WProgram.h>
 #endif
 
-#include <Wire.h>
 #include <Servo.h>
 
 #include "ros.h"
@@ -15,8 +14,6 @@
 #include "geometry_msgs/Twist.h"
 //header file for pid server
 #include "lino_msgs/PID.h"
-//header files for sub-imu
-#include "geometry_msgs/Vector3.h"
 //header file for imu
 #include "lino_msgs/Imu.h"
 
@@ -29,12 +26,10 @@
 #define ENCODER_OPTIMIZE_INTERRUPTS
 #include "Encoder.h"
 
-
 #define IMU_PUBLISH_RATE 10 //hz
 #define VEL_PUBLISH_RATE 10 //hz
 #define COMMAND_RATE 15 //hz
 #define DEBUG_RATE 5
-
 
 Encoder motor1_encoder(MOTOR1_ENCODER_A, MOTOR1_ENCODER_B);
 Encoder motor2_encoder(MOTOR2_ENCODER_A, MOTOR2_ENCODER_B); 
