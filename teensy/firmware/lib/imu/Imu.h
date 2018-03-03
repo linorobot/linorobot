@@ -1,44 +1,67 @@
-#ifndef _IMU_H_
-#define _IMU_H_
+#ifndef _IMU2_H_
+#define _IMU2_H_
 
-#ifdef USE_GY85_IMU
-    #include "GY85/gy85_configuration.h"
-#endif
+#include "I2Cdev.h"
+#include "imu_config.h"
 
-#ifdef USE_MP6050_IMU
-    #include "MP6050/test.h"
-#endif
+#include <Wire.h>
+#include "geometry_msgs/Vector3.h"
 
 bool initIMU()
 {
-    Wire.begin();
-    delay(5);
-    bool accel, gyro, mag;
-    accel = initAccelerometer();
-    gyro = initGyroscope();
-    mag = initMagnetometer();
+    #if I2CDEV_IMPLEMENTATION == I2CDEV_ARDUINO_WIRE
+        Wire.begin();
+    #elif I2CDEV_IMPLEMENTATION == I2CDEV_BUILTIN_FASTWIRE
+        Fastwire::setup(400, true);
+    #endif
 
-    if(accel && gyro && mag)
-        return true;
-    
-    else
-        return false;
+    accelerometer.initialize();
+    gyroscope.initialize();
+    magnetometer.initialize();
+
+    return true;
 }
 
 geometry_msgs::Vector3 readAccelerometer()
 {
-    return readIMUaccelerometer();
+    geometry_msgs::Vector3 accel;
+    int16_t ax, ay, az;
+    
+    accelerometer.getAcceleration(&ax, &ay, &az);
+
+    accel.x = ax * ACCEL_SCALE * G_TO_ACCEL;
+    accel.y = ay * ACCEL_SCALE * G_TO_ACCEL;
+    accel.z = az * ACCEL_SCALE * G_TO_ACCEL;
+
+    return accel;
 }
 
 geometry_msgs::Vector3 readGyroscope()
 {
-    return readIMUgyroscope();
+    geometry_msgs::Vector3 gyro;
+    int16_t gx, gy, gz;
+
+    gyroscope.getRotation(&gx, &gy, &gz);
+
+    gyro.x = gx * GYRO_SCALE * DEG_TO_RAD;
+    gyro.y = gy * GYRO_SCALE * DEG_TO_RAD;
+    gyro.z = gz * GYRO_SCALE * DEG_TO_RAD;
+
+    return gyro;
 }
 
 geometry_msgs::Vector3 readMagnetometer()
 {
-    return readIMUmagnetometer();
-}
+    geometry_msgs::Vector3 mag;
+    int16_t mx, my, mz;
 
+    magnetometer.getHeading(&mx, &my, &mz);
+
+    mag.x = mx;
+    mag.y = my;
+    mag.z = mz;
+
+    return mag;
+}
 
 #endif
