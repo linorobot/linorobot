@@ -13,7 +13,7 @@
 
 //uncomment the IMU you're using
 #define USE_GY85_IMU
-// #define USE_MP6050_IMU (not supported yet)
+// #define USE_MPU6050_IMU
 
 #define DEBUG 1
 
