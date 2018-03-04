@@ -2,7 +2,7 @@
 #define _FAKE_MAG_H_
 
 
-//This a place holder class for devices that does not have a magnetometer
+//This is a pseudo Magnetometer Class as a placeholder for IMUs that do not have a Magnetometer
 
 class FakeMag
 {
