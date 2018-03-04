@@ -32,8 +32,22 @@
     FakeMag magnetometer;
 #endif
 
+#ifdef USE_MPU9150_IMU
+    #include "MPU9150.h"
+
+    #define ACCEL_SCALE 1 / 16384 // 1/16,384 LSB/g
+    #define GYRO_SCALE 1 / 131 // 1/131 LSB(%s)
+    #define MAG_SCALE 0 // Not used. This is just a placeholder
+    
+    MPU9150 accelerometer;
+    MPU9150 gyroscope;    
+    MPU9150 magnetometer;
+#endif
+
 #endif
 
 //ADXL345 https://www.sparkfun.com/datasheets/Sensors/Accelerometer/ADXL345.pdf
 //MPU6050 https://store.invensense.com/datasheets/invensense/MPU-6050_DataSheet_V3%204.pdf
+//https://www.invensense.com/wp-content/uploads/2015/02/PS-MPU-9250A-01-v1.1.pdf
 //ITG320 https://www.sparkfun.com/datasheets/Sensors/Gyro/PS-ITG-3200-00-01.4.pdf
+//http://www.sureshjoshi.com/embedded/invensense-imus-what-to-know/
