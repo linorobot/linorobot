@@ -9,11 +9,7 @@
 
 bool initIMU()
 {
-    #if I2CDEV_IMPLEMENTATION == I2CDEV_ARDUINO_WIRE
-        Wire.begin();
-    #elif I2CDEV_IMPLEMENTATION == I2CDEV_BUILTIN_FASTWIRE
-        Fastwire::setup(400, true);
-    #endif
+    Wire.begin();
 
     accelerometer.initialize();
     gyroscope.initialize();
