@@ -65,7 +65,6 @@ geometry_msgs::Vector3 readMagnetometer()
 
     magnetometer.getHeading(&mx, &my, &mz);
 
-    //TODO: do some tesla conversion and sync with relay node
     mag.x = mx * MAG_SCALE * UTESLA_TO_TESLA;
     mag.y = my * MAG_SCALE * UTESLA_TO_TESLA;
     mag.z = mz * MAG_SCALE * UTESLA_TO_TESLA;
