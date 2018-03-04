@@ -13,7 +13,7 @@
     #include "HMC5883L.h"
 
     #define ACCEL_SCALE 1 / 232 // 1/232 LSB/g
-    #define GYRO_SCALE 1 / 14.375 // 1/14.375 LSB(%s)
+    #define GYRO_SCALE 1 / 14.375 // 1/14.375 LSB/(deg/s)
     #define MAG_SCALE 0.92 * MGAUSS_TO_UTESLA // uT/LSB
 
     ADXL345 accelerometer;
@@ -26,7 +26,7 @@
     #include "fake_mag.h"
 
     #define ACCEL_SCALE 1 / 16384 // 1/16,384 LSB/g
-    #define GYRO_SCALE 1 / 131 // 1/131 LSB(%s)
+    #define GYRO_SCALE 1 / 131 // 1/131 LSB/(deg/s)
     #define MAG_SCALE 0.285 // uT/LSB
     
     MPU6050 accelerometer;
@@ -38,7 +38,7 @@
     #include "MPU9150.h"
 
     #define ACCEL_SCALE 1 / 16384 // 1/16,384 LSB/g
-    #define GYRO_SCALE 1 / 131 // 1/131 LSB(%s)
+    #define GYRO_SCALE 1 / 131 // 1/131 LSB/(deg/s)
     #define MAG_SCALE 0.285 // uT/LSB
     
     MPU9150 accelerometer;
@@ -55,4 +55,6 @@
 
 //MPU9150 https://www.invensense.com/wp-content/uploads/2015/02/PS-MPU-9250A-01-v1.1.pdf
 //MPU6050 https://store.invensense.com/datasheets/invensense/MPU-6050_DataSheet_V3%204.pdf
+
 //http://www.sureshjoshi.com/embedded/invensense-imus-what-to-know/
+//https://stackoverflow.com/questions/19161872/meaning-of-lsb-unit-and-unit-lsb
