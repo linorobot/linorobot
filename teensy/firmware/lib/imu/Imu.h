@@ -37,9 +37,9 @@ geometry_msgs::Vector3 readAccelerometer()
     
     accelerometer.getAcceleration(&ax, &ay, &az);
 
-    accel.x = ax * ACCEL_SCALE * G_TO_ACCEL;
-    accel.y = ay * ACCEL_SCALE * G_TO_ACCEL;
-    accel.z = az * ACCEL_SCALE * G_TO_ACCEL;
+    accel.x = ax * (double) ACCEL_SCALE * G_TO_ACCEL;
+    accel.y = ay * (double) ACCEL_SCALE * G_TO_ACCEL;
+    accel.z = az * (double) ACCEL_SCALE * G_TO_ACCEL;
 
     return accel;
 }
@@ -51,9 +51,9 @@ geometry_msgs::Vector3 readGyroscope()
 
     gyroscope.getRotation(&gx, &gy, &gz);
 
-    gyro.x = gx * GYRO_SCALE * DEG_TO_RAD;
-    gyro.y = gy * GYRO_SCALE * DEG_TO_RAD;
-    gyro.z = gz * GYRO_SCALE * DEG_TO_RAD;
+    gyro.x = gx * (double) GYRO_SCALE * DEG_TO_RAD;
+    gyro.y = gy * (double) GYRO_SCALE * DEG_TO_RAD;
+    gyro.z = gz * (double) GYRO_SCALE * DEG_TO_RAD;
 
     return gyro;
 }
@@ -65,9 +65,9 @@ geometry_msgs::Vector3 readMagnetometer()
 
     magnetometer.getHeading(&mx, &my, &mz);
 
-    mag.x = mx * MAG_SCALE * UTESLA_TO_TESLA;
-    mag.y = my * MAG_SCALE * UTESLA_TO_TESLA;
-    mag.z = mz * MAG_SCALE * UTESLA_TO_TESLA;
+    mag.x = mx * (double) MAG_SCALE * UTESLA_TO_TESLA;
+    mag.y = my * (double) MAG_SCALE * UTESLA_TO_TESLA;
+    mag.z = mz * (double) MAG_SCALE * UTESLA_TO_TESLA;
 
     return mag;
 }
