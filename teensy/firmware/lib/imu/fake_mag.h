@@ -9,6 +9,7 @@ class FakeMag
     public:
         FakeMag();
         bool initialize();
+        bool testConnection();
         void getHeading(int16_t* mx, int16_t* my, int16_t* mz);
 };
 
@@ -18,6 +19,11 @@ FakeMag::FakeMag()
 }
 
 bool  FakeMag::initialize()
+{
+    return true;
+}
+
+bool  FakeMag::testConnection()
 {
     return true;
 }
