@@ -12,8 +12,8 @@
     #include "ITG3200.h"
     #include "HMC5883L.h"
 
-    #define ACCEL_SCALE 1 / 232 // 1/232 LSB/g
-    #define GYRO_SCALE 1 / 14.375 // 1/14.375 LSB/(deg/s)
+    #define ACCEL_SCALE 1 / 256 // LSB/g
+    #define GYRO_SCALE 1 / 14.375 // LSB/(deg/s)
     #define MAG_SCALE 0.92 * MGAUSS_TO_UTESLA // uT/LSB
 
     ADXL345 accelerometer;
@@ -25,8 +25,8 @@
     #include "MPU6050.h"
     #include "fake_mag.h"
 
-    #define ACCEL_SCALE 1 / 16384 // 1/16,384 LSB/g
-    #define GYRO_SCALE 1 / 131 // 1/131 LSB/(deg/s)
+    #define ACCEL_SCALE 1 / 16384 // LSB/g
+    #define GYRO_SCALE 1 / 131 // LSB/(deg/s)
     #define MAG_SCALE 0.285 // uT/LSB
     
     MPU6050 accelerometer;
@@ -37,8 +37,8 @@
 #ifdef USE_MPU9150_IMU
     #include "MPU9150.h"
 
-    #define ACCEL_SCALE 1 / 16384 // 1/16,384 LSB/g
-    #define GYRO_SCALE 1 / 131 // 1/131 LSB/(deg/s)
+    #define ACCEL_SCALE 1 / 16384 // LSB/g
+    #define GYRO_SCALE 1 / 131 // LSB/(deg/s)
     #define MAG_SCALE 0.285 // uT/LSB
     
     MPU9150 accelerometer;
