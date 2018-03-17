@@ -1,4 +1,4 @@
-<img src="https://raw.githubusercontent.com/linorobot/lino_docs/master/imgs/wiki/logo.png" width="200" height="200" />
+<img src="https://raw.githubusercontent.com/linorobot/lino_docs/master/imgs/wiki/logo1.png" width="200" height="200" />
 
 # linorobot [![Build Status](https://travis-ci.org/linorobot/lino_install.svg?branch=master)](https://travis-ci.org/linorobot/lino_install)
 Linorobot is a suite of Open Source ROS compatible robots that aims to provide students, developers, and researchers a low-cost platform in creating new exciting applications on top of ROS.
