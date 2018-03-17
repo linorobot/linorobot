@@ -87,7 +87,7 @@ int main(int argc, char** argv){
 
         geometry_msgs::TransformStamped odom_trans;
         odom_trans.header.frame_id = "odom";
-        odom_trans.child_frame_id = "base_link";
+        odom_trans.child_frame_id = "base_footprint";
         //robot's position in x,y, and z
         odom_trans.transform.translation.x = x_pos;
         odom_trans.transform.translation.y = y_pos;
@@ -108,7 +108,7 @@ int main(int argc, char** argv){
         //robot's heading in quaternion
         odom.pose.pose.orientation = odom_quat;
 
-        odom.child_frame_id = "base_link";
+        odom.child_frame_id = "base_footprint";
         //linear speed from encoders
         odom.twist.twist.linear.x = linear_velocity_x;
         odom.twist.twist.linear.y = linear_velocity_y;
