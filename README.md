@@ -29,10 +29,13 @@ or wire it on your own. Wiring diagrams are also provided.
 [![alt text](https://github.com/linorobot/lino_docs/blob/master/imgs/readme/schematicsfamilyphoto.png?raw=true)](https://github.com/linorobot/linorobot/wiki/2.-Base-Controller)
 
 #### Supported IMUs:
+
 - GY-85
 - MPU6050
 - MPU9150
 - MPU9250
+
+The IMU drivers are based on [i2cdevlib](https://github.com/jrowberg/i2cdevlib).
 
 #### Supported Motor Drivers:
 - [L298](http://www.st.com/content/ccc/resource/technical/document/datasheet/82/cc/3f/39/0a/29/4d/f0/CD00000240.pdf/files/CD00000240.pdf/jcr:content/translations/en.CD00000240.pdf) (MAX: 35V, 2A)
