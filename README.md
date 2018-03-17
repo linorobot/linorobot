@@ -79,7 +79,7 @@ linorobot_ws/teensy/firmware/lib/config/lino_base_config.h
 ```
 //uncomment the IMU you're using
 #define USE_GY85_IMU
-// #define USE_MP6050_IMU (not supported yet)
+// #define USE_MP6050_IMU
 // #define USE_MPU9150_IMU
 ```
 
