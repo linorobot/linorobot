@@ -2,7 +2,7 @@
     <package>
     <name>linorobot</name>
     <version>1.0.0</version>
-    <description>Two wheel differential drive ROS platform</description>
+    <description>ROS compatible ground robots</description>
     <maintainer email="jimenojmm@gmail.com">t</maintainer>
 
     <license>BSD</license>
