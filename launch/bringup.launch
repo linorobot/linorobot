@@ -24,4 +24,7 @@
 
     <!-- Publish static transform from base_footprint to base_link -->
     <node pkg="tf" type="static_transform_publisher" name="base_footprint_to_base_link" args="0 0 0.098 0 0 0  /base_footprint /base_link  100"/>
+
+    <!-- Run Linorobot compatible laser drivers -->
+    <include file="$(find linorobot)/launch/laser.launch" />
 </launch>

@@ -1,7 +1,4 @@
 <launch>
-    <!-- Run Linorobot compatible laser drivers -->
-    <include file="$(find linorobot)/launch/laser.launch" />
-
     <!-- Mapping package -->
     <node pkg="gmapping" type="slam_gmapping" name="slam_gmapping" output="screen">
         <param name="base_frame" value="/base_footprint" />

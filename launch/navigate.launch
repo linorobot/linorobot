@@ -1,7 +1,4 @@
 <launch>
-    <!-- Run Linorobot compatible laser drivers -->
-    <include file="$(find linorobot)/launch/laser.launch" />
-
     <!-- Map server -->
     <arg name="map_file" default="$(find linorobot)/maps/house.yaml"/>
     <node pkg="map_server" name="map_server"  type="map_server" args="$(arg map_file)" />
