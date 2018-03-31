@@ -1,7 +1,27 @@
 <launch>
-    <!--serial communication between arduino and pc via usb /-->
-    <node name="rosserial_lino" pkg="rosserial_python" type="serial_node.py" output="screen">
-        <param name="port" value="/dev/ttyACM0" />
+    <!-- Start ROS communication between the robot's computer and Linorobot base -->
+    <node pkg="rosserial_python" name="rosserial_lino" type="serial_node.py" output="screen">
+        <param name="port" value="/dev/linobase" />
         <param name="baud" value="57600" />
     </node>
+
+    <!-- IMU relay from linorobot_msgs/Imu to sensor_msgs/Imu -->
+    <node pkg="imu_calib" type="apply_calib" name="apply_calib" output="screen" respawn="false">
+        <param name="calib_file" value="$(find linorobot)/param/imu/imu_calib.yaml" />
+    </node>
+
+    <!-- Filter and fuse raw imu data -->
+    <node pkg="imu_filter_madgwick" type="imu_filter_node" name="imu_filter_madgwick" output="screen" respawn="false" >
+        <param name="fixed_frame" value="odom" />
+        <param name="use_mag" value="true" />
+        <param name="publish_tf" value="true" />
+        <param name="use_magnetic_field_msg" value="true" /> 
+        <param name="world_frame" value="enu" />
+    </node>
+
+    <!-- Publish Linorobot odometry -->
+    <node pkg="linorobot" name="lino_base_node" type="lino_base_node"></node>
+
+    <!-- Publish static transform from base_footprint to base_link -->
+    <node pkg="tf" type="static_transform_publisher" name="base_footprint_to_base_link" args="0 0 0.098 0 0 0  /base_footprint /base_link  100"/>
 </launch>
