@@ -6,7 +6,7 @@
     <!-- AMCL used for localization -->
     <include file="$(find linorobot)/launch/amcl.launch" />
     
-    <!-- Calls navigation stack packages for compatible Linorobto base -->
+    <!-- Calls navigation stack packages for compatible Linorobot base -->
     <!-- Takes reference from env variable LINOBASE. ie. export LINOBASE=2wd -->
     <include file="$(find linorobot)/launch/move_base/move_base_$(env LINOBASE).launch" />
 </launch>
