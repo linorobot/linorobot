@@ -130,8 +130,8 @@ ROBOT ORIENTATION
   #define MOTOR4_IN_A 4
   #define MOTOR4_IN_B 3
 
-  #define PWM_MAX 1900
-  #define PWM_MIN 1100
+  #define PWM_MAX 400
+  #define PWM_MIN -PWM_MAX
 #endif
 
 #define STEERING_PIN 7
