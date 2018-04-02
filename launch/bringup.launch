@@ -5,19 +5,7 @@
         <param name="baud" value="57600" />
     </node>
 
-    <!-- IMU relay from linorobot_msgs/Imu to sensor_msgs/Imu -->
-    <node pkg="imu_calib" type="apply_calib" name="apply_calib" output="screen" respawn="false">
-        <param name="calib_file" value="$(find linorobot)/param/imu/imu_calib.yaml" />
-    </node>
-
-    <!-- Filter and fuse raw imu data -->
-    <node pkg="imu_filter_madgwick" type="imu_filter_node" name="imu_filter_madgwick" output="screen" respawn="false" >
-        <param name="fixed_frame" value="odom" />
-        <param name="use_mag" value="true" />
-        <param name="publish_tf" value="true" />
-        <param name="use_magnetic_field_msg" value="true" /> 
-        <param name="world_frame" value="enu" />
-    </node>
+    <include file="$(find linorobot)/launch/imu/imu.launch" />
 
     <!-- Publish Linorobot odometry -->
     <node pkg="linorobot" name="lino_base_node" type="lino_base_node"></node>
