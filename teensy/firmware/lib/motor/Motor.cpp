@@ -1,4 +1,3 @@
-#include "Arduino.h"
 #include "Motor.h"
 
 Motor::Motor(driver motor_driver, int counts_per_rev, int pwm_pin, int motor_pinA, int motor_pinB)
@@ -25,6 +24,11 @@ Motor::Motor(driver motor_driver, int counts_per_rev, int pwm_pin, int motor_pin
 
             motor_pinA_ = motor_pinA;
             motor_pinB_ = motor_pinB;
+
+            break;
+
+        case ESC:
+            motor.attach(motor_pinA);
 
             break;
     }
@@ -87,6 +91,11 @@ void Motor::spin(int pwm)
                 analogWrite(motor_pinB_, 0);
                 analogWrite(motor_pinA_, 0);
             }
+
+            break;
+        
+        case ESC:
+            motor.writeMicroseconds(pwm);
 
             break;
     }
