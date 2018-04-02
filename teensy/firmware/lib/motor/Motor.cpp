@@ -95,7 +95,7 @@ void Motor::spin(int pwm)
             break;
         
         case ESC:
-            motor.writeMicroseconds(pwm);
+            motor.writeMicroseconds(1500 + pwm);
 
             break;
     }
