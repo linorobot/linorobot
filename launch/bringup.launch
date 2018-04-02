@@ -5,7 +5,8 @@
         <param name="baud" value="57600" />
     </node>
 
-    <include file="$(find linorobot)/launch/imu/imu.launch" />
+    <!-- IMU Relay and Filter -->
+    <include file="$(find linorobot)/launch/include/imu/imu.launch" />
 
     <!-- Publish Linorobot odometry -->
     <node pkg="linorobot" name="lino_base_node" type="lino_base_node"></node>
@@ -14,5 +15,5 @@
     <node pkg="tf" type="static_transform_publisher" name="base_footprint_to_base_link" args="0 0 0.098 0 0 0  /base_footprint /base_link  100"/>
 
     <!-- Run Linorobot compatible laser drivers -->
-    <include file="$(find linorobot)/launch/laser.launch" />
+    <include file="$(find linorobot)/launch/include/laser.launch" />
 </launch>
