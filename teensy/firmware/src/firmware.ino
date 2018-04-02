@@ -43,11 +43,10 @@ Motor motor2(Motor::MOTOR_DRIVER, COUNTS_PER_REV, MOTOR2_PWM, MOTOR2_IN_A, MOTOR
 Motor motor3(Motor::MOTOR_DRIVER, COUNTS_PER_REV, MOTOR3_PWM, MOTOR3_IN_A, MOTOR3_IN_B);
 Motor motor4(Motor::MOTOR_DRIVER, COUNTS_PER_REV, MOTOR4_PWM, MOTOR4_IN_A, MOTOR4_IN_B);
 
-float PWM_MAX = pow(2, PWM_BITS) - 1;
-PID motor1_pid(-PWM_MAX, PWM_MAX, K_P, K_I, K_D);
-PID motor2_pid(-PWM_MAX, PWM_MAX, K_P, K_I, K_D);
-PID motor3_pid(-PWM_MAX, PWM_MAX, K_P, K_I, K_D);
-PID motor4_pid(-PWM_MAX, PWM_MAX, K_P, K_I, K_D);
+PID motor1_pid(PWM_MIN, PWM_MAX, K_P, K_I, K_D);
+PID motor2_pid(PWM_MIN, PWM_MAX, K_P, K_I, K_D);
+PID motor3_pid(PWM_MIN, PWM_MAX, K_P, K_I, K_D);
+PID motor4_pid(PWM_MIN, PWM_MAX, K_P, K_I, K_D);
 
 Kinematics kinematics(Kinematics::LINO_BASE, MAX_RPM, WHEEL_DIAMETER, BASE_WIDTH, PWM_BITS);
 
