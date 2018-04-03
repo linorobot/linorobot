@@ -35,7 +35,9 @@ Motor::Motor(driver motor_driver, int counts_per_rev, int pwm_pin, int motor_pin
             break;
 
         case ESC:
-            motor_.attach(motor_pinA);
+            motor_pinA_ = motor_pinA;
+
+            motor_.attach(motor_pinA_);
 
             //ensure that the motor is neutral state during bootup
             motor_.writeMicroseconds(1500);
