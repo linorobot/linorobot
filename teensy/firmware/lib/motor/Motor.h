@@ -15,7 +15,7 @@ class Motor
         int getRPM();
 
     private:
-        Servo motor;
+        Servo motor_;
         int rpm_;
         int counts_per_rev_;
         driver motor_driver_;
