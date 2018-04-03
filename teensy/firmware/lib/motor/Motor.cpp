@@ -29,6 +29,7 @@ Motor::Motor(driver motor_driver, int counts_per_rev, int pwm_pin, int motor_pin
 
         case ESC:
             motor.attach(motor_pinA);
+            motor.writeMicroseconds(1500);
 
             break;
     }
