@@ -10,6 +10,7 @@
 //uncomment the motor driver you're using
 #define USE_L298_DRIVER
 // #define USE_BTS7960_DRIVER
+// #define USE_ESC
 
 //uncomment the IMU you're using
 #define USE_GY85_IMU
@@ -82,6 +83,9 @@ ROBOT ORIENTATION
   #define MOTOR4_PWM 4
   #define MOTOR4_IN_A 2
   #define MOTOR4_IN_B 3
+
+  #define PWM_MAX pow(2, PWM_BITS) - 1
+  #define PWM_MIN -PWM_MAX
 #endif 
 
 #ifdef USE_BTS7960_DRIVER
@@ -102,6 +106,32 @@ ROBOT ORIENTATION
   #define MOTOR4_PWM 2 //DON'T TOUCH THIS! This is just a placeholder
   #define MOTOR4_IN_A 4
   #define MOTOR4_IN_B 3
+
+  #define PWM_MAX pow(2, PWM_BITS) - 1
+  #define PWM_MIN -PWM_MAX
+#endif
+
+#ifdef USE_ESC
+  #define MOTOR_DRIVER ESC  
+
+  #define MOTOR1_PWM 1 //DON'T TOUCH THIS! This is just a placeholder
+  #define MOTOR1_IN_A 21
+  #define MOTOR1_IN_B 20
+
+  #define MOTOR2_PWM 8 //DON'T TOUCH THIS! This is just a placeholder
+  #define MOTOR2_IN_A 5
+  #define MOTOR2_IN_B 6
+
+  #define MOTOR3_PWM 0 //DON'T TOUCH THIS! This is just a placeholder
+  #define MOTOR3_IN_A 22
+  #define MOTOR3_IN_B 23
+
+  #define MOTOR4_PWM 2 //DON'T TOUCH THIS! This is just a placeholder
+  #define MOTOR4_IN_A 4
+  #define MOTOR4_IN_B 3
+
+  #define PWM_MAX 400
+  #define PWM_MIN -PWM_MAX
 #endif
 
 #define STEERING_PIN 7
