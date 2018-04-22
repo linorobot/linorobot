@@ -90,6 +90,7 @@ linorobot_ws/teensy/firmware/lib/config/lino_base_config.h
 //uncomment the motor driver you're using
 #define USE_L298_DRIVER
 // #define USE_BTS7960_DRIVER
+// #define USE_ESC
 ```
 
 #### Motor configuration:
