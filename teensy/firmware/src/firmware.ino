@@ -50,9 +50,9 @@ PID motor4_pid(PWM_MIN, PWM_MAX, K_P, K_I, K_D);
 
 Kinematics kinematics(Kinematics::LINO_BASE, MAX_RPM, WHEEL_DIAMETER, BASE_WIDTH, PWM_BITS);
 
-double g_req_linear_vel_x = 0;
-double g_req_linear_vel_y = 0;
-double g_req_angular_vel_z = 0;
+float g_req_linear_vel_x = 0;
+float g_req_linear_vel_y = 0;
+float g_req_angular_vel_z = 0;
 
 unsigned long g_prev_command_time = 0;
 
@@ -195,9 +195,9 @@ void moveBase()
 
 void stopBase()
 {
-    g_req_linear_vel_x = 0.0;
-    g_req_linear_vel_y = 0.0;
-    g_req_angular_vel_z = 0.0;
+    g_req_linear_vel_x = 0;
+    g_req_linear_vel_y = 0;
+    g_req_angular_vel_z = 0;
 }
 
 void publishVelocities()
