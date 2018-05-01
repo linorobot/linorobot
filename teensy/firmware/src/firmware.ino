@@ -48,7 +48,7 @@ PID motor2_pid(PWM_MIN, PWM_MAX, K_P, K_I, K_D);
 PID motor3_pid(PWM_MIN, PWM_MAX, K_P, K_I, K_D);
 PID motor4_pid(PWM_MIN, PWM_MAX, K_P, K_I, K_D);
 
-Kinematics kinematics(Kinematics::LINO_BASE, MAX_RPM, WHEEL_DIAMETER, BASE_WIDTH, PWM_BITS);
+Kinematics kinematics(Kinematics::LINO_BASE, MAX_RPM, WHEEL_DIAMETER, LR_WHEELS_DISTANCE, PWM_BITS);
 
 float g_req_linear_vel_x = 0;
 float g_req_linear_vel_y = 0;
