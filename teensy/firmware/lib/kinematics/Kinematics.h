@@ -33,7 +33,7 @@
 class Kinematics
 {
     public:
-        enum base {DIFF_2WD, DIFF_4WD, ACKERMANN, HOLO_4W};
+        enum base {DIFFERENTIAL_DRIVE, SKID_STEER, ACKERMANN, MECANUM};
 
         struct output
         {

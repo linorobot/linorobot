@@ -71,10 +71,10 @@ linorobot_ws/teensy/firmware/lib/config/lino_base_config.h
 #### Robot base configuration:
 ```
 //uncomment the base you're building
-#define LINO_BASE DIFF_2WD
-// #define LINO_BASE DIFF_4WD
+#define LINO_BASE DIFFERENTIAL_DRIVE
+// #define LINO_BASE SKID_STEER
 // #define LINO_BASE ACKERMANN
-// #define LINO_BASE HOLO_4W
+// #define LINO_BASE MECANUM
 ```
 
 #### IMU configuration:

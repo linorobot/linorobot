@@ -48,7 +48,7 @@ Kinematics::output Kinematics::calculateRPM(float linear_x, float linear_y, floa
     angular_vel_z_mins_ = angular_z * 60;
 
     //Vt = ω * radius
-    if(base_platform_ == DIFF_2WD)
+    if(base_platform_ == DIFFERENTIAL_DRIVE)
         tangential_vel_ = angular_vel_z_mins_ * (base_width_ / 2);
     else
         tangential_vel_ = angular_vel_z_mins_ * base_width_;
@@ -83,7 +83,7 @@ Kinematics::output Kinematics::getRPM(float linear_x, float linear_y, float angu
 {
     Kinematics::output rpm;
 
-    if(base_platform_ == DIFF_2WD || base_platform_ == DIFF_4WD)
+    if(base_platform_ == DIFFERENTIAL_DRIVE || base_platform_ == SKID_STEER)
     {
         rpm = calculateRPM(linear_x, 0.0 , angular_z);
     }
@@ -91,7 +91,7 @@ Kinematics::output Kinematics::getRPM(float linear_x, float linear_y, float angu
     {
         rpm = calculateRPM(linear_x, 0.0, 0.0);
     }
-    else if(base_platform_ == HOLO_4W)
+    else if(base_platform_ == MECANUM)
     {
         rpm = calculateRPM(linear_x, linear_y, angular_z);
     }
@@ -129,7 +129,7 @@ Kinematics::output Kinematics::getPWM(float linear_x, float linear_y, float angu
 {
     Kinematics::output pwm;
 
-    if(base_platform_ == DIFF_2WD || base_platform_ == DIFF_4WD)
+    if(base_platform_ == DIFFERENTIAL_DRIVE || base_platform_ == SKID_STEER)
     {
         pwm = calculatePWM(linear_x, 0.0 , angular_z);
     }
@@ -137,7 +137,7 @@ Kinematics::output Kinematics::getPWM(float linear_x, float linear_y, float angu
     {
         pwm = calculatePWM(linear_x, 0.0, 0.0);
     }
-    else if(base_platform_ == HOLO_4W)
+    else if(base_platform_ == MECANUM)
     {
         pwm = calculatePWM(linear_x, linear_y, angular_z);
     }
@@ -189,11 +189,11 @@ Kinematics::velocities Kinematics::getVelocities(int motor1, int motor2, int mot
 {
     Kinematics::velocities vel;
 
-    if(base_platform_ == DIFF_2WD || base_platform_ == ACKERMANN)
+    if(base_platform_ == DIFFERENTIAL_DRIVE || base_platform_ == ACKERMANN)
     {   
         vel = calculateVelocities(motor1, motor2);
     }
-    else if(base_platform_ == DIFF_4WD || base_platform_ == HOLO_4W)
+    else if(base_platform_ == SKID_STEER || base_platform_ == MECANUM)
     {
         vel = calculateVelocities(motor1, motor2, motor3, motor4);
     }

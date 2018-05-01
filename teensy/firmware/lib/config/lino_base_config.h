@@ -2,10 +2,10 @@
 #define LINO_BASE_CONFIG_H
 
 //uncomment the base you're building
-#define LINO_BASE DIFF_2WD
-// #define LINO_BASE DIFF_4WD
-// #define LINO_BASE ACKERMANN
-// #define LINO_BASE HOLO_4W
+#define LINO_BASE DIFFERENTIAL_DRIVE // 2WD and Tracked robot w/ 2 motors
+// #define LINO_BASE SKID_STEER      //4WD robot
+// #define LINO_BASE ACKERMANN       // Car-like steering robot
+// #define LINO_BASE MECANUM         // Mecanum drive robot
 
 //uncomment the motor driver you're using
 #define USE_L298_DRIVER
@@ -24,23 +24,23 @@
 #define K_D 0.5 // D constant
 
 //define your robot' specs here
-#define MAX_RPM 330 // motor's maximum RPM
+#define MAX_RPM 330         // motor's maximum RPM
 #define COUNTS_PER_REV 1550 // wheel encoder's no of ticks per rev
 #define WHEEL_DIAMETER 0.10 // wheel's diameter in meters
-#define PWM_BITS 8 // PWM Resolution of the microcontroller
-#define BASE_WIDTH 0.235 // width of the plate you are using
+#define PWM_BITS 8          // PWM Resolution of the microcontroller
+#define BASE_WIDTH 0.235    // width of the plate you are using
 
 //=================BIGGER ROBOT SPEC (BTS7960)=============================
-// #define K_P 0.05 // P constant
-// #define K_I 0.9 // I constant
-// #define K_D 0.1 // D constant
+// #define K_P 0.05  // P constant
+// #define K_I 0.9   // I constant
+// #define K_D 0.1   // D constant
 
 // define your robot' specs here
-// #define MAX_RPM 45 // motor's maximum RPM
+// #define MAX_RPM 45          // motor's maximum RPM
 // #define COUNTS_PER_REV 4000 // wheel encoder's no of ticks per rev
 // #define WHEEL_DIAMETER 0.15 // wheel's diameter in meters
-// #define PWM_BITS 8 // PWM Resolution of the microcontroller
-// #define BASE_WIDTH 0.32 // width of the plate you are using
+// #define PWM_BITS 8          // PWM Resolution of the microcontroller
+// #define BASE_WIDTH 0.32     // width of the plate you are using
 //================= END OF BIGGER ROBOT SPEC =============================
 
 /*
