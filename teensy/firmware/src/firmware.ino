@@ -48,7 +48,7 @@ PID motor2_pid(PWM_MIN, PWM_MAX, K_P, K_I, K_D);
 PID motor3_pid(PWM_MIN, PWM_MAX, K_P, K_I, K_D);
 PID motor4_pid(PWM_MIN, PWM_MAX, K_P, K_I, K_D);
 
-Kinematics kinematics(Kinematics::LINO_BASE, MAX_RPM, WHEEL_DIAMETER, LR_WHEELS_DISTANCE, PWM_BITS);
+Kinematics kinematics(Kinematics::LINO_BASE, MAX_RPM, WHEEL_DIAMETER, FR_WHEELS_DISTANCE, LR_WHEELS_DISTANCE, PWM_BITS);
 
 float g_req_linear_vel_x = 0;
 float g_req_linear_vel_y = 0;
@@ -175,7 +175,7 @@ void commandCallback(const geometry_msgs::Twist& cmd_msg)
 
 void moveBase()
 {
-    Kinematics::output req_rpm;
+    Kinematics::rpm req_rpm;
 
     //get the required rpm for each motor based on required velocities, and base used
     req_rpm = kinematics.getRPM(g_req_linear_vel_x, g_req_linear_vel_y, g_req_angular_vel_z);
@@ -278,12 +278,12 @@ void printDebug()
 {
     char buffer[50];
 
-    sprintf (buffer, "Encoder FrontLeft: %ld", motor1_encoder.read());
+    sprintf (buffer, "Encoder FrontLeft  : %ld", motor1_encoder.read());
     nh.loginfo(buffer);
-    sprintf (buffer, "Encoder FrontRight: %ld", motor2_encoder.read());
+    sprintf (buffer, "Encoder FrontRight : %ld", motor2_encoder.read());
     nh.loginfo(buffer);
-    sprintf (buffer, "Encoder RearLeft: %ld", motor3_encoder.read());
+    sprintf (buffer, "Encoder RearLeft   : %ld", motor3_encoder.read());
     nh.loginfo(buffer);
-    sprintf (buffer, "Encoder RearRight: %ld", motor4_encoder.read());
+    sprintf (buffer, "Encoder RearRight  : %ld", motor4_encoder.read());
     nh.loginfo(buffer);
 }

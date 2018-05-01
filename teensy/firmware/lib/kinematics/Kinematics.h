@@ -35,13 +35,14 @@ class Kinematics
     public:
         enum base {DIFFERENTIAL_DRIVE, SKID_STEER, ACKERMANN, MECANUM};
 
-        struct output
+        struct rpm
         {
             int motor1;
             int motor2;
             int motor3;
             int motor4;
         };
+        
         struct velocities
         {
             float linear_x;
@@ -49,22 +50,27 @@ class Kinematics
             float angular_z;
         };
 
-        Kinematics(base base_platform, int motor_max_rpm, float wheel_diameter, float base_width, int pwm_bits);
-        velocities getVelocities(int motor1, int motor2, int motor3, int motor4);
-        output getRPM(float linear_x, float linear_y, float angular_z);
-        output getPWM(float linear_x, float linear_y, float angular_z);
+        struct pwm
+        {
+            int motor1;
+            int motor2;
+            int motor3;
+            int motor4;
+        };
 
+        Kinematics(base base_platform, int motor_max_rpm, float wheel_diameter, float wheels_x_distance, float wheels_y_distance, int pwm_bits);
+        velocities getVelocities(int motor1, int motor2, int motor3, int motor4);
+        rpm getRPM(float linear_x, float linear_y, float angular_z);
+        pwm getPWM(float linear_x, float linear_y, float angular_z);
 
     private:
         base base_platform_;
         velocities calculateVelocities(int motor1, int motor2);
         velocities calculateVelocities(int motor1, int motor2, int motor3, int motor4);
-        output calculateRPM(float linear_x, float linear_y, float angular_z);
-        output calculatePWM(float linear_x, float linear_y, float angular_z);
+        rpm calculateRPM(float linear_x, float linear_y, float angular_z);
+        pwm calculatePWM(float linear_x, float linear_y, float angular_z);
         int rpmToPWM(int rpm);
         
-        float linear_vel_x_mins_;
-        float linear_vel_y_mins_;
         float angular_vel_z_mins_;
         float circumference_;
         float tangential_vel_;
@@ -73,7 +79,8 @@ class Kinematics
         float tan_rpm_;
         int max_rpm_;
         double wheel_diameter_;
-        float base_width_;
+        float wheels_x_distance_;
+        float wheels_y_distance_;
         double pwm_res_;
 };
 

@@ -29,7 +29,7 @@
 #define WHEEL_DIAMETER 0.10       // wheel's diameter in meters
 #define PWM_BITS 8                // PWM Resolution of the microcontroller
 #define LR_WHEELS_DISTANCE 0.235  // distance between left and right wheels
-#define FB_WHEELS_DISTANCE 0.30   // distance between front and back wheels
+#define FR_WHEELS_DISTANCE 0.30   // distance between front and rear wheels
 
 //=================BIGGER ROBOT SPEC (BTS7960)=============================
 // #define K_P 0.05  // P constant
