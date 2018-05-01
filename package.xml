@@ -1,7 +1,7 @@
 <?xml version="1.0.0"?>
     <package>
     <name>linorobot</name>
-    <version>1.2.0</version>
+    <version>1.3.0</version>
     <description>ROS compatible ground robots</description>
     <maintainer email="jimenojmm@gmail.com">t</maintainer>
 
