@@ -14,7 +14,7 @@ Motor::Motor(driver motor_driver, int counts_per_rev, int pwm_pin, int motor_pin
         case L298:
             pinMode(pwm_pin_, OUTPUT);
             pinMode(motor_pinA_, OUTPUT);
-            pinMode(motor_pinA_, OUTPUT);
+            pinMode(motor_pinB_, OUTPUT);
 
             //ensure that the motor is in neutral state during bootup
             analogWrite(pwm_pin_, abs(0));
