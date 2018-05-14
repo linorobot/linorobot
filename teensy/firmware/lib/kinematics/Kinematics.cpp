@@ -48,37 +48,42 @@ Kinematics::rpm Kinematics::calculateRPM(float linear_x, float linear_y, float a
 {
     float linear_vel_x_mins;
     float linear_vel_y_mins;
+    float angular_vel_z_mins;
+    float tangential_vel;
+    float x_rpm;
+    float y_rpm;
+    float tan_rpm;
 
     //convert m/s to m/min
     linear_vel_x_mins = linear_x * 60;
     linear_vel_y_mins = linear_y * 60;
 
     //convert rad/s to rad/min
-    angular_vel_z_mins_ = angular_z * 60;
+    angular_vel_z_mins = angular_z * 60;
 
-    tangential_vel_ = angular_vel_z_mins_ * ((wheels_x_distance_ / 2) + (wheels_y_distance_ / 2));
+    tangential_vel = angular_vel_z_mins * ((wheels_x_distance_ / 2) + (wheels_y_distance_ / 2));
 
-    x_rpm_ = linear_vel_x_mins / circumference_;
-    y_rpm_ = linear_vel_y_mins / circumference_;
-    tan_rpm_ = tangential_vel_ / circumference_;
+    x_rpm = linear_vel_x_mins / circumference_;
+    y_rpm = linear_vel_y_mins / circumference_;
+    tan_rpm = tangential_vel / circumference_;
 
     Kinematics::rpm rpm;
 
     //calculate for the target motor RPM and direction
     //front-left motor
-    rpm.motor1 = x_rpm_ - y_rpm_ - tan_rpm_;
+    rpm.motor1 = x_rpm - y_rpm - tan_rpm;
     rpm.motor1 = constrain(rpm.motor1, -max_rpm_, max_rpm_);
 
     //front-right motor
-    rpm.motor2 = x_rpm_ + y_rpm_ + tan_rpm_;
+    rpm.motor2 = x_rpm + y_rpm + tan_rpm;
     rpm.motor2 = constrain(rpm.motor2, -max_rpm_, max_rpm_);
 
     //rear-left motor
-    rpm.motor3 = x_rpm_ + y_rpm_ - tan_rpm_;
+    rpm.motor3 = x_rpm + y_rpm - tan_rpm;
     rpm.motor3 = constrain(rpm.motor3, -max_rpm_, max_rpm_);
 
     //rear-right motor
-    rpm.motor4 = x_rpm_ - y_rpm_ + tan_rpm_;
+    rpm.motor4 = x_rpm - y_rpm + tan_rpm;
     rpm.motor4 = constrain(rpm.motor4, -max_rpm_, max_rpm_);
 
     return rpm;
