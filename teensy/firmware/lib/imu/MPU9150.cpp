@@ -75,7 +75,7 @@ bool MPU9150::testConnection() {
     // return getDeviceID() == 0x34; 
     uint8_t device_id = getDeviceID();
     
-    if(device_id == 0x34 || device_id == 0x38)
+    if(device_id == 0x34 || device_id == 0x38 || device_id == 0x71)
         return true;
     else 
         return false;
