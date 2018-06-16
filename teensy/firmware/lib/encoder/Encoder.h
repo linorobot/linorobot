@@ -69,7 +69,7 @@ typedef struct {
 class Encoder
 {
 public:
-	Encoder(uint8_t pin1, uint8_t pin2) {
+	Encoder(uint8_t pin1, uint8_t pin2, int counts_per_rev) {
 		#ifdef INPUT_PULLUP
 		pinMode(pin1, INPUT_PULLUP);
 		pinMode(pin2, INPUT_PULLUP);
@@ -79,6 +79,7 @@ public:
 		pinMode(pin2, INPUT);
 		digitalWrite(pin2, HIGH);
 		#endif
+		counts_per_rev_ = counts_per_rev;
 		encoder.pin1_register = PIN_TO_BASEREG(pin1);
 		encoder.pin1_bitmask = PIN_TO_BITMASK(pin1);
 		encoder.pin2_register = PIN_TO_BASEREG(pin2);
@@ -126,7 +127,28 @@ public:
 		encoder.position = p;
 	}
 #endif
+	int getRPM(){
+		long encoder_ticks = read();
+		//this function calculates the motor's RPM based on encoder ticks and delta time
+		unsigned long current_time = millis();
+		unsigned long dt = current_time - prev_update_time_;
+
+		//convert the time from milliseconds to minutes
+		double dtm = (double)dt / 60000;
+		double delta_ticks = encoder_ticks - prev_encoder_ticks_;
+
+		//calculate wheel's speed (RPM)
+
+		prev_update_time_ = current_time;
+		prev_encoder_ticks_ = encoder_ticks;
+		
+		return (delta_ticks / counts_per_rev_) / dtm;
+	}
+
 private:
+	int counts_per_rev_;
+	unsigned long prev_update_time_;
+    long prev_encoder_ticks_;
 	Encoder_internal_state_t encoder;
 #ifdef ENCODER_USE_INTERRUPTS
 	uint8_t interrupts_in_use;

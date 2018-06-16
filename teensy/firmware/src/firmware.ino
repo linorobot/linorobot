@@ -27,21 +27,20 @@
 #include "Encoder.h"
 
 #define IMU_PUBLISH_RATE 10 //hz
-#define VEL_PUBLISH_RATE 10 //hz
 #define COMMAND_RATE 15 //hz
 #define DEBUG_RATE 5
 
-Encoder motor1_encoder(MOTOR1_ENCODER_A, MOTOR1_ENCODER_B);
-Encoder motor2_encoder(MOTOR2_ENCODER_A, MOTOR2_ENCODER_B); 
-Encoder motor3_encoder(MOTOR3_ENCODER_A, MOTOR3_ENCODER_B); 
-Encoder motor4_encoder(MOTOR4_ENCODER_A, MOTOR4_ENCODER_B); 
+Encoder motor1_encoder(MOTOR1_ENCODER_A, MOTOR1_ENCODER_B, COUNTS_PER_REV);
+Encoder motor2_encoder(MOTOR2_ENCODER_A, MOTOR2_ENCODER_B, COUNTS_PER_REV); 
+Encoder motor3_encoder(MOTOR3_ENCODER_A, MOTOR3_ENCODER_B, COUNTS_PER_REV); 
+Encoder motor4_encoder(MOTOR4_ENCODER_A, MOTOR4_ENCODER_B, COUNTS_PER_REV); 
 
 Servo steering_servo;
 
-Motor motor1(Motor::MOTOR_DRIVER, COUNTS_PER_REV, MOTOR1_PWM, MOTOR1_IN_A, MOTOR1_IN_B);
-Motor motor2(Motor::MOTOR_DRIVER, COUNTS_PER_REV, MOTOR2_PWM, MOTOR2_IN_A, MOTOR2_IN_B); 
-Motor motor3(Motor::MOTOR_DRIVER, COUNTS_PER_REV, MOTOR3_PWM, MOTOR3_IN_A, MOTOR3_IN_B);
-Motor motor4(Motor::MOTOR_DRIVER, COUNTS_PER_REV, MOTOR4_PWM, MOTOR4_IN_A, MOTOR4_IN_B);
+Controller motor1_controller(Controller::MOTOR_DRIVER, MOTOR1_PWM, MOTOR1_IN_A, MOTOR1_IN_B);
+Controller motor2_controller(Controller::MOTOR_DRIVER, MOTOR2_PWM, MOTOR2_IN_A, MOTOR2_IN_B); 
+Controller motor3_controller(Controller::MOTOR_DRIVER, MOTOR3_PWM, MOTOR3_IN_A, MOTOR3_IN_B);
+Controller motor4_controller(Controller::MOTOR_DRIVER, MOTOR4_PWM, MOTOR4_IN_A, MOTOR4_IN_B);
 
 PID motor1_pid(PWM_MIN, PWM_MAX, K_P, K_I, K_D);
 PID motor2_pid(PWM_MIN, PWM_MAX, K_P, K_I, K_D);
@@ -94,7 +93,6 @@ void setup()
 void loop()
 {
     static unsigned long prev_control_time = 0;
-    static unsigned long publish_vel_time = 0;
     static unsigned long prev_imu_time = 0;
     static unsigned long prev_debug_time = 0;
     static bool imu_is_initialized;
@@ -110,13 +108,6 @@ void loop()
     if ((millis() - g_prev_command_time) >= 400)
     {
         stopBase();
-    }
-
-    //this block publishes velocity based on defined rate
-    if ((millis() - publish_vel_time) >= (1000 / VEL_PUBLISH_RATE))
-    {
-        publishVelocities();
-        publish_vel_time = millis();
     }
 
     //this block publishes the IMU data based on defined rate
@@ -175,17 +166,31 @@ void commandCallback(const geometry_msgs::Twist& cmd_msg)
 
 void moveBase()
 {
-    Kinematics::rpm req_rpm;
-
     //get the required rpm for each motor based on required velocities, and base used
-    req_rpm = kinematics.getRPM(g_req_linear_vel_x, g_req_linear_vel_y, g_req_angular_vel_z);
+    Kinematics::rpm req_rpm = kinematics.getRPM(g_req_linear_vel_x, g_req_linear_vel_y, g_req_angular_vel_z);
+
+    int current_rpm1 = motor1_encoder.getRPM();
+    int current_rpm2 = motor2_encoder.getRPM();
+    int current_rpm3 = motor3_encoder.getRPM();
+    int current_rpm4 = motor4_encoder.getRPM();
 
     //the required rpm is capped at -/+ MAX_RPM to prevent the PID from having too much error
     //the PWM value sent to the motor driver is the calculated PID based on required RPM vs measured RPM
-    motor1.spin(motor1_pid.compute(req_rpm.motor1, motor1.getRPM()));
-    motor2.spin(motor2_pid.compute(req_rpm.motor2, motor2.getRPM()));
-    motor3.spin(motor3_pid.compute(req_rpm.motor3, motor3.getRPM()));  
-    motor4.spin(motor4_pid.compute(req_rpm.motor4, motor4.getRPM()));    
+    motor1_controller.spin(motor1_pid.compute(req_rpm.motor1, current_rpm1));
+    motor2_controller.spin(motor2_pid.compute(req_rpm.motor2, current_rpm2));
+    motor3_controller.spin(motor3_pid.compute(req_rpm.motor3, current_rpm3));  
+    motor4_controller.spin(motor4_pid.compute(req_rpm.motor4, current_rpm4));    
+    
+    //calculate the robot's speed based on rpm reading from each motor and platform used.
+    Kinematics::velocities vel = kinematics.getVelocities(current_rpm1, current_rpm2, current_rpm3, current_rpm4);
+
+    //pass velocities to publisher object
+    raw_vel_msg.linear_x = vel.linear_x;
+    raw_vel_msg.linear_y = vel.linear_y;
+    raw_vel_msg.angular_z = vel.angular_z;
+
+    //publish raw_vel_msg
+    raw_vel_pub.publish(&raw_vel_msg);
 
     //steer if Ackermann base
     #if LINO_BASE == ACKERMANN
@@ -200,27 +205,6 @@ void stopBase()
     g_req_angular_vel_z = 0;
 }
 
-void publishVelocities()
-{
-    Kinematics::velocities vel;
-
-    motor1.updateSpeed(motor1_encoder.read());
-    motor2.updateSpeed(motor2_encoder.read());
-    motor3.updateSpeed(motor3_encoder.read());
-    motor4.updateSpeed(motor4_encoder.read());
-    
-    //calculate the robot's speed based on rpm reading from each motor and platform used.
-    vel = kinematics.getVelocities(motor1.getRPM(), motor2.getRPM(), motor3.getRPM(), motor4.getRPM());
-
-    //pass velocities to publisher object
-    raw_vel_msg.linear_x = vel.linear_x;
-    raw_vel_msg.linear_y = vel.linear_y;
-    raw_vel_msg.angular_z = vel.angular_z;
-
-    //publish raw_vel_msg object to ROS
-    raw_vel_pub.publish(&raw_vel_msg);
-}
-
 void publishIMU()
 {
     //pass accelerometer data to imu object
@@ -232,7 +216,7 @@ void publishIMU()
     //pass accelerometer data to imu object
     raw_imu_msg.magnetic_field = readMagnetometer();
 
-    //publish raw_imu_msg object to ROS
+    //publish raw_imu_msg
     raw_imu_pub.publish(&raw_imu_msg);
 }
 
@@ -243,10 +227,8 @@ void steer()
     float steering_angle;
     float steering_angle_deg;
 
-    float req_steering_angle = g_req_angular_vel_z;
-
     //convert steering angle from rad to deg
-    steering_angle_deg = req_steering_angle * (180 / PI);
+    steering_angle_deg = g_req_angular_vel_z * (180 / PI);
 
     if(steering_angle_deg > 0)
     {
