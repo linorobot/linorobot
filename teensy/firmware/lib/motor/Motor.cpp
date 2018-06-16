@@ -1,14 +1,12 @@
 #include "Motor.h"
 
-Motor::Motor(driver motor_driver, int counts_per_rev, int pwm_pin, int motor_pinA, int motor_pinB)
+Motor::Motor(driver motor_driver, int counts_per_rev, int pwm_pin, int motor_pinA, int motor_pinB):
+    motor_driver_(motor_driver),
+    counts_per_rev_(counts_per_rev),
+    pwm_pin_(pwm_pin),
+    motor_pinA_(motor_pinA),
+    motor_pinB_(motor_pinB)
 {
-    motor_driver_ = motor_driver;
-    counts_per_rev_ = counts_per_rev;
-
-    pwm_pin_ = pwm_pin;
-    motor_pinA_ = motor_pinA;
-    motor_pinB_ = motor_pinB;
-    
     switch (motor_driver)
     {
         case L298:

@@ -71,12 +71,13 @@ class Kinematics
         pwm calculatePWM(float linear_x, float linear_y, float angular_z);
         int rpmToPWM(int rpm);
 
-        float circumference_;
         int max_rpm_;
-        double wheel_diameter_;
+        float wheel_diameter_;
         float wheels_x_distance_;
         float wheels_y_distance_;
-        double pwm_res_;
+        float pwm_res_;
+        float circumference_;
+
 };
 
 #endif

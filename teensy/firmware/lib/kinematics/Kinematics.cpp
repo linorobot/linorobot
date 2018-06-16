@@ -28,20 +28,16 @@
 #include "Arduino.h"
 #include "Kinematics.h"
 
-Kinematics::Kinematics(base base_platform, int motor_max_rpm, float wheel_diameter, float wheels_x_distance, float wheels_y_distance, int pwm_bits)
-{
-    base_platform_ = base_platform;
-    wheel_diameter_ = wheel_diameter;
-    circumference_ = PI * wheel_diameter_;
-    max_rpm_ = motor_max_rpm;
-    pwm_res_ = pow(2, pwm_bits) - 1;
-    
-    if(base_platform_ == DIFFERENTIAL_DRIVE)
-        wheels_x_distance_ = 0;
-    else
-        wheels_x_distance_ = wheels_x_distance;
-    
-    wheels_y_distance_ = wheels_y_distance;
+Kinematics::Kinematics(base base_platform, int motor_max_rpm, float wheel_diameter, 
+float wheels_x_distance, float wheels_y_distance, int pwm_bits):
+    base_platform_(base_platform),
+    max_rpm_(motor_max_rpm),
+    wheel_diameter_(wheel_diameter),
+    wheels_x_distance_(base_platform_ == DIFFERENTIAL_DRIVE ? 0 : wheels_x_distance),
+    wheels_y_distance_(wheels_y_distance),
+    pwm_res_(pow(2, pwm_bits) - 1),
+    circumference_(PI * wheel_diameter_)
+{    
 }
 
 Kinematics::rpm Kinematics::calculateRPM(float linear_x, float linear_y, float angular_z)
@@ -160,15 +156,15 @@ Kinematics::velocities Kinematics::calculateVelocities(int motor1, int motor2)
 {
     Kinematics::velocities vel;
 
-    double average_rpm_x = (motor1 + motor2) / 2; // RPM
+    float average_rpm_x = (motor1 + motor2) / 2; // RPM
     //convert revolutions per minute to revolutions per second
-    double average_rps_x = average_rpm_x / 60; // RPS
-    vel.linear_x = (average_rps_x * (wheel_diameter_ * PI)); // m/s
+    float average_rps_x = average_rpm_x / 60; // RPS
+    vel.linear_x = average_rps_x * circumference_; // m/s
 
-    double average_rpm_a = (motor2 - motor1) / 2;
+    float average_rpm_a = (motor2 - motor1) / 2;
     //convert revolutions per minute to revolutions per second
-    double average_rps_a = average_rpm_a / 60;
-    vel.angular_z =  (average_rps_a * (wheel_diameter_ * PI)) / (wheels_y_distance_ / 2);
+    float average_rps_a = average_rpm_a / 60;
+    vel.angular_z =  (average_rps_a * circumference_) / (wheels_y_distance_ / 2);
 
     vel.linear_y = 0.0;
 
@@ -179,23 +175,23 @@ Kinematics::velocities Kinematics::calculateVelocities(int motor1, int motor2, i
 {
     Kinematics::velocities vel;
 
-    double average_rpm_x = (motor1 + motor2 + motor3 + motor4) / 4; // RPM
+    float average_rpm_x = (motor1 + motor2 + motor3 + motor4) / 4; // RPM
     //convert revolutions per minute to revolutions per second
-    double average_rps_x = average_rpm_x / 60; // RPS
+    float average_rps_x = average_rpm_x / 60; // RPS
 
-    vel.linear_x = (average_rps_x * (wheel_diameter_ * PI)); // m/s
+    vel.linear_x = average_rps_x * circumference_; // m/s
 
-    double average_rpm_y = (-motor1 + motor2 + motor3 - motor4) / 4; // RPM
+    float average_rpm_y = (-motor1 + motor2 + motor3 - motor4) / 4; // RPM
     //convert revolutions per minute in y axis to revolutions per second
-    double average_rps_y = average_rpm_y / 60; // RPS
+    float average_rps_y = average_rpm_y / 60; // RPS
 
-    vel.linear_y = (average_rps_y * (wheel_diameter_ * PI)); // m/s
+    vel.linear_y = average_rps_y * circumference_; // m/s
 
-    double average_rpm_a = (-motor1 + motor2 - motor3 + motor4) / 4;
+    float average_rpm_a = (-motor1 + motor2 - motor3 + motor4) / 4;
     //convert revolutions per minute to revolutions per second
-    double average_rps_a = average_rpm_a / 60;
+    float average_rps_a = average_rpm_a / 60;
 
-    vel.angular_z =  (average_rps_a * (wheel_diameter_ * PI)) / ((wheels_x_distance_ / 2) + (wheels_y_distance_ / 2)); //  rad/s
+    vel.angular_z =  (average_rps_a * circumference_) / ((wheels_x_distance_ / 2) + (wheels_y_distance_ / 2)); //  rad/s
 
     return vel;
 }

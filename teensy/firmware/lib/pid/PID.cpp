@@ -1,13 +1,13 @@
 #include "Arduino.h"
 #include "PID.h"
 
-PID::PID(float min_val, float max_val, float kp, float ki, float kd)
+PID::PID(float min_val, float max_val, float kp, float ki, float kd):
+    min_val_(min_val),
+    max_val_(max_val),
+    kp_(kp),
+    ki_(ki),
+    kd_(kd)
 {
-    min_val_ = min_val;
-    max_val_ = max_val;
-    kp_ = kp;
-    ki_ = ki;
-    kd_ = kd;
 }
 
 double PID::compute(float setpoint, float measured_value)
