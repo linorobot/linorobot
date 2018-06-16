@@ -169,6 +169,7 @@ void moveBase()
     //get the required rpm for each motor based on required velocities, and base used
     Kinematics::rpm req_rpm = kinematics.getRPM(g_req_linear_vel_x, g_req_linear_vel_y, g_req_angular_vel_z);
 
+    //get the current speed of each motor
     int current_rpm1 = motor1_encoder.getRPM();
     int current_rpm2 = motor2_encoder.getRPM();
     int current_rpm3 = motor3_encoder.getRPM();
@@ -182,12 +183,12 @@ void moveBase()
     motor4_controller.spin(motor4_pid.compute(req_rpm.motor4, current_rpm4));    
     
     //calculate the robot's speed based on rpm reading from each motor and platform used.
-    Kinematics::velocities vel = kinematics.getVelocities(current_rpm1, current_rpm2, current_rpm3, current_rpm4);
+    Kinematics::velocities current_vel = kinematics.getVelocities(current_rpm1, current_rpm2, current_rpm3, current_rpm4);
 
     //pass velocities to publisher object
-    raw_vel_msg.linear_x = vel.linear_x;
-    raw_vel_msg.linear_y = vel.linear_y;
-    raw_vel_msg.angular_z = vel.angular_z;
+    raw_vel_msg.linear_x = current_vel.linear_x;
+    raw_vel_msg.linear_y = current_vel.linear_y;
+    raw_vel_msg.angular_z = current_vel.angular_z;
 
     //publish raw_vel_msg
     raw_vel_pub.publish(&raw_vel_msg);
