@@ -52,7 +52,7 @@ int main(int argc, char** argv){
     ros::Publisher odom_pub = n.advertise<nav_msgs::Odometry>("odom", 50);
     tf::TransformBroadcaster odom_broadcaster;
 
-    double rate = 10.0;
+    double rate = 15.0;
     double x_pos = 0.0;
     double y_pos = 0.0;
     double theta = 0.0;
