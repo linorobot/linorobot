@@ -26,8 +26,8 @@
 #define ENCODER_OPTIMIZE_INTERRUPTS
 #include "Encoder.h"
 
-#define IMU_PUBLISH_RATE 10 //hz
-#define COMMAND_RATE 15 //hz
+#define IMU_PUBLISH_RATE 20 //hz
+#define COMMAND_RATE 20 //hz
 #define DEBUG_RATE 5
 
 Encoder motor1_encoder(MOTOR1_ENCODER_A, MOTOR1_ENCODER_B, COUNTS_PER_REV);
