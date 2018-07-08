@@ -71,7 +71,7 @@ void LinoBase::velCallback(const lino_msgs::Velocities& vel)
 
     odom.twist.twist.angular.x = 0.0;
     odom.twist.twist.angular.y = 0.0;
-    //angular speed from IMU
+    //angular speed from encoders
     odom.twist.twist.angular.z = angular_velocity_z_;
 
     //TODO: include covariance matrix here
