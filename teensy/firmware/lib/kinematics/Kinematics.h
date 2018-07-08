@@ -33,7 +33,7 @@
 class Kinematics
 {
     public:
-        enum base {DIFFERENTIAL_DRIVE, SKID_STEER, ACKERMANN, MECANUM};
+        enum base {DIFFERENTIAL_DRIVE, SKID_STEER, ACKERMANN, ACKERMANN1, MECANUM};
 
         struct rpm
         {
@@ -58,26 +58,22 @@ class Kinematics
             int motor4;
         };
 
-        Kinematics(base base_platform, int motor_max_rpm, float wheel_diameter, float wheels_x_distance, float wheels_y_distance, int pwm_bits);
+        Kinematics(base base_platform, int motor_max_rpm, float wheel_diameter, float wheels_x_distance, float wheels_y_distance);
         velocities getVelocities(int motor1, int motor2, int motor3, int motor4);
         rpm getRPM(float linear_x, float linear_y, float angular_z);
-        pwm getPWM(float linear_x, float linear_y, float angular_z);
 
     private:
-        base base_platform_;
-        velocities calculateVelocities(int motor1, int motor2);
-        velocities calculateVelocities(int motor1, int motor2, int motor3, int motor4);
         rpm calculateRPM(float linear_x, float linear_y, float angular_z);
-        pwm calculatePWM(float linear_x, float linear_y, float angular_z);
-        int rpmToPWM(int rpm);
+        int getTotalWheels();
 
+        base base_platform_;
         int max_rpm_;
         float wheel_diameter_;
         float wheels_x_distance_;
         float wheels_y_distance_;
         float pwm_res_;
         float circumference_;
-
+        int total_wheels_;
 };
 
 #endif

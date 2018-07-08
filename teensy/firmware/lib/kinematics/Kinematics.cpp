@@ -29,14 +29,14 @@
 #include "Kinematics.h"
 
 Kinematics::Kinematics(base base_platform, int motor_max_rpm, float wheel_diameter, 
-float wheels_x_distance, float wheels_y_distance, int pwm_bits):
+float wheels_x_distance, float wheels_y_distance):
     base_platform_(base_platform),
     max_rpm_(motor_max_rpm),
     wheel_diameter_(wheel_diameter),
     wheels_x_distance_(base_platform_ == DIFFERENTIAL_DRIVE ? 0 : wheels_x_distance),
     wheels_y_distance_(wheels_y_distance),
-    pwm_res_(pow(2, pwm_bits) - 1),
-    circumference_(PI * wheel_diameter_)
+    circumference_(PI * wheel_diameter_),
+    total_wheels_(getTotalWheels())
 {    
 }
 
@@ -93,7 +93,7 @@ Kinematics::rpm Kinematics::getRPM(float linear_x, float linear_y, float angular
     {
         rpm = calculateRPM(linear_x, 0.0 , angular_z);
     }
-    else if(base_platform_ == ACKERMANN)
+    else if(base_platform_ == ACKERMANN || base_platform_ == ACKERMANN1)
     {
         rpm = calculateRPM(linear_x, 0.0, 0.0);
     }
@@ -105,115 +105,37 @@ Kinematics::rpm Kinematics::getRPM(float linear_x, float linear_y, float angular
     return rpm;
 }
 
-Kinematics::pwm Kinematics::calculatePWM(float linear_x, float linear_y, float angular_z)
-{
-    Kinematics::rpm rpm;
-    Kinematics::pwm pwm;
-
-    rpm = calculateRPM(linear_x, linear_y, angular_z);
-
-    //convert from RPM to PWM
-    //front-left motor
-    pwm.motor1 = rpmToPWM(rpm.motor1);
-    pwm.motor1 = constrain(pwm.motor1, -pwm_res_, pwm_res_);
-
-    //rear-left motor
-    pwm.motor2 = rpmToPWM(rpm.motor2);
-    pwm.motor2 = constrain(pwm.motor2, -pwm_res_, pwm_res_);
-
-    //front-right motor
-    pwm.motor3 = rpmToPWM(rpm.motor3);
-    pwm.motor3 = constrain(pwm.motor3, -pwm_res_, pwm_res_);
-
-    //rear-right motor
-    pwm.motor4 = rpmToPWM(rpm.motor4);
-    pwm.motor4 = constrain(pwm.motor4, -pwm_res_, pwm_res_);
-
-    return pwm;
-}
-
-Kinematics::pwm Kinematics::getPWM(float linear_x, float linear_y, float angular_z)
-{
-    Kinematics::pwm pwm;
-
-    if(base_platform_ == DIFFERENTIAL_DRIVE || base_platform_ == SKID_STEER)
-    {
-        pwm = calculatePWM(linear_x, 0.0 , angular_z);
-    }
-    else if(base_platform_ == ACKERMANN)
-    {
-        pwm = calculatePWM(linear_x, 0.0, 0.0);
-    }
-    else if(base_platform_ == MECANUM)
-    {
-        pwm = calculatePWM(linear_x, linear_y, angular_z);
-    }
-
-    return pwm;
-}
-
-Kinematics::velocities Kinematics::calculateVelocities(int motor1, int motor2)
+Kinematics::velocities Kinematics::getVelocities(int motor1, int motor2, int motor3, int motor4)
 {
     Kinematics::velocities vel;
 
-    float average_rpm_x = (motor1 + motor2) / 2; // RPM
-    //convert revolutions per minute to revolutions per second
-    float average_rps_x = average_rpm_x / 60; // RPS
+    //convert average revolutions per minute to revolutions per second
+    float average_rps_x = ((motor1 + motor2 + motor3 + motor4) / total_wheels_) / 60; // RPM
     vel.linear_x = average_rps_x * circumference_; // m/s
 
-    float average_rpm_a = (motor2 - motor1) / 2;
-    //convert revolutions per minute to revolutions per second
-    float average_rps_a = average_rpm_a / 60;
-    vel.angular_z =  (average_rps_a * circumference_) / (wheels_y_distance_ / 2);
+    //convert average revolutions per minute in y axis to revolutions per second
+    float average_rps_y = ((-motor1 + motor2 + motor3 - motor4) / total_wheels_) / 60; // RPM
+    if(base_platform_ == MECANUM)
+        vel.linear_y = average_rps_y * circumference_; // m/s
+    else
+        vel.linear_y = 0;
 
-    vel.linear_y = 0.0;
-
-    return vel;
-}
-
-Kinematics::velocities Kinematics::calculateVelocities(int motor1, int motor2, int motor3, int motor4)
-{
-    Kinematics::velocities vel;
-
-    float average_rpm_x = (motor1 + motor2 + motor3 + motor4) / 4; // RPM
-    //convert revolutions per minute to revolutions per second
-    float average_rps_x = average_rpm_x / 60; // RPS
-
-    vel.linear_x = average_rps_x * circumference_; // m/s
-
-    float average_rpm_y = (-motor1 + motor2 + motor3 - motor4) / 4; // RPM
-    //convert revolutions per minute in y axis to revolutions per second
-    float average_rps_y = average_rpm_y / 60; // RPS
-
-    vel.linear_y = average_rps_y * circumference_; // m/s
-
-    float average_rpm_a = (-motor1 + motor2 - motor3 + motor4) / 4;
-    //convert revolutions per minute to revolutions per second
-    float average_rps_a = average_rpm_a / 60;
-
+    //convert average revolutions per minute to revolutions per second
+    float average_rps_a = ((-motor1 + motor2 - motor3 + motor4) / total_wheels_) / 60;
     vel.angular_z =  (average_rps_a * circumference_) / ((wheels_x_distance_ / 2) + (wheels_y_distance_ / 2)); //  rad/s
 
     return vel;
 }
 
-Kinematics::velocities Kinematics::getVelocities(int motor1, int motor2, int motor3, int motor4)
+int Kinematics::getTotalWheels()
 {
-    Kinematics::velocities vel;
-
-    if(base_platform_ == DIFFERENTIAL_DRIVE || base_platform_ == ACKERMANN)
-    {   
-        vel = calculateVelocities(motor1, motor2);
-    }
-    else if(base_platform_ == SKID_STEER || base_platform_ == MECANUM)
+    switch(base_platform_)
     {
-        vel = calculateVelocities(motor1, motor2, motor3, motor4);
+        case DIFFERENTIAL_DRIVE:    return 2;
+        case ACKERMANN:             return 2;
+        case ACKERMANN1:            return 1;
+        case SKID_STEER:            return 4;
+        case MECANUM:               return 4;
+        default:                    return 2;
     }
-
-    return vel;
-}
-
-int Kinematics::rpmToPWM(int rpm)
-{
-    //remap scale of target RPM vs MAX_RPM to PWM
-    return (((double) rpm / (double) max_rpm_) * pwm_res_);
 }
