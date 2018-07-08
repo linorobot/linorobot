@@ -183,8 +183,13 @@ void moveBase()
     motor4_controller.spin(motor4_pid.compute(req_rpm.motor4, current_rpm4));    
     
     //calculate the robot's speed based on rpm reading from each motor and platform used.
-    Kinematics::velocities current_vel = kinematics.getVelocities(current_rpm1, current_rpm2, current_rpm3, current_rpm4);
-
+    #if LINO_BASE == ACKERMANN || LINO_BASE == ACKERMANN1
+        steer();
+        Kinematics::velocities current_vel = kinematics.getVelocities(g_req_angular_vel_z, current_rpm1, current_rpm2);
+    #else 
+        Kinematics::velocities current_vel = kinematics.getVelocities(current_rpm1, current_rpm2, current_rpm3, current_rpm4);
+    #endif
+    
     //pass velocities to publisher object
     raw_vel_msg.linear_x = current_vel.linear_x;
     raw_vel_msg.linear_y = current_vel.linear_y;
@@ -192,11 +197,6 @@ void moveBase()
 
     //publish raw_vel_msg
     raw_vel_pub.publish(&raw_vel_msg);
-
-    //steer if Ackermann base
-    #if LINO_BASE == ACKERMANN
-        steer();
-    #endif
 }
 
 void stopBase()

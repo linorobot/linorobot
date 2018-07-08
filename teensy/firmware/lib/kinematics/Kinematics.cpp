@@ -105,23 +105,39 @@ Kinematics::rpm Kinematics::getRPM(float linear_x, float linear_y, float angular
     return rpm;
 }
 
-Kinematics::velocities Kinematics::getVelocities(int motor1, int motor2, int motor3, int motor4)
+Kinematics::velocities Kinematics::getVelocities(float steering_angle, int rpm1, int rpm2)
 {
     Kinematics::velocities vel;
 
     //convert average revolutions per minute to revolutions per second
-    float average_rps_x = ((motor1 + motor2 + motor3 + motor4) / total_wheels_) / 60; // RPM
+    float average_rps_x = ((rpm1 + rpm2) / total_wheels_) / 60; // RPM
+    vel.linear_x = average_rps_x * circumference_; // m/s
+
+    vel.linear_y = 0.0;
+
+    //http://wiki.ros.org/teb_local_planner/Tutorials/Planning%20for%20car-like%20robots
+    vel.angular_z =  (vel.linear_x / wheels_x_distance_) * tan(steering_angle);
+
+    return vel;
+}
+
+Kinematics::velocities Kinematics::getVelocities(int rpm1, int rpm2, int rpm3, int rpm4)
+{
+    Kinematics::velocities vel;
+
+    //convert average revolutions per minute to revolutions per second
+    float average_rps_x = ((rpm1 + rpm2 + rpm3 + rpm4) / total_wheels_) / 60; // RPM
     vel.linear_x = average_rps_x * circumference_; // m/s
 
     //convert average revolutions per minute in y axis to revolutions per second
-    float average_rps_y = ((-motor1 + motor2 + motor3 - motor4) / total_wheels_) / 60; // RPM
+    float average_rps_y = ((-rpm1 + rpm2 + rpm3 - rpm4) / total_wheels_) / 60; // RPM
     if(base_platform_ == MECANUM)
         vel.linear_y = average_rps_y * circumference_; // m/s
     else
         vel.linear_y = 0;
 
     //convert average revolutions per minute to revolutions per second
-    float average_rps_a = ((-motor1 + motor2 - motor3 + motor4) / total_wheels_) / 60;
+    float average_rps_a = ((-rpm1 + rpm2 - rpm3 + rpm4) / total_wheels_) / 60;
     vel.angular_z =  (average_rps_a * circumference_) / ((wheels_x_distance_ / 2) + (wheels_y_distance_ / 2)); //  rad/s
 
     return vel;
