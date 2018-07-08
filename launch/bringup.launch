@@ -14,6 +14,11 @@
     <!-- Publish static transform from base_footprint to base_link -->
     <node pkg="tf" type="static_transform_publisher" name="base_footprint_to_base_link" args="0 0 0.098 0 0 0  /base_footprint /base_link  100"/>
 
+    <!-- Odom-IMU Extended Kalman Filter-->
+    <node pkg="robot_localization" type="ekf_localization_node" name="ekf_localization"> 
+        <rosparam command="load" file="$(find linorobot)/param/ekf/robot_localization.yaml" />
+    </node>
+
     <!-- Run Linorobot compatible laser drivers -->
     <include file="$(find linorobot)/launch/include/laser.launch" />
 </launch>
