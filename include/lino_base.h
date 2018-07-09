@@ -15,6 +15,7 @@ public:
 private:
     ros::NodeHandle nh_;
     ros::Publisher odom_publisher_;
+    ros::Subscriber velocity_subscriber_;
     tf::TransformBroadcaster odom_broadcaster_;
 
     float steering_angle_;

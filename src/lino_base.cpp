@@ -14,6 +14,7 @@ LinoBase::LinoBase():
     heading_(0)
 {
     odom_publisher_ = nh_.advertise<nav_msgs::Odometry>("odom", 50);
+    velocity_subscriber_ = nh_.subscribe("raw_vel", 50, &LinoBase::velCallback, this);
 }
 
 void LinoBase::velCallback(const lino_msgs::Velocities& vel)
