@@ -2,6 +2,7 @@
     <!-- IMU relay from linorobot_msgs/Imu to sensor_msgs/Imu -->
     <node pkg="imu_calib" type="apply_calib" name="apply_calib" output="screen" respawn="false">
         <param name="calib_file" value="$(find linorobot)/param/imu/imu_calib.yaml" />
+        <param name="calibrate_gyros" value="false" />
     </node>
 
     <!-- Filter and fuse raw imu data -->
@@ -11,5 +12,6 @@
         <param name="publish_tf" value="true" />
         <param name="use_magnetic_field_msg" value="true" /> 
         <param name="world_frame" value="enu" />
+        <param name="orientation_stddev" value="0.05" />
     </node>
 </launch>
