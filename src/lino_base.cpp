@@ -52,19 +52,23 @@ void LinoBase::velCallback(const lino_msgs::Velocities& vel)
     odom_trans.transform.rotation = odom_quat;
     odom_trans.header.stamp = current_time;
     //publish robot's tf using odom_trans object
-    odom_broadcaster_.sendTransform(odom_trans);
+    // odom_broadcaster_.sendTransform(odom_trans);
 
     nav_msgs::Odometry odom;
     odom.header.stamp = current_time;
     odom.header.frame_id = "odom";
+    odom.child_frame_id = "base_footprint";
+
     //robot's position in x,y, and z
     odom.pose.pose.position.x = x_pos_;
     odom.pose.pose.position.y = y_pos_;
     odom.pose.pose.position.z = 0.0;
     //robot's heading in quaternion
     odom.pose.pose.orientation = odom_quat;
+    odom.pose.covariance[0] = 0.000001;
+    odom.pose.covariance[7] = 0.000001;
+    odom.pose.covariance[35] = 0.000001;
 
-    odom.child_frame_id = "base_footprint";
     //linear speed from encoders
     odom.twist.twist.linear.x = linear_velocity_x_;
     odom.twist.twist.linear.y = linear_velocity_y_;
@@ -74,8 +78,9 @@ void LinoBase::velCallback(const lino_msgs::Velocities& vel)
     odom.twist.twist.angular.y = 0.0;
     //angular speed from encoders
     odom.twist.twist.angular.z = angular_velocity_z_;
-
-    //TODO: include covariance matrix here
+    odom.twist.covariance[0] = 0.0001;
+    odom.twist.covariance[7] = 0.0001;
+    odom.twist.covariance[35] = 0.0001;
 
     odom_publisher_.publish(odom);
 }
