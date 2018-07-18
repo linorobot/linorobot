@@ -23,7 +23,7 @@ void LinoBase::velCallback(const lino_msgs::Velocities& vel)
 
     linear_velocity_x_ = vel.linear_x;
     linear_velocity_y_ = vel.linear_y;
-    angular_velocity_z_ = vel.angular_z;
+    angular_velocity_z_ = vel.angular_z * 1.1;
 
     vel_dt_ = (current_time - last_vel_time_).toSec();
     last_vel_time_ = current_time;
@@ -65,9 +65,9 @@ void LinoBase::velCallback(const lino_msgs::Velocities& vel)
     odom.pose.pose.position.z = 0.0;
     //robot's heading in quaternion
     odom.pose.pose.orientation = odom_quat;
-    odom.pose.covariance[0] = 0.000001;
-    odom.pose.covariance[7] = 0.000001;
-    odom.pose.covariance[35] = 0.000001;
+    odom.pose.covariance[0] = 0.01;
+    odom.pose.covariance[7] = 0.01;
+    odom.pose.covariance[35] = 0.1;
 
     //linear speed from encoders
     odom.twist.twist.linear.x = linear_velocity_x_;
@@ -78,9 +78,9 @@ void LinoBase::velCallback(const lino_msgs::Velocities& vel)
     odom.twist.twist.angular.y = 0.0;
     //angular speed from encoders
     odom.twist.twist.angular.z = angular_velocity_z_;
-    odom.twist.covariance[0] = 0.0001;
-    odom.twist.covariance[7] = 0.0001;
-    odom.twist.covariance[35] = 0.0001;
+    odom.twist.covariance[0] = 0.002;
+    odom.twist.covariance[7] = 0.002;
+    odom.twist.covariance[35] = 0.001;
 
     odom_publisher_.publish(odom);
 }
