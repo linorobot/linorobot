@@ -23,9 +23,7 @@ void LinoBase::velCallback(const lino_msgs::Velocities& vel)
 
     linear_velocity_x_ = vel.linear_x;
     linear_velocity_y_ = vel.linear_y;
-    //received angular velocity is multiplied to a scale factor due to friction or slippage depending on the environment
-    //TODO: make the scaling factor as a parameter
-    angular_velocity_z_ = vel.angular_z * 1.25;
+    angular_velocity_z_ = vel.angular_z;
 
     vel_dt_ = (current_time - last_vel_time_).toSec();
     last_vel_time_ = current_time;
