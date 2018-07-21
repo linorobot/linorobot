@@ -37,7 +37,7 @@ void LinoBase::velCallback(const lino_msgs::Velocities& vel)
     y_pos_ += delta_y;
     heading_ += delta_heading;
 
-    //calculate robot's heading in quarternion angle
+    //calculate robot's heading in quaternion angle
     //ROS has a function to calculate yaw in quaternion angle
     geometry_msgs::Quaternion odom_quat = tf::createQuaternionMsgFromYaw(heading_);
 
@@ -65,9 +65,9 @@ void LinoBase::velCallback(const lino_msgs::Velocities& vel)
     odom.pose.pose.position.z = 0.0;
     //robot's heading in quaternion
     odom.pose.pose.orientation = odom_quat;
-    odom.pose.covariance[0] = 0.01;
-    odom.pose.covariance[7] = 0.01;
-    odom.pose.covariance[35] = 0.1;
+    odom.pose.covariance[0] = 0.001;
+    odom.pose.covariance[7] = 0.001;
+    odom.pose.covariance[35] = 0.001;
 
     //linear speed from encoders
     odom.twist.twist.linear.x = linear_velocity_x_;
@@ -78,9 +78,9 @@ void LinoBase::velCallback(const lino_msgs::Velocities& vel)
     odom.twist.twist.angular.y = 0.0;
     //angular speed from encoders
     odom.twist.twist.angular.z = angular_velocity_z_;
-    odom.twist.covariance[0] = 0.002;
-    odom.twist.covariance[7] = 0.002;
-    odom.twist.covariance[35] = 0.001;
+    odom.twist.covariance[0] = 0.0001;
+    odom.twist.covariance[7] = 0.0001;
+    odom.twist.covariance[35] = 0.0001;
 
     odom_publisher_.publish(odom);
 }
