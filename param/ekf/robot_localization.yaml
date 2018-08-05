@@ -1,6 +1,13 @@
+frequency: 50
 
 two_d_mode: true
 diagnostics_agg: true
+
+#x     , y     , z, 
+#roll  , pitch , yaw, 
+#vx    , vy    , vz, 
+#vroll , vpitch, vyaw, 
+#ax    , ay    , az
 
 odom0: /raw_odom
 odom0_config: [false, false, false,
@@ -9,7 +16,7 @@ odom0_config: [false, false, false,
                false, false, true,
                false, false, false]
                
-odom0_differential: true
+odom0_differential: false
 odom0_relative: true 
 
 imu0: /imu/data
@@ -25,4 +32,3 @@ imu0_relative: true
 odom_frame: odom
 base_link_frame: base_footprint
 world_frame: odom
-
