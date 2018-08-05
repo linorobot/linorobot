@@ -27,7 +27,7 @@
 
     #define ACCEL_SCALE 1 / 16384 // LSB/g
     #define GYRO_SCALE 1 / 131 // LSB/(deg/s)
-    #define MAG_SCALE 0.285 // uT/LSB
+    #define MAG_SCALE 0.3 // uT/LSB
     
     MPU6050 accelerometer;
     MPU6050 gyroscope;    
@@ -39,7 +39,7 @@
 
     #define ACCEL_SCALE 1 / 16384 // LSB/g
     #define GYRO_SCALE 1 / 131 // LSB/(deg/s)
-    #define MAG_SCALE 0.285 // uT/LSB
+    #define MAG_SCALE 0.3 // uT/LSB
     
     MPU9150 accelerometer;
     MPU9150 gyroscope;    
@@ -51,7 +51,7 @@
 
     #define ACCEL_SCALE 1 / 16384 // LSB/g
     #define GYRO_SCALE 1 / 131 // LSB/(deg/s)
-    #define MAG_SCALE 0.285 // uT/LSB
+    #define MAG_SCALE 0.6 // uT/LSB
     
     MPU9250 accelerometer;
     MPU9250 gyroscope;    
@@ -66,6 +66,7 @@
 
 
 //MPU9150 https://www.invensense.com/wp-content/uploads/2015/02/PS-MPU-9250A-01-v1.1.pdf
+//MPU9250 https://www.invensense.com/wp-content/uploads/2015/02/MPU-9150-Datasheet.pdf
 //MPU6050 https://store.invensense.com/datasheets/invensense/MPU-6050_DataSheet_V3%204.pdf
 
 //http://www.sureshjoshi.com/embedded/invensense-imus-what-to-know/
