@@ -181,14 +181,18 @@ void moveBase()
     motor2_controller.spin(motor2_pid.compute(req_rpm.motor2, current_rpm2));
     motor3_controller.spin(motor3_pid.compute(req_rpm.motor3, current_rpm3));  
     motor4_controller.spin(motor4_pid.compute(req_rpm.motor4, current_rpm4));    
-    
-    //calculate the robot's speed based on rpm reading from each motor and platform used.
-    #if LINO_BASE == ACKERMANN || LINO_BASE == ACKERMANN1
+
+    Kinematics::velocities current_vel;
+
+    if(kinematics.base_platform == Kinematics::ACKERMANN || kinematics.base_platform == Kinematics::ACKERMANN1)
+    {
         steer();
-        Kinematics::velocities current_vel = kinematics.getVelocities(g_req_angular_vel_z, current_rpm1, current_rpm2);
-    #else 
-        Kinematics::velocities current_vel = kinematics.getVelocities(current_rpm1, current_rpm2, current_rpm3, current_rpm4);
-    #endif
+        current_vel = kinematics.getVelocities(g_req_angular_vel_z, current_rpm1, current_rpm2);
+    }
+    else
+    {
+        current_vel = kinematics.getVelocities(current_rpm1, current_rpm2, current_rpm3, current_rpm4);
+    }
     
     //pass velocities to publisher object
     raw_vel_msg.linear_x = current_vel.linear_x;
@@ -230,6 +234,9 @@ void steer()
 
     //convert steering angle from rad to deg
     steering_angle_deg = g_req_angular_vel_z * (180 / PI);
+    
+    //TODO: Test this to replace the whole if-else block
+    //steering_angle = mapFloat(steering_angle_deg, -90, 90, 180, 0)
 
     if(steering_angle_deg > 0)
     {
