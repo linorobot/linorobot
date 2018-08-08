@@ -186,8 +186,10 @@ void moveBase()
 
     if(kinematics.base_platform == Kinematics::ACKERMANN || kinematics.base_platform == Kinematics::ACKERMANN1)
     {
-        steer();
-        current_vel = kinematics.getVelocities(g_req_angular_vel_z, current_rpm1, current_rpm2);
+        float current_steering_angle;
+        
+        current_steering_angle = steer(g_req_angular_vel_z);
+        current_vel = kinematics.getVelocities(current_steering_angle, current_rpm1, current_rpm2);
     }
     else
     {
@@ -225,43 +227,22 @@ void publishIMU()
     raw_imu_pub.publish(&raw_imu_msg);
 }
 
-void steer()
+float steer(float steering_angle)
 {
     //steering function for ACKERMANN base
-    //this converts angular velocity(rad) to steering angle(degree)
-    float steering_angle;
-    float steering_angle_deg;
+    float servo_steering_angle;
 
-    //convert steering angle from rad to deg
-    steering_angle_deg = g_req_angular_vel_z * (180 / PI);
-    
-    //TODO: Test this to replace the whole if-else block
-    //steering_angle = mapFloat(steering_angle_deg, -90, 90, 180, 0)
+    steering_angle = constrain(steering_angle, -MAX_STEERING_ANGLE, MAX_STEERING_ANGLE);
+    servo_steering_angle = mapFloat(steering_angle, -MAX_STEERING_ANGLE, MAX_STEERING_ANGLE, PI, 0) * (180 / PI);
 
-    if(steering_angle_deg > 0)
-    {
-        //steer left 
-        steering_angle = mapFloat(steering_angle_deg, 0, 90, 90, 0);
+    steering_servo.write(servo_steering_angle);
 
-    }
-    else if(steering_angle_deg < 0)
-    {
-        //steer right
-        steering_angle = mapFloat(steering_angle_deg, 0, -90, 90, 180);
-    }
-    else
-    {
-        //return steering wheel to middle if there's no command
-        steering_angle = 90;
-    }
-    
-    //steer the robot
-    steering_servo.write(steering_angle);
+    return steering_angle;
 }
 
-float mapFloat(long x, long in_min, long in_max, long out_min, long out_max)
+float mapFloat(float x, float in_min, float in_max, float out_min, float out_max)
 {
-    return (float)(x - in_min) * (out_max - out_min) / (float)(in_max - in_min) + out_min;
+    return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
 
 void printDebug()
