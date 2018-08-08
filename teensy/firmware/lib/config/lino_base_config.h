@@ -45,7 +45,7 @@
 // #define WHEEL_DIAMETER 0.15      // wheel's diameter in meters
 // #define PWM_BITS 8               // PWM Resolution of the microcontroller
 // #define LR_WHEELS_DISTANCE 0.32  // distance between left and right wheels
-// #define FB_WHEELS_DISTANCE 0.38  // distance between front and back wheels. Ignore this if you're on 2WD/ACKERMANN
+// #define FR_WHEELS_DISTANCE 0.38  // distance between front and back wheels. Ignore this if you're on 2WD/ACKERMANN
 //================= END OF BIGGER ROBOT SPEC =============================
 
 /*
