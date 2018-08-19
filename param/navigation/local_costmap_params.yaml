@@ -9,3 +9,5 @@ local_costmap:
   height: 2.5
   resolution: 0.05 #increase to for higher res 0.025
   transform_tolerance: 0.5
+  cost_scaling_factor: 5
+  inflation_radius: 0.55
