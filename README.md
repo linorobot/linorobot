@@ -45,11 +45,13 @@ The IMU drivers are based on [i2cdevlib](https://github.com/jrowberg/i2cdevlib).
 #### Supported ROS Compatible Sensors:
 - XV11 Lidar
 - RPLidar
+- YDLIDAR X4
+- Hokuyo (SCIP 2.2 Compliant)
 - Intel RealSense R200
 - Kinect
 
 #### Tested on Linux compatible ARM dev boards:    
-- Raspberry Pi 3   
+- Raspberry Pi 3/B+   
 - Jetson TK1   
 - Jetson TX1   
 - Odroid XU4   
@@ -74,6 +76,7 @@ linorobot_ws/teensy/firmware/lib/config/lino_base_config.h
 #define LINO_BASE DIFFERENTIAL_DRIVE
 // #define LINO_BASE SKID_STEER
 // #define LINO_BASE ACKERMANN
+// #define LINO_BASE ACKERMANN1
 // #define LINO_BASE MECANUM
 ```
 
@@ -102,7 +105,7 @@ linorobot_ws/teensy/firmware/lib/config/lino_base_config.h
 #define WHEEL_DIAMETER 0.10       // wheel's diameter in meters
 #define PWM_BITS 8                // PWM Resolution of the microcontroller
 #define LR_WHEELS_DISTANCE 0.235  // distance between left and right wheels
-#define FB_WHEELS_DISTANCE 0.30   // distance between front and rear wheels
+#define FR_WHEELS_DISTANCE 0.30   // distance between front and rear wheels
 ```
 
 #### Uploading the codes:
