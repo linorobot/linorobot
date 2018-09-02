@@ -106,6 +106,8 @@ linorobot_ws/teensy/firmware/lib/config/lino_base_config.h
 #define PWM_BITS 8                // PWM Resolution of the microcontroller
 #define LR_WHEELS_DISTANCE 0.235  // distance between left and right wheels
 #define FR_WHEELS_DISTANCE 0.30   // distance between front and rear wheels
+#define MAX_STEERING_ANGLE 0.415  // max steering angle. This only applies to Ackermann steering
+
 ```
 
 #### Uploading the codes:
