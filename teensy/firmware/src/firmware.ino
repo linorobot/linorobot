@@ -23,7 +23,7 @@
 #include "PID.h"
 #include "Imu.h"
 
-#define ENCODER_OPTIMIZE_INTERRUPTS
+#define ENCODER_OPTIMIZE_INTERRUPTS // uncomment this on Non-Teensy board
 #include "Encoder.h"
 
 #define IMU_PUBLISH_RATE 20 //hz
