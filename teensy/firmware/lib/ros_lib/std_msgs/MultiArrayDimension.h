@@ -12,9 +12,12 @@ namespace std_msgs
   class MultiArrayDimension : public ros::Msg
   {
     public:
-      const char* label;
-      uint32_t size;
-      uint32_t stride;
+      typedef const char* _label_type;
+      _label_type label;
+      typedef uint32_t _size_type;
+      _size_type size;
+      typedef uint32_t _stride_type;
+      _stride_type stride;
 
     MultiArrayDimension():
       label(""),
@@ -27,7 +30,7 @@ namespace std_msgs
     {
       int offset = 0;
       uint32_t length_label = strlen(this->label);
-      memcpy(outbuffer + offset, &length_label, sizeof(uint32_t));
+      varToArr(outbuffer + offset, length_label);
       offset += 4;
       memcpy(outbuffer + offset, this->label, length_label);
       offset += length_label;
@@ -48,7 +51,7 @@ namespace std_msgs
     {
       int offset = 0;
       uint32_t length_label;
-      memcpy(&length_label, (inbuffer + offset), sizeof(uint32_t));
+      arrToVar(length_label, (inbuffer + offset));
       offset += 4;
       for(unsigned int k= offset; k< offset+length_label; ++k){
           inbuffer[k-1]=inbuffer[k];

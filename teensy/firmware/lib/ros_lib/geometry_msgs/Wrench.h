@@ -13,8 +13,10 @@ namespace geometry_msgs
   class Wrench : public ros::Msg
   {
     public:
-      geometry_msgs::Vector3 force;
-      geometry_msgs::Vector3 torque;
+      typedef geometry_msgs::Vector3 _force_type;
+      _force_type force;
+      typedef geometry_msgs::Vector3 _torque_type;
+      _torque_type torque;
 
     Wrench():
       force(),

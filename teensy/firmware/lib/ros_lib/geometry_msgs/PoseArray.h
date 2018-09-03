@@ -14,10 +14,12 @@ namespace geometry_msgs
   class PoseArray : public ros::Msg
   {
     public:
-      std_msgs::Header header;
-      uint8_t poses_length;
-      geometry_msgs::Pose st_poses;
-      geometry_msgs::Pose * poses;
+      typedef std_msgs::Header _header_type;
+      _header_type header;
+      uint32_t poses_length;
+      typedef geometry_msgs::Pose _poses_type;
+      _poses_type st_poses;
+      _poses_type * poses;
 
     PoseArray():
       header(),
@@ -29,11 +31,12 @@ namespace geometry_msgs
     {
       int offset = 0;
       offset += this->header.serialize(outbuffer + offset);
-      *(outbuffer + offset++) = poses_length;
-      *(outbuffer + offset++) = 0;
-      *(outbuffer + offset++) = 0;
-      *(outbuffer + offset++) = 0;
-      for( uint8_t i = 0; i < poses_length; i++){
+      *(outbuffer + offset + 0) = (this->poses_length >> (8 * 0)) & 0xFF;
+      *(outbuffer + offset + 1) = (this->poses_length >> (8 * 1)) & 0xFF;
+      *(outbuffer + offset + 2) = (this->poses_length >> (8 * 2)) & 0xFF;
+      *(outbuffer + offset + 3) = (this->poses_length >> (8 * 3)) & 0xFF;
+      offset += sizeof(this->poses_length);
+      for( uint32_t i = 0; i < poses_length; i++){
       offset += this->poses[i].serialize(outbuffer + offset);
       }
       return offset;
@@ -43,12 +46,15 @@ namespace geometry_msgs
     {
       int offset = 0;
       offset += this->header.deserialize(inbuffer + offset);
-      uint8_t poses_lengthT = *(inbuffer + offset++);
+      uint32_t poses_lengthT = ((uint32_t) (*(inbuffer + offset))); 
+      poses_lengthT |= ((uint32_t) (*(inbuffer + offset + 1))) << (8 * 1); 
+      poses_lengthT |= ((uint32_t) (*(inbuffer + offset + 2))) << (8 * 2); 
+      poses_lengthT |= ((uint32_t) (*(inbuffer + offset + 3))) << (8 * 3); 
+      offset += sizeof(this->poses_length);
       if(poses_lengthT > poses_length)
         this->poses = (geometry_msgs::Pose*)realloc(this->poses, poses_lengthT * sizeof(geometry_msgs::Pose));
-      offset += 3;
       poses_length = poses_lengthT;
-      for( uint8_t i = 0; i < poses_length; i++){
+      for( uint32_t i = 0; i < poses_length; i++){
       offset += this->st_poses.deserialize(inbuffer + offset);
         memcpy( &(this->poses[i]), &(this->st_poses), sizeof(geometry_msgs::Pose));
       }

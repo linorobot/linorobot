@@ -14,8 +14,10 @@ namespace geometry_msgs
   class TwistStamped : public ros::Msg
   {
     public:
-      std_msgs::Header header;
-      geometry_msgs::Twist twist;
+      typedef std_msgs::Header _header_type;
+      _header_type header;
+      typedef geometry_msgs::Twist _twist_type;
+      _twist_type twist;
 
     TwistStamped():
       header(),

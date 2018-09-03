@@ -12,9 +12,12 @@ namespace lino_msgs
   class Velocities : public ros::Msg
   {
     public:
-      float linear_x;
-      float linear_y;
-      float angular_z;
+      typedef float _linear_x_type;
+      _linear_x_type linear_x;
+      typedef float _linear_y_type;
+      _linear_y_type linear_y;
+      typedef float _angular_z_type;
+      _angular_z_type angular_z;
 
     Velocities():
       linear_x(0),

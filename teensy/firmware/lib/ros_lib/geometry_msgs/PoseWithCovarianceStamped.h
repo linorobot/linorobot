@@ -14,8 +14,10 @@ namespace geometry_msgs
   class PoseWithCovarianceStamped : public ros::Msg
   {
     public:
-      std_msgs::Header header;
-      geometry_msgs::PoseWithCovariance pose;
+      typedef std_msgs::Header _header_type;
+      _header_type header;
+      typedef geometry_msgs::PoseWithCovariance _pose_type;
+      _pose_type pose;
 
     PoseWithCovarianceStamped():
       header(),

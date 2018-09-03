@@ -13,9 +13,12 @@ namespace lino_msgs
   class Imu : public ros::Msg
   {
     public:
-      geometry_msgs::Vector3 linear_acceleration;
-      geometry_msgs::Vector3 angular_velocity;
-      geometry_msgs::Vector3 magnetic_field;
+      typedef geometry_msgs::Vector3 _linear_acceleration_type;
+      _linear_acceleration_type linear_acceleration;
+      typedef geometry_msgs::Vector3 _angular_velocity_type;
+      _angular_velocity_type angular_velocity;
+      typedef geometry_msgs::Vector3 _magnetic_field_type;
+      _magnetic_field_type magnetic_field;
 
     Imu():
       linear_acceleration(),

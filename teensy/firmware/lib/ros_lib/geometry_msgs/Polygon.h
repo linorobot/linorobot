@@ -13,9 +13,10 @@ namespace geometry_msgs
   class Polygon : public ros::Msg
   {
     public:
-      uint8_t points_length;
-      geometry_msgs::Point32 st_points;
-      geometry_msgs::Point32 * points;
+      uint32_t points_length;
+      typedef geometry_msgs::Point32 _points_type;
+      _points_type st_points;
+      _points_type * points;
 
     Polygon():
       points_length(0), points(NULL)
@@ -25,11 +26,12 @@ namespace geometry_msgs
     virtual int serialize(unsigned char *outbuffer) const
     {
       int offset = 0;
-      *(outbuffer + offset++) = points_length;
-      *(outbuffer + offset++) = 0;
-      *(outbuffer + offset++) = 0;
-      *(outbuffer + offset++) = 0;
-      for( uint8_t i = 0; i < points_length; i++){
+      *(outbuffer + offset + 0) = (this->points_length >> (8 * 0)) & 0xFF;
+      *(outbuffer + offset + 1) = (this->points_length >> (8 * 1)) & 0xFF;
+      *(outbuffer + offset + 2) = (this->points_length >> (8 * 2)) & 0xFF;
+      *(outbuffer + offset + 3) = (this->points_length >> (8 * 3)) & 0xFF;
+      offset += sizeof(this->points_length);
+      for( uint32_t i = 0; i < points_length; i++){
       offset += this->points[i].serialize(outbuffer + offset);
       }
       return offset;
@@ -38,12 +40,15 @@ namespace geometry_msgs
     virtual int deserialize(unsigned char *inbuffer)
     {
       int offset = 0;
-      uint8_t points_lengthT = *(inbuffer + offset++);
+      uint32_t points_lengthT = ((uint32_t) (*(inbuffer + offset))); 
+      points_lengthT |= ((uint32_t) (*(inbuffer + offset + 1))) << (8 * 1); 
+      points_lengthT |= ((uint32_t) (*(inbuffer + offset + 2))) << (8 * 2); 
+      points_lengthT |= ((uint32_t) (*(inbuffer + offset + 3))) << (8 * 3); 
+      offset += sizeof(this->points_length);
       if(points_lengthT > points_length)
         this->points = (geometry_msgs::Point32*)realloc(this->points, points_lengthT * sizeof(geometry_msgs::Point32));
-      offset += 3;
       points_length = points_lengthT;
-      for( uint8_t i = 0; i < points_length; i++){
+      for( uint32_t i = 0; i < points_length; i++){
       offset += this->st_points.deserialize(inbuffer + offset);
         memcpy( &(this->points[i]), &(this->st_points), sizeof(geometry_msgs::Point32));
       }

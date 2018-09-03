@@ -14,8 +14,10 @@ namespace geometry_msgs
   class Pose : public ros::Msg
   {
     public:
-      geometry_msgs::Point position;
-      geometry_msgs::Quaternion orientation;
+      typedef geometry_msgs::Point _position_type;
+      _position_type position;
+      typedef geometry_msgs::Quaternion _orientation_type;
+      _orientation_type orientation;
 
     Pose():
       position(),

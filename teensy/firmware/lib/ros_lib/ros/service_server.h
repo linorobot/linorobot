@@ -1,4 +1,4 @@
-/* 
+/*
  * Software License Agreement (BSD License)
  *
  * Copyright (c) 2011, Willow Garage, Inc.
@@ -37,39 +37,93 @@
 
 #include "rosserial_msgs/TopicInfo.h"
 
-#include "publisher.h"
-#include "subscriber.h"
+#include "ros/publisher.h"
+#include "ros/subscriber.h"
 
-namespace ros {
+namespace ros
+{
 
-  template<typename MReq , typename MRes>
-  class ServiceServer : public Subscriber_ {
-    public:
-      typedef void(*CallbackT)(const MReq&,  MRes&);
+template<typename MReq , typename MRes, typename ObjT = void>
+class ServiceServer : public Subscriber_
+{
+public:
+  typedef void(ObjT::*CallbackT)(const MReq&,  MRes&);
 
-      ServiceServer(const char* topic_name, CallbackT cb) :
-        pub(topic_name, &resp, rosserial_msgs::TopicInfo::ID_SERVICE_SERVER + rosserial_msgs::TopicInfo::ID_PUBLISHER)
-      {
-        this->topic_ = topic_name;
-        this->cb_ = cb;
-      }
+  ServiceServer(const char* topic_name, CallbackT cb, ObjT* obj) :
+    pub(topic_name, &resp, rosserial_msgs::TopicInfo::ID_SERVICE_SERVER + rosserial_msgs::TopicInfo::ID_PUBLISHER),
+    obj_(obj)
+  {
+    this->topic_ = topic_name;
+    this->cb_ = cb;
+  }
 
-      // these refer to the subscriber
-      virtual void callback(unsigned char *data){
-        req.deserialize(data);
-        cb_(req,resp);
-        pub.publish(&resp);
-      }
-      virtual const char * getMsgType(){ return this->req.getType(); }
-      virtual const char * getMsgMD5(){ return this->req.getMD5(); }
-      virtual int getEndpointType(){ return rosserial_msgs::TopicInfo::ID_SERVICE_SERVER + rosserial_msgs::TopicInfo::ID_SUBSCRIBER; }
+  // these refer to the subscriber
+  virtual void callback(unsigned char *data)
+  {
+    req.deserialize(data);
+    (obj_->*cb_)(req, resp);
+    pub.publish(&resp);
+  }
+  virtual const char * getMsgType()
+  {
+    return this->req.getType();
+  }
+  virtual const char * getMsgMD5()
+  {
+    return this->req.getMD5();
+  }
+  virtual int getEndpointType()
+  {
+    return rosserial_msgs::TopicInfo::ID_SERVICE_SERVER + rosserial_msgs::TopicInfo::ID_SUBSCRIBER;
+  }
 
-      MReq req;
-      MRes resp;
-      Publisher pub;
-    private:
-      CallbackT cb_;
-  };
+  MReq req;
+  MRes resp;
+  Publisher pub;
+private:
+  CallbackT cb_;
+  ObjT* obj_;
+};
+
+template<typename MReq , typename MRes>
+class ServiceServer<MReq, MRes, void> : public Subscriber_
+{
+public:
+  typedef void(*CallbackT)(const MReq&,  MRes&);
+
+  ServiceServer(const char* topic_name, CallbackT cb) :
+    pub(topic_name, &resp, rosserial_msgs::TopicInfo::ID_SERVICE_SERVER + rosserial_msgs::TopicInfo::ID_PUBLISHER)
+  {
+    this->topic_ = topic_name;
+    this->cb_ = cb;
+  }
+
+  // these refer to the subscriber
+  virtual void callback(unsigned char *data)
+  {
+    req.deserialize(data);
+    cb_(req, resp);
+    pub.publish(&resp);
+  }
+  virtual const char * getMsgType()
+  {
+    return this->req.getType();
+  }
+  virtual const char * getMsgMD5()
+  {
+    return this->req.getMD5();
+  }
+  virtual int getEndpointType()
+  {
+    return rosserial_msgs::TopicInfo::ID_SERVICE_SERVER + rosserial_msgs::TopicInfo::ID_SUBSCRIBER;
+  }
+
+  MReq req;
+  MRes resp;
+  Publisher pub;
+private:
+  CallbackT cb_;
+};
 
 }
 

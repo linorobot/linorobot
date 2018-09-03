@@ -14,8 +14,10 @@ namespace geometry_msgs
   class TwistWithCovarianceStamped : public ros::Msg
   {
     public:
-      std_msgs::Header header;
-      geometry_msgs::TwistWithCovariance twist;
+      typedef std_msgs::Header _header_type;
+      _header_type header;
+      typedef geometry_msgs::TwistWithCovariance _twist_type;
+      _twist_type twist;
 
     TwistWithCovarianceStamped():
       header(),

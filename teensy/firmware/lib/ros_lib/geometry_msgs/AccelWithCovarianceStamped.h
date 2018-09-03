@@ -14,8 +14,10 @@ namespace geometry_msgs
   class AccelWithCovarianceStamped : public ros::Msg
   {
     public:
-      std_msgs::Header header;
-      geometry_msgs::AccelWithCovariance accel;
+      typedef std_msgs::Header _header_type;
+      _header_type header;
+      typedef geometry_msgs::AccelWithCovariance _accel_type;
+      _accel_type accel;
 
     AccelWithCovarianceStamped():
       header(),

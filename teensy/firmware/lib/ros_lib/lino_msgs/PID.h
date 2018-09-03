@@ -12,9 +12,12 @@ namespace lino_msgs
   class PID : public ros::Msg
   {
     public:
-      float p;
-      float d;
-      float i;
+      typedef float _p_type;
+      _p_type p;
+      typedef float _d_type;
+      _d_type d;
+      typedef float _i_type;
+      _i_type i;
 
     PID():
       p(0),

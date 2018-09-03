@@ -32,64 +32,73 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef _ROS_SERVICE_CLIENT_H_
-#define _ROS_SERVICE_CLIENT_H_
+#ifndef ROS_ARDUINO_TCP_HARDWARE_H_
+#define ROS_ARDUINO_TCP_HARDWARE_H_
 
-#include "rosserial_msgs/TopicInfo.h"
+#include <Arduino.h>
+#if defined(ESP8266)
+  #include <ESP8266WiFi.h>
+#else
+  #include <SPI.h>
+  #include <Ethernet.h>
+#endif
 
-#include "ros/publisher.h"
-#include "ros/subscriber.h"
-
-namespace ros
-{
-
-template<typename MReq , typename MRes>
-class ServiceClient : public Subscriber_
-{
+class ArduinoHardware {
 public:
-  ServiceClient(const char* topic_name) :
-    pub(topic_name, &req, rosserial_msgs::TopicInfo::ID_SERVICE_CLIENT + rosserial_msgs::TopicInfo::ID_PUBLISHER)
+  ArduinoHardware()
   {
-    this->topic_ = topic_name;
-    this->waiting = true;
   }
 
-  virtual void call(const MReq & request, MRes & response)
+  void setConnection(IPAddress &server, int port = 11411)
   {
-    if (!pub.nh_->connected()) return;
-    ret = &response;
-    waiting = true;
-    pub.publish(&request);
-    while (waiting && pub.nh_->connected())
-      if (pub.nh_->spinOnce() < 0) break;
+    server_ = server;
+    serverPort_ = port;
   }
 
-  // these refer to the subscriber
-  virtual void callback(unsigned char *data)
+  IPAddress getLocalIP()
   {
-    ret->deserialize(data);
-    waiting = false;
-  }
-  virtual const char * getMsgType()
-  {
-    return this->resp.getType();
-  }
-  virtual const char * getMsgMD5()
-  {
-    return this->resp.getMD5();
-  }
-  virtual int getEndpointType()
-  {
-    return rosserial_msgs::TopicInfo::ID_SERVICE_CLIENT + rosserial_msgs::TopicInfo::ID_SUBSCRIBER;
+#if defined(ESP8266)
+    return tcp_.localIP();
+#else
+    return Ethernet.localIP();
+#endif
   }
 
-  MReq req;
-  MRes resp;
-  MRes * ret;
-  bool waiting;
-  Publisher pub;
+  void init()
+  {
+    tcp_.connect(server_, serverPort_);
+  }
+
+  int read(){
+    if (tcp_.connected())
+    {
+        return tcp_.read();
+    }
+    else
+    {
+      tcp_.connect(server_, serverPort_);
+    }
+    return -1;
+  }
+
+  void write(const uint8_t* data, int length)
+  {
+    tcp_.write(data, length);
+  }
+
+  unsigned long time()
+  {
+    return millis();
+  }
+
+protected:
+#if defined(ESP8266)
+  WiFiClient tcp_;
+#else
+  EthernetClient tcp_;
+#endif
+  IPAddress server_;
+  uint16_t serverPort_ = 11411;
 };
-
-}
 
 #endif

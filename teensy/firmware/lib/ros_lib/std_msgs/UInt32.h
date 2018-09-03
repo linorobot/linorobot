@@ -12,7 +12,8 @@ namespace std_msgs
   class UInt32 : public ros::Msg
   {
     public:
-      uint32_t data;
+      typedef uint32_t _data_type;
+      _data_type data;
 
     UInt32():
       data(0)

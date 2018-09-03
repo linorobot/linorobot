@@ -1,4 +1,4 @@
-/*
+/* 
  * Software License Agreement (BSD License)
  *
  * Copyright (c) 2011, Willow Garage, Inc.
@@ -32,54 +32,36 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-
- //
- // #ifndef _ROS_H_
- // #define _ROS_H_
- //
- // #include "ros/node_handle.h"
- // #include "ArduinoHardware.h"
- //
- // namespace ros
- // {
- // #if defined(__AVR_ATmega8__) || defined(__AVR_ATmega168__)
- //   /* downsize our buffers */
- //   typedef NodeHandle_<ArduinoHardware, 6, 6, 150, 150> NodeHandle;
- //
- // #elif defined(__AVR_ATmega328P__)
- //
- //   typedef NodeHandle_<ArduinoHardware, 25, 25, 280, 280> NodeHandle;
- //
- // #else
- //
- //   typedef NodeHandle_<ArduinoHardware> NodeHandle;
- //
- // #endif
- // }
- //
- // #endif
-
 #ifndef _ROS_H_
 #define _ROS_H_
 
 #include "ros/node_handle.h"
-#include "ArduinoHardware.h"
+
+#if defined(ESP8266) or defined(ROSSERIAL_ARDUINO_TCP)
+  #include "ArduinoTcpHardware.h"
+#else
+  #include "ArduinoHardware.h"
+#endif
 
 namespace ros
 {
-#if defined(__AVR_ATmega8__) || defined(__AVR_ATmega168__)
+#if defined(__AVR_ATmega8__) or defined(__AVR_ATmega168__)
   /* downsize our buffers */
-  typedef NodeHandle_<ArduinoHardware, 5, 5, 1024, 1024> NodeHandle;
+  typedef NodeHandle_<ArduinoHardware, 6, 6, 150, 150> NodeHandle;
 
 #elif defined(__AVR_ATmega328P__)
 
-  typedef NodeHandle_<ArduinoHardware, 5, 5, 1024, 1024> NodeHandle;
+  typedef NodeHandle_<ArduinoHardware, 25, 25, 280, 280> NodeHandle;
+
+#elif defined(SPARK)
+
+  typedef NodeHandle_<ArduinoHardware, 10, 10, 2048, 2048> NodeHandle;
 
 #else
 
-typedef NodeHandle_<ArduinoHardware, 5, 5, 1024, 1024> NodeHandle;
+  typedef NodeHandle_<ArduinoHardware> NodeHandle; // default 25, 25, 512, 512
 
-#endif
+#endif   
 }
 
 #endif
