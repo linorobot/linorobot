@@ -14,7 +14,8 @@
     <buildtool_depend>catkin</buildtool_depend>
     <build_depend>roscpp</build_depend>
     <build_depend>rospy</build_depend>
-    <build_depend>tf</build_depend>
+    <build_depend>tf2</build_depend>
+		<build_depend>tf2_ros</build_depend>
     <build_depend>nav_msgs</build_depend>
     <build_depend>lino_msgs</build_depend>
     <build_depend>sensor_msgs</build_depend>
@@ -24,7 +25,8 @@
     <run_depend>roscpp</run_depend>
     <run_depend>rospy</run_depend>
     <run_depend>rosserial_python</run_depend>
-    <run_depend>tf</run_depend>
+    <run_depend>tf2</run_depend>
+		<run_depend>tf2_ros</run_depend>
     <run_depend>nav_msgs</run_depend>
     <run_depend>lino_msgs</run_depend>
     <run_depend>sensor_msgs</run_depend>

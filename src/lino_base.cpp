@@ -1,6 +1,7 @@
 #include <ros/ros.h>
 #include <nav_msgs/Odometry.h>
-#include <tf/transform_broadcaster.h>
+#include <tf2/LinearMath/Quaternion.h>
+#include <geometry_msgs/TransformStamped.h>
 #include <lino_base.h>
 
 LinoBase::LinoBase():
@@ -39,7 +40,8 @@ void LinoBase::velCallback(const lino_msgs::Velocities& vel)
 
     //calculate robot's heading in quaternion angle
     //ROS has a function to calculate yaw in quaternion angle
-    geometry_msgs::Quaternion odom_quat = tf::createQuaternionMsgFromYaw(heading_);
+    tf2::Quaternion odom_quat;
+    odom_quat.setRPY(0,0,heading_);
 
     geometry_msgs::TransformStamped odom_trans;
     odom_trans.header.frame_id = "odom";
@@ -49,10 +51,13 @@ void LinoBase::velCallback(const lino_msgs::Velocities& vel)
     odom_trans.transform.translation.y = y_pos_;
     odom_trans.transform.translation.z = 0.0;
     //robot's heading in quaternion
-    odom_trans.transform.rotation = odom_quat;
+    odom_trans.transform.rotation.x = odom_quat.x();
+    odom_trans.transform.rotation.y = odom_quat.y();
+    odom_trans.transform.rotation.z = odom_quat.z();
+    odom_trans.transform.rotation.w = odom_quat.w();
     odom_trans.header.stamp = current_time;
     //publish robot's tf using odom_trans object
-    // odom_broadcaster_.sendTransform(odom_trans);
+    odom_broadcaster_.sendTransform(odom_trans);
 
     nav_msgs::Odometry odom;
     odom.header.stamp = current_time;
@@ -64,7 +69,10 @@ void LinoBase::velCallback(const lino_msgs::Velocities& vel)
     odom.pose.pose.position.y = y_pos_;
     odom.pose.pose.position.z = 0.0;
     //robot's heading in quaternion
-    odom.pose.pose.orientation = odom_quat;
+    odom.pose.pose.orientation.x = odom_quat.x();
+    odom.pose.pose.orientation.y = odom_quat.y();
+    odom.pose.pose.orientation.z = odom_quat.z();
+    odom.pose.pose.orientation.w = odom_quat.w();
     odom.pose.covariance[0] = 0.001;
     odom.pose.covariance[7] = 0.001;
     odom.pose.covariance[35] = 0.001;

@@ -3,7 +3,7 @@
 
 #include <ros/ros.h>
 #include <lino_msgs/Velocities.h>
-#include <tf/transform_broadcaster.h>
+#include <tf2_ros/transform_broadcaster.h>
 
 class LinoBase
 {
@@ -11,12 +11,11 @@ public:
     LinoBase();
     void velCallback(const lino_msgs::Velocities& vel);
 
-
 private:
     ros::NodeHandle nh_;
     ros::Publisher odom_publisher_;
     ros::Subscriber velocity_subscriber_;
-    tf::TransformBroadcaster odom_broadcaster_;
+    tf2_ros::TransformBroadcaster odom_broadcaster_;
 
     float steering_angle_;
     float linear_velocity_x_;
