@@ -1,7 +1,3 @@
-#include <ros/ros.h>
-#include <nav_msgs/Odometry.h>
-#include <tf2/LinearMath/Quaternion.h>
-#include <geometry_msgs/TransformStamped.h>
 #include <lino_base.h>
 
 LinoBase::LinoBase():
@@ -40,10 +36,8 @@ void LinoBase::velCallback(const lino_msgs::Velocities& vel)
 
     //calculate robot's heading in quaternion angle
     //ROS has a function to calculate yaw in quaternion angle
-    tf2::Quaternion odom_quat;
     odom_quat.setRPY(0,0,heading_);
 
-    geometry_msgs::TransformStamped odom_trans;
     odom_trans.header.frame_id = "odom";
     odom_trans.child_frame_id = "base_footprint";
     //robot's position in x,y, and z
@@ -59,7 +53,6 @@ void LinoBase::velCallback(const lino_msgs::Velocities& vel)
     //publish robot's tf using odom_trans object
     odom_broadcaster_.sendTransform(odom_trans);
 
-    nav_msgs::Odometry odom;
     odom.header.stamp = current_time;
     odom.header.frame_id = "odom";
     odom.child_frame_id = "base_footprint";
