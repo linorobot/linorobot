@@ -51,7 +51,7 @@ void LinoBase::velCallback(const lino_msgs::Velocities& vel)
     odom_trans.transform.rotation.w = odom_quat.w();
     odom_trans.header.stamp = current_time;
     //publish robot's tf using odom_trans object
-    odom_broadcaster_.sendTransform(odom_trans);
+    //odom_broadcaster_.sendTransform(odom_trans);
 
     odom.header.stamp = current_time;
     odom.header.frame_id = "odom";

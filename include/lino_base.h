@@ -18,7 +18,7 @@ private:
     ros::NodeHandle nh_;
     ros::Publisher odom_publisher_;
     ros::Subscriber velocity_subscriber_;
-    tf2_ros::TransformBroadcaster odom_broadcaster_;
+    //tf2_ros::TransformBroadcaster odom_broadcaster_;
     tf2::Quaternion odom_quat;
     geometry_msgs::TransformStamped odom_trans;
     nav_msgs::Odometry odom;
