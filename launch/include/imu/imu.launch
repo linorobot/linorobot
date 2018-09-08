@@ -17,5 +17,5 @@
 
         
     <!-- Publish static transform from base_footprint to imu_link -->
-    <node pkg="tf" type="static_transform_publisher" name="base_footprint_to_imu_link" args="0 0 0 0 0 0  /base_footprint /imu_link  100"/>
+    <node pkg="tf2_ros" type="static_transform_publisher" name="base_footprint_to_imu_link" args="0 0 0 0 0 0  /base_footprint /imu_link"/>
 </launch>

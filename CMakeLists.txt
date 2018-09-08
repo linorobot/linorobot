@@ -1,13 +1,19 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(linorobot)
 
-## Find catkin macros and libraries
-## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
-## is used, also find other catkin packages
+##################
+## Dependencies ##
+##################
+
+## Compile as C++11, supported in ROS Kinetic and newer
+add_compile_options(-std=c++11)
+
+## Find catkin macros and libraries 
 find_package(catkin REQUIRED COMPONENTS
     roscpp 
     rospy 
-    tf
+    tf2
+		tf2_ros
     nav_msgs 
     lino_msgs 
     geometry_msgs 
@@ -18,12 +24,12 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES linorobot
-  CATKIN_DEPENDS roscpp rospy tf nav_msgs lino_msgs geometry_msgs sensor_msgs std_msgs 
+  CATKIN_DEPENDS roscpp rospy tf2 tf2_ros nav_msgs lino_msgs geometry_msgs sensor_msgs std_msgs 
   DEPENDS system_lib
 )
-###########
-## Build ###include "lino_base.h"
 
+###########
+## Build ##
 ###########
 
 include_directories(
@@ -34,3 +40,15 @@ include_directories(
 add_library(lino_base src/lino_base.cpp)
 add_executable(lino_base_node src/lino_base_node.cpp)
 target_link_libraries(lino_base_node lino_base ${catkin_LIBRARIES})
+
+#############
+## Install ##
+#############
+
+# Future work
+
+#############
+## Testing ##
+#############
+
+# Future work
