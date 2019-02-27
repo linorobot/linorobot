@@ -32,10 +32,9 @@ Kinematics::Kinematics(base robot_base, int motor_max_rpm, float wheel_diameter,
 float wheels_x_distance, float wheels_y_distance):
     base_platform(robot_base),
     max_rpm_(motor_max_rpm),
-    wheel_diameter_(wheel_diameter),
     wheels_x_distance_(base_platform == DIFFERENTIAL_DRIVE ? 0 : wheels_x_distance),
     wheels_y_distance_(wheels_y_distance),
-    wheel_circumference_(PI * wheel_diameter_),
+    wheel_circumference_(PI * wheel_diameter),
     total_wheels_(getTotalWheels(robot_base))
 {    
 }
