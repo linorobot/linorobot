@@ -118,6 +118,17 @@ void loop()
         {
             imu_is_initialized = initIMU();
 
+            char buffer[50];
+            sprintf(buffer, "=== ACCELEROMETER === %d", accelerometer.testConnection());
+            nh.loginfo(buffer);
+
+            sprintf(buffer, "=== GYROSCOPE === %d", gyroscope.testConnection());
+            nh.loginfo(buffer);
+
+            sprintf(buffer, "=== MAGNETOMETER === %d", magnetometer.testConnection());
+            nh.loginfo(buffer);
+
+
             if(imu_is_initialized)
                 nh.loginfo("IMU Initialized");
             else
