@@ -164,23 +164,53 @@ void commandCallback(const geometry_msgs::Twist& cmd_msg)
     g_prev_command_time = millis();
 }
 
+
+// Using current RPM as global variables. For debugging
+int current_rpm1;
+int current_rpm2;
+int current_rpm3;
+int current_rpm4;
+int requested_current_rpm1;
+int requested_current_rpm2;
+int requested_current_rpm3;
+int requested_current_rpm4;
+
 void moveBase()
 {
     //get the required rpm for each motor based on required velocities, and base used
     Kinematics::rpm req_rpm = kinematics.getRPM(g_req_linear_vel_x, g_req_linear_vel_y, g_req_angular_vel_z);
 
-    //get the current speed of each motor
-    int current_rpm1 = motor1_encoder.getRPM();
-    int current_rpm2 = motor2_encoder.getRPM();
-    int current_rpm3 = motor3_encoder.getRPM();
-    int current_rpm4 = motor4_encoder.getRPM();
+    //get the current speed of each motor and the requested. These are saved in a variable for debugging purposes
+	// TEST 20190323, changed motor but is seems the rotation must sensing has to be reversed
+	//current_rpm1 = motor1_encoder.getRPM();	
+	current_rpm1 = -motor1_encoder.getRPM();	
+	current_rpm2 = motor2_encoder.getRPM();
+	current_rpm3 = motor3_encoder.getRPM();
+    current_rpm4 = motor4_encoder.getRPM();
+	requested_current_rpm1 = req_rpm.motor1;
+	requested_current_rpm2 = req_rpm.motor2;
+	requested_current_rpm3 = req_rpm.motor3;
+	requested_current_rpm4 = req_rpm.motor4;
+	
+	// // HW FIX: 20190224
+	// // Compensate for some different readings between sensors... This is a very hard fix...
+	// // Claim to be verified
+	// // Based on rotation sense has a different beahvior apparently
+	// // If IMU calibration is reperformed, constant needs to be recalculated (count the number of ticks per turn of every wheel and optimize)
+	// if (current_rpm1 > 0) {
+		// current_rpm1 = int(current_rpm1*1.107562218); // It seems my sensor needs to be compensated. TODO: check if changing the sensor/Motor the situation improves
+	// }
+	// // Situation change when going backward... mmmm
+	// if (current_rpm2 < 0) {
+		// current_rpm2 = int(current_rpm2*2.041220769); // compensate for the quicker
+	// }
 
     //the required rpm is capped at -/+ MAX_RPM to prevent the PID from having too much error
     //the PWM value sent to the motor driver is the calculated PID based on required RPM vs measured RPM
-    motor1_controller.spin(motor1_pid.compute(req_rpm.motor1, current_rpm1));
-    motor2_controller.spin(motor2_pid.compute(req_rpm.motor2, current_rpm2));
-    motor3_controller.spin(motor3_pid.compute(req_rpm.motor3, current_rpm3));  
-    motor4_controller.spin(motor4_pid.compute(req_rpm.motor4, current_rpm4));    
+    motor1_controller.spin(motor1_pid.compute(requested_current_rpm1, current_rpm1));
+    motor2_controller.spin(motor2_pid.compute(requested_current_rpm2, current_rpm2));
+    motor3_controller.spin(motor3_pid.compute(requested_current_rpm3, current_rpm3));  
+    motor4_controller.spin(motor4_pid.compute(requested_current_rpm4, current_rpm4));    
 
     Kinematics::velocities current_vel;
 
@@ -245,16 +275,52 @@ float mapFloat(float x, float in_min, float in_max, float out_min, float out_max
     return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
 
+
+int32_t  prev_read_motor1_encoder;
+int32_t  prev_read_motor2_encoder;
+int32_t  prev_read_motor3_encoder;
+int32_t  prev_read_motor4_encoder;
+
 void printDebug()
 {
-    char buffer[50];
-
-    sprintf (buffer, "Encoder FrontLeft  : %ld", motor1_encoder.read());
+    char buffer[100];
+	
+	int32_t read_motor1_encoder = motor1_encoder.read();
+	int32_t read_motor2_encoder = motor2_encoder.read();
+	int32_t read_motor3_encoder = motor3_encoder.read();
+	int32_t read_motor4_encoder = motor4_encoder.read();
+	geometry_msgs::Vector3 gyro = readGyroscope();
+	geometry_msgs::Vector3 accel = readAccelerometer();
+	
+	// Requested Speed
+	sprintf (buffer, "Required speed     : vel_x=%.2f, vel_y=%.2f, vel_z=%.2f", g_req_linear_vel_x, g_req_linear_vel_y, g_req_angular_vel_z);
     nh.loginfo(buffer);
-    sprintf (buffer, "Encoder FrontRight : %ld", motor2_encoder.read());
+	
+	// ENCODER
+    sprintf (buffer, "Encoder FrontLeft  : %ld \t diff:  %ld", read_motor1_encoder,  read_motor1_encoder - prev_read_motor1_encoder);
     nh.loginfo(buffer);
-    sprintf (buffer, "Encoder RearLeft   : %ld", motor3_encoder.read());
+	sprintf (buffer, "Encoder FrontRight : %ld \t diff:  %ld", read_motor2_encoder,  read_motor2_encoder - prev_read_motor2_encoder);
     nh.loginfo(buffer);
-    sprintf (buffer, "Encoder RearRight  : %ld", motor4_encoder.read());
+	
+	// RPMs
+	sprintf (buffer, "Encoder FrontLeft  : Requested RPM %d \t Read RPM: %d \t  diff RPM:  %d", requested_current_rpm1, current_rpm1, requested_current_rpm1 - current_rpm1);
     nh.loginfo(buffer);
+	sprintf (buffer, "Encoder FrontRight : Requested RPM %d \t Read RPM: %d \t  diff RPM:  %d", requested_current_rpm2, current_rpm2, requested_current_rpm2 - current_rpm2);
+    nh.loginfo(buffer);
+	
+	//IMU
+	sprintf (buffer, "IMU Readings Accel : a_x=%2.2f, a_y=%2.2f, a_z=%2.2f", accel.x, accel.y, accel.z);
+	nh.loginfo(buffer);
+	sprintf (buffer, "IMU Readings Gyro  : g_x=%2.2f, g_y=%2.2f, g_z=%2.2f", gyro.x, gyro.y, gyro.z);
+    nh.loginfo(buffer);
+	
+    //sprintf (buffer, "Encoder RearLeft   : %ld - RPM: %d - diff:  %ld", read_motor3_encoder, motor3_encoder.getRPM(), read_motor3_encoder - prev_read_motor3_encoder);
+    //nh.loginfo(buffer);
+    //sprintf (buffer, "Encoder RearRight  : %ld - RPM: %d - diff:  %ld", read_motor4_encoder, motor4_encoder.getRPM(), read_motor4_encoder - prev_read_motor4_encoder);
+    //nh.loginfo(buffer);
+	
+	prev_read_motor1_encoder = read_motor1_encoder;
+	prev_read_motor2_encoder = read_motor2_encoder;
+	prev_read_motor3_encoder = read_motor3_encoder;
+	prev_read_motor4_encoder = read_motor4_encoder;
 }
