@@ -1,7 +1,7 @@
 <launch>
-    <!-- IMU relay from linorobot_msgs/Imu to sensor_msgs/Imu -->
+    <!-- IMU relay from plutobot_msgs/Imu to sensor_msgs/Imu -->
     <node pkg="imu_calib" type="apply_calib" name="apply_calib" output="screen" respawn="false">
-        <param name="calib_file" value="$(find linorobot)/param/imu/imu_calib.yaml" />
+        <param name="calib_file" value="$(find plutobot)/param/imu/imu_calib.yaml" />
         <param name="calibrate_gyros" value="true" />
     </node>
 

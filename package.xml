@@ -1,15 +1,15 @@
 <?xml version="1.0.0"?>
     <package>
-    <name>linorobot</name>
-    <version>1.4.1</version>
-    <description>ROS compatible ground robots</description>
-    <maintainer email="jimenojmm@gmail.com">t</maintainer>
+    <name>plutobot</name>
+    <version>1.99.1</version>
+    <description>Pluto ground robots</description>
+    <maintainer email="lawrence.iviani@gmail.com">Lawrence Iviani</maintainer>
 
     <license>BSD</license>
 
-    <url type="website">http://www.linorobot.org</url>
+    <url type="website"></url>
 
-    <author email="jimenojmm@gmail.com">Juan Miguel Jimeno</author>
+    <author email="lawrence.iviani@gmail.com">Lawrence Iviani</author>
 
     <buildtool_depend>catkin</buildtool_depend>
     <build_depend>roscpp</build_depend>
