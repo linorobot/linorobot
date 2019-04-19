@@ -11,8 +11,8 @@ BASE="2wd" # $1
 SENSOR="SICK" # $2
 ARCH="$(uname -m)"
 WORKSPACE="pluto_ws"
-echo $ARCH
-echo $ROSDISTRO
+echo "Architecture is $ARCH"
+echo "ROS is $ROSDISTRO"
 
 if [ ! -d "$HOME/$WORKSPACE/src/" ]; then
 	cd $HOME
@@ -20,7 +20,7 @@ if [ ! -d "$HOME/$WORKSPACE/src/" ]; then
 	cd $HOME/$WORKSPACE/src
 	catkin_init_workspace
 	
-	echo "NOT INSTALLING BOT, PROBABLY I'LL FAIL, install manually linorobot or plutobot"
+	echo "NOT INSTALLING BOT, PROBABLY I'LL FAIL, install manually linorobot or plutobot and the proper branch"
 fi
 
 # echo "
@@ -124,8 +124,7 @@ if [ "$1" == "update" ]
 		ros-$ROSDISTRO-tf2 \
 		ros-$ROSDISTRO-tf2-ros 
 		echo "UPDATE FINISHED NOW...."
-		
-	
+	else
 		echo "UPDATE IGNORED...."
 fi
 # cd $HOME
@@ -212,8 +211,8 @@ for i in "${arr[@]}" # naja, tricky but very compact
 # TRAVIS_BRANCH="echo $TRAVIS_BRANCH"
 # if [ "$TRAVIS_BRANCH" = "devel" ]; then git checkout devel; fi
 
+# Checking firmware for teensy compile
 cd $HOME/$WORKSPACE/src/plutobot/teensy/firmware
-echo $PWD
 export PLATFORMIO_CI_SRC=$PWD/src/firmware.ino
 platformio ci --project-conf=./platformio.ini --lib="./lib/ros_lib" --lib="./lib/config"  --lib="./lib/motor"  --lib="./lib/kinematics"  --lib="./lib/pid"  --lib="./lib/imu" --lib="./lib/encoder"
 
