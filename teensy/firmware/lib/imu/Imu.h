@@ -10,22 +10,10 @@
 bool initIMU()
 {
     Wire.begin();
-    bool ret;
     
     accelerometer.initialize();
-    ret = accelerometer.testConnection();
-    if(!ret)
-        return false;
-
     gyroscope.initialize();
-    ret = gyroscope.testConnection();
-    if(!ret)
-        return false;
-  
     magnetometer.initialize();
-    ret = magnetometer.testConnection();
-    if(!ret)
-        return false;
 
     return true;
 }

@@ -116,7 +116,8 @@ void loop()
         //sanity check if the IMU is connected
         if (!imu_is_initialized)
         {
-            imu_is_initialized = initIMU();
+            initIMU();
+
             bool accel_ok = accelerometer.testConnection();
             bool gyro_ok = gyroscope.testConnection();
             bool mag_ok = magnetometer.testConnection();
