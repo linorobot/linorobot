@@ -46,7 +46,7 @@
     MPU9150 magnetometer;
 #endif
 
-#ifdef USE_MPU9250_IMU
+#if defined(USE_MPU9250_IMU) || defined(USE_GY91_IMU)
     #include "MPU9250.h"
 
     #define ACCEL_SCALE 1 / 16384 // LSB/g
