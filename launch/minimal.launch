@@ -11,12 +11,12 @@
     <!-- Publish Linorobot odometry -->
     <node pkg="linorobot" name="lino_base_node" type="lino_base_node"></node>
 
-    <!-- Publish static transform from base_footprint to base_link -->
-    <node pkg="tf2_ros" type="static_transform_publisher" name="base_footprint_to_base_link" args="0 0 0.098 0 0 0  /base_footprint /base_link"/>
-
     <!-- Odom-IMU Extended Kalman Filter-->
     <node pkg="robot_localization" type="ekf_localization_node" name="ekf_localization"> 
         <remap from="odometry/filtered" to="odom" />
         <rosparam command="load" file="$(find linorobot)/param/ekf/robot_localization.yaml" />
     </node>
+
+    <!-- Transforms for base_link, imu, and laser-->
+    <include file="$(find linorobot)/launch/include/tf.launch" />
 </launch>
