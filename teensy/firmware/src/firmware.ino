@@ -68,7 +68,7 @@ lino_msgs::Imu raw_imu_msg;
 ros::Publisher raw_imu_pub("raw_imu", &raw_imu_msg);
 
 lino_msgs::Velocities raw_vel_msg;
-ros::Publisher raw_vel_pub("raw_vel", &raw_vel_msg);
+ros::Publisher raw_vel_pub("/linorobot/velocities", &raw_vel_msg);
 
 void setup()
 {
