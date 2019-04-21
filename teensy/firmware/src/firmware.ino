@@ -65,7 +65,7 @@ ros::Subscriber<geometry_msgs::Twist> cmd_sub("cmd_vel", commandCallback);
 ros::Subscriber<lino_msgs::PID> pid_sub("pid", PIDCallback);
 
 lino_msgs::Imu raw_imu_msg;
-ros::Publisher raw_imu_pub("/linorobot/teensy/raw_imu", &raw_imu_msg);
+ros::Publisher raw_imu_pub("/linorobot/teensy/imu_raw", &raw_imu_msg);
 
 lino_msgs::Velocities raw_vel_msg;
 ros::Publisher raw_vel_pub("/linorobot/teensy/velocities", &raw_vel_msg);
