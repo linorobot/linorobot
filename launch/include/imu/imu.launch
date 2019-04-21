@@ -13,5 +13,8 @@
         <param name="use_magnetic_field_msg" value="true" /> 
         <param name="world_frame" value="enu" />
         <param name="orientation_stddev" value="0.05" />
+        <remap from="imu/data_raw" to="/linorobot/imu/data_raw"/>
+        <remap from="imu/mag" to="/linorobot/imu/mag"/>
+        <remap from="imu/data" to="/linorobot/imu/data"/>
     </node>
 </launch>
