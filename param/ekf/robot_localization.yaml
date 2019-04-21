@@ -9,7 +9,7 @@ diagnostics_agg: true
 #vroll , vpitch, vyaw,
 #ax    , ay    , az
 
-odom0: /raw_odom
+odom0: /linorobot/odom
 odom0_config: [false, false, false,
                false, false, false,
                true, true, false,
