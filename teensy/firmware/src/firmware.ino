@@ -95,7 +95,7 @@ void loop()
     static unsigned long prev_control_time = 0;
     static unsigned long prev_imu_time = 0;
     static unsigned long prev_debug_time = 0;
-    static bool imu_is_initialized;
+    static bool imu_is_initialized = false;
 
     //this block drives the robot based on defined rate
     if ((millis() - prev_control_time) >= (1000 / COMMAND_RATE))
@@ -116,20 +116,22 @@ void loop()
         //sanity check if the IMU is connected
         if (!imu_is_initialized)
         {
-            imu_is_initialized = initIMU();
-
+            bool accel_ok = accelerometer.testConnection();
+            bool gyro_ok = gyroscope.testConnection();
+            bool mag_ok = magnetometer.testConnection();
             char buffer[50];
-            sprintf(buffer, "=== ACCELEROMETER === %d", accelerometer.testConnection());
+
+            sprintf(buffer, "=== ACCELEROMETER === %d", accel_ok);
             nh.loginfo(buffer);
 
-            sprintf(buffer, "=== GYROSCOPE === %d", gyroscope.testConnection());
+            sprintf(buffer, "=== GYROSCOPE === %d", gyro_ok);
             nh.loginfo(buffer);
 
-            sprintf(buffer, "=== MAGNETOMETER === %d", magnetometer.testConnection());
+            sprintf(buffer, "=== MAGNETOMETER === %d", mag_ok);
             nh.loginfo(buffer);
 
-            if(imu_is_initialized)
-                nh.loginfo("IMU Initialized");
+            if(accel_ok && gyro_ok && mag_ok)
+                imu_is_initialized = true;
             else
                 nh.logfatal("IMU failed to initialize. Check your IMU connection.");
         }
