@@ -116,18 +116,19 @@ void loop()
         //sanity check if the IMU is connected
         if (!imu_is_initialized)
         {
+            imu_is_initialized = initIMU();
             bool accel_ok = accelerometer.testConnection();
             bool gyro_ok = gyroscope.testConnection();
             bool mag_ok = magnetometer.testConnection();
             char buffer[50];
 
-            sprintf(buffer, "=== ACCELEROMETER === %d", accel_ok);
+            sprintf(buffer, "ACCELEROMETER : %s", accel_ok ? "OK":"FAIL");
             nh.loginfo(buffer);
 
-            sprintf(buffer, "=== GYROSCOPE === %d", gyro_ok);
+            sprintf(buffer, "GYROSCOPE     : %s", gyro_ok ? "OK":"FAIL");
             nh.loginfo(buffer);
 
-            sprintf(buffer, "=== MAGNETOMETER === %d", mag_ok);
+            sprintf(buffer, "MAGNETOMETER  : %s", mag_ok ? "OK":"FAIL");
             nh.loginfo(buffer);
 
             if(accel_ok && gyro_ok && mag_ok)
