@@ -38,21 +38,6 @@ void LinoBase::velCallback(const lino_msgs::Velocities& vel)
     //ROS has a function to calculate yaw in quaternion angle
     odom_quat.setRPY(0,0,heading_);
 
-    odom_trans.header.frame_id = "odom";
-    odom_trans.child_frame_id = "base_footprint";
-    //robot's position in x,y, and z
-    odom_trans.transform.translation.x = x_pos_;
-    odom_trans.transform.translation.y = y_pos_;
-    odom_trans.transform.translation.z = 0.0;
-    //robot's heading in quaternion
-    odom_trans.transform.rotation.x = odom_quat.x();
-    odom_trans.transform.rotation.y = odom_quat.y();
-    odom_trans.transform.rotation.z = odom_quat.z();
-    odom_trans.transform.rotation.w = odom_quat.w();
-    odom_trans.header.stamp = current_time;
-    //publish robot's tf using odom_trans object
-    //odom_broadcaster_.sendTransform(odom_trans);
-
     odom.header.stamp = current_time;
     odom.header.frame_id = "odom";
     odom.child_frame_id = "base_footprint";
