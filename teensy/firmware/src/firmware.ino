@@ -35,17 +35,24 @@ Encoder motor2_encoder(MOTOR2_ENCODER_A, MOTOR2_ENCODER_B, COUNTS_PER_REV);
 Encoder motor3_encoder(MOTOR3_ENCODER_A, MOTOR3_ENCODER_B, COUNTS_PER_REV); 
 Encoder motor4_encoder(MOTOR4_ENCODER_A, MOTOR4_ENCODER_B, COUNTS_PER_REV); 
 
+// as defined in Kinematics.h --->>> {DIFFERENTIAL_DRIVE, SKID_STEER, ACKERMANN, ACKERMANN1, MECANUM};
+#if LINO_BASE==2 || LINO_BASE==3
 Servo steering_servo;
+#endif
 
 Controller motor1_controller(Controller::MOTOR_DRIVER, MOTOR1_PWM, MOTOR1_IN_A, MOTOR1_IN_B);
 Controller motor2_controller(Controller::MOTOR_DRIVER, MOTOR2_PWM, MOTOR2_IN_A, MOTOR2_IN_B); 
+#if LINO_BASE==1 // as defined in Kinematics.h --->>> {DIFFERENTIAL_DRIVE, SKID_STEER, ACKERMANN, ACKERMANN1, MECANUM};
 Controller motor3_controller(Controller::MOTOR_DRIVER, MOTOR3_PWM, MOTOR3_IN_A, MOTOR3_IN_B);
 Controller motor4_controller(Controller::MOTOR_DRIVER, MOTOR4_PWM, MOTOR4_IN_A, MOTOR4_IN_B);
+#endif
 
 PID motor1_pid(PWM_MIN, PWM_MAX, K_P, K_I, K_D);
 PID motor2_pid(PWM_MIN, PWM_MAX, K_P, K_I, K_D);
+#if LINO_BASE==1
 PID motor3_pid(PWM_MIN, PWM_MAX, K_P, K_I, K_D);
 PID motor4_pid(PWM_MIN, PWM_MAX, K_P, K_I, K_D);
+#endif
 
 Kinematics kinematics(Kinematics::LINO_BASE, MAX_RPM, WHEEL_DIAMETER, FR_WHEELS_DISTANCE, LR_WHEELS_DISTANCE);
 
@@ -72,9 +79,12 @@ ros::Publisher raw_vel_pub("raw_vel", &raw_vel_msg);
 
 void setup()
 {
+// as defined in Kinematics.h --->>> {DIFFERENTIAL_DRIVE, SKID_STEER, ACKERMANN, ACKERMANN1, MECANUM};
+#if LINO_BASE==2 || LINO_BASE==3
     steering_servo.attach(STEERING_PIN);
     steering_servo.write(90); 
-    
+#endif
+
     nh.initNode();
     nh.getHardware()->setBaud(57600);
     nh.subscribe(pid_sub);
@@ -88,6 +98,16 @@ void setup()
     }
     nh.loginfo("LINOBASE CONNECTED");
     delay(1);
+// as defined in Kinematics.h --->>> {DIFFERENTIAL_DRIVE, SKID_STEER, ACKERMANN, ACKERMANN1, MECANUM};
+	#if LINO_BASE==0
+		nh.loginfo("LINOBASE configured as DIFFERENTIAL_DRIVE (2WD)");
+	#elif LINO_BASE==1
+		nh.loginfo("LINOBASE configured as SKID_STEER (4WD)");
+	#elif LINO_BASE==2 || LINO_BASE==3
+		nh.loginfo("LINOBASE configured as ACKERMANN");
+	#else
+		nh.loginfo("LINOBASE UNKNOWN configuration"); //TODO: MECCANO
+	#endif
 }
 
 void loop()
@@ -149,8 +169,11 @@ void PIDCallback(const lino_msgs::PID& pid)
     //this callback receives pid object where P,I, and D constants are stored
     motor1_pid.updateConstants(pid.p, pid.i, pid.d);
     motor2_pid.updateConstants(pid.p, pid.i, pid.d);
+// as defined in Kinematics.h --->>> {DIFFERENTIAL_DRIVE, SKID_STEER, ACKERMANN, ACKERMANN1, MECANUM};
+#if LINO_BASE==1
     motor3_pid.updateConstants(pid.p, pid.i, pid.d);
     motor4_pid.updateConstants(pid.p, pid.i, pid.d);
+#endif
 }
 
 void commandCallback(const geometry_msgs::Twist& cmd_msg)
@@ -168,12 +191,15 @@ void commandCallback(const geometry_msgs::Twist& cmd_msg)
 // Using current RPM as global variables. For debugging
 int current_rpm1;
 int current_rpm2;
-int current_rpm3;
-int current_rpm4;
 int requested_current_rpm1;
 int requested_current_rpm2;
+// as defined in Kinematics.h --->>> {DIFFERENTIAL_DRIVE, SKID_STEER, ACKERMANN, ACKERMANN1, MECANUM};
+#if LINO_BASE==1
+int current_rpm3;
+int current_rpm4;
 int requested_current_rpm3;
 int requested_current_rpm4;
+#endif
 
 void moveBase()
 {
@@ -185,46 +211,41 @@ void moveBase()
 	//current_rpm1 = motor1_encoder.getRPM();	
 	current_rpm1 = -motor1_encoder.getRPM();	
 	current_rpm2 = motor2_encoder.getRPM();
-	current_rpm3 = motor3_encoder.getRPM();
-    current_rpm4 = motor4_encoder.getRPM();
 	requested_current_rpm1 = req_rpm.motor1;
 	requested_current_rpm2 = req_rpm.motor2;
+#if LINO_BASE==1
+	current_rpm3 = motor3_encoder.getRPM();
+    current_rpm4 = motor4_encoder.getRPM();
 	requested_current_rpm3 = req_rpm.motor3;
 	requested_current_rpm4 = req_rpm.motor4;
-	
-	// // HW FIX: 20190224
-	// // Compensate for some different readings between sensors... This is a very hard fix...
-	// // Claim to be verified
-	// // Based on rotation sense has a different beahvior apparently
-	// // If IMU calibration is reperformed, constant needs to be recalculated (count the number of ticks per turn of every wheel and optimize)
-	// if (current_rpm1 > 0) {
-		// current_rpm1 = int(current_rpm1*1.107562218); // It seems my sensor needs to be compensated. TODO: check if changing the sensor/Motor the situation improves
-	// }
-	// // Situation change when going backward... mmmm
-	// if (current_rpm2 < 0) {
-		// current_rpm2 = int(current_rpm2*2.041220769); // compensate for the quicker
-	// }
+#endif
 
     //the required rpm is capped at -/+ MAX_RPM to prevent the PID from having too much error
     //the PWM value sent to the motor driver is the calculated PID based on required RPM vs measured RPM
     motor1_controller.spin(motor1_pid.compute(requested_current_rpm1, current_rpm1));
     motor2_controller.spin(motor2_pid.compute(requested_current_rpm2, current_rpm2));
+#if LINO_BASE==1
     motor3_controller.spin(motor3_pid.compute(requested_current_rpm3, current_rpm3));  
     motor4_controller.spin(motor4_pid.compute(requested_current_rpm4, current_rpm4));    
-
+#endif
+	
     Kinematics::velocities current_vel;
-
-    if(kinematics.base_platform == Kinematics::ACKERMANN || kinematics.base_platform == Kinematics::ACKERMANN1)
-    {
-        float current_steering_angle;
-        
-        current_steering_angle = steer(g_req_angular_vel_z);
-        current_vel = kinematics.getVelocities(current_steering_angle, current_rpm1, current_rpm2);
-    }
-    else
-    {
-        current_vel = kinematics.getVelocities(current_rpm1, current_rpm2, current_rpm3, current_rpm4);
-    }
+	
+// as defined in Kinematics.h --->>> {DIFFERENTIAL_DRIVE, SKID_STEER, ACKERMANN, ACKERMANN1, MECANUM};
+#if LINO_BASE==2 || LINO_BASE==3
+	// NEVER TESTED!!
+	// ACKERMANN
+       float current_steering_angle;
+       current_steering_angle = steer(g_req_angular_vel_z);
+       current_vel = kinematics.getVelocities(current_steering_angle, current_rpm1, current_rpm2);
+#elif LINO_BASE==1
+	//4WD CASE
+		current_vel = kinematics.getVelocities(current_rpm1, current_rpm2, current_rpm3,current_rpm4);
+#else
+	//2WD CASE
+		current_vel = kinematics.getVelocities(current_rpm1, current_rpm2, 0,0);// Motor 3 and 4 are not considered in this kinematics, TODO: function should be overloaded in kinematics!
+#endif
+//	TODO: MECCANO IS MISSING
     
     //pass velocities to publisher object
     raw_vel_msg.linear_x = current_vel.linear_x;
@@ -256,7 +277,8 @@ void publishIMU()
     //publish raw_imu_msg
     raw_imu_pub.publish(&raw_imu_msg);
 }
-
+// as defined in Kinematics.h --->>> {DIFFERENTIAL_DRIVE, SKID_STEER, ACKERMANN, ACKERMANN1, MECANUM};
+#if LINO_BASE==2 || LINO_BASE==3
 float steer(float steering_angle)
 {
     //steering function for ACKERMANN base
@@ -269,17 +291,20 @@ float steer(float steering_angle)
 
     return steering_angle;
 }
+#endif
 
 float mapFloat(float x, float in_min, float in_max, float out_min, float out_max)
 {
     return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
 
-
 int32_t  prev_read_motor1_encoder;
 int32_t  prev_read_motor2_encoder;
+
+#if LINO_BASE==1
 int32_t  prev_read_motor3_encoder;
 int32_t  prev_read_motor4_encoder;
+#endif
 
 void printDebug()
 {
@@ -287,8 +312,8 @@ void printDebug()
 	
 	int32_t read_motor1_encoder = motor1_encoder.read();
 	int32_t read_motor2_encoder = motor2_encoder.read();
-	int32_t read_motor3_encoder = motor3_encoder.read();
-	int32_t read_motor4_encoder = motor4_encoder.read();
+	//int32_t read_motor3_encoder = motor3_encoder.read();
+	//int32_t read_motor4_encoder = motor4_encoder.read();
 	geometry_msgs::Vector3 gyro = readGyroscope();
 	geometry_msgs::Vector3 accel = readAccelerometer();
 	
@@ -321,6 +346,8 @@ void printDebug()
 	
 	prev_read_motor1_encoder = read_motor1_encoder;
 	prev_read_motor2_encoder = read_motor2_encoder;
-	prev_read_motor3_encoder = read_motor3_encoder;
-	prev_read_motor4_encoder = read_motor4_encoder;
+
+//	prev_read_motor3_encoder = read_motor3_encoder;
+//	prev_read_motor4_encoder = read_motor4_encoder;
+
 }

@@ -9,25 +9,25 @@
 // #define LINO_BASE MECANUM         // Mecanum drive robot
 
 //uncomment the motor driver you're using
-#define USE_L298_DRIVER
+//#define USE_L298_DRIVER
 // #define USE_BTS7960_DRIVER
-// #define USE_ESC
+#define USE_ESC
 
 //uncomment the IMU you're using
-#define USE_GY85_IMU
-// #define USE_MPU6050_IMU
+// #define USE_GY85_IMU
+#define USE_MPU6050_IMU
 // #define USE_MPU9150_IMU
 // #define USE_MPU9250_IMU
 
 #define DEBUG 1
 
 #define K_P 0.6 // P constant
-#define K_I 0.3 // I constant
+#define K_I 0.001 // I constant
 #define K_D 0.5 // D constant
 
 //define your robot' specs here
 #define MAX_RPM 330               // motor's maximum RPM
-#define COUNTS_PER_REV 1550       // wheel encoder's no of ticks per rev
+#define COUNTS_PER_REV 1	      // wheel encoder's no of ticks per rev
 #define WHEEL_DIAMETER 0.10       // wheel's diameter in meters
 #define PWM_BITS 8                // PWM Resolution of the microcontroller
 #define LR_WHEELS_DISTANCE 0.235  // distance between left and right wheels

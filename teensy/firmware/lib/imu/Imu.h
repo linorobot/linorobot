@@ -7,7 +7,7 @@
 #include <Wire.h>
 #include "geometry_msgs/Vector3.h"
 
-bool initIMU()
+int initIMU()
 {
     Wire.begin();
     bool ret;
@@ -15,19 +15,19 @@ bool initIMU()
     accelerometer.initialize();
     ret = accelerometer.testConnection();
     if(!ret)
-        return false;
+        return -1;
 
     gyroscope.initialize();
     ret = gyroscope.testConnection();
     if(!ret)
-        return false;
+        return -2;
   
     magnetometer.initialize();
     ret = magnetometer.testConnection();
     if(!ret)
-        return false;
+        return -3;
 
-    return true;
+    return 1;
 }
 
 geometry_msgs::Vector3 readAccelerometer()
