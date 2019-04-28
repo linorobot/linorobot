@@ -24,21 +24,50 @@
 #include "Imu.h"
 
 #define ENCODER_OPTIMIZE_INTERRUPTS // comment this out on Non-Teensy boards
-#include "Encoder.h"
 
-#define IMU_PUBLISH_RATE 20 //hz
-#define COMMAND_RATE 20 //hz
+
+#define IMU_PUBLISH_RATE 10 //hz
+#define COMMAND_RATE 4 //hz Number of time per second the velocity command is parsed. Used to filter out too many command to the ESC
 #define DEBUG_RATE 5
 
+#ifdef USE_ESC // Assuming using ESC uses needs to extract the RPM in the 
+#include "Encoder_BLDC.h"
+//Setup a pointer for the encoders needed, this has to be init with proper pins in the setup
+Encoder_BLDC motor1_encoder(MOTOR1_ENCODER_A, MOTOR1_ENCODER_B, MOTOR1_ENCODER_C, COUNTS_PER_REV);
+Encoder_BLDC motor2_encoder(MOTOR2_ENCODER_A, MOTOR2_ENCODER_B, MOTOR2_ENCODER_C, COUNTS_PER_REV);
+
+//Encapsulate a call for any interrupts to the relative encoder class, this has to be asssociated in the setup
+void enc1InterruptHandler_A(void) { motor1_encoder.handleInterrupt_U(); }
+void enc1InterruptHandler_B(void) { motor1_encoder.handleInterrupt_V(); }
+void enc1InterruptHandler_C(void) { motor1_encoder.handleInterrupt_W(); }
+void enc2InterruptHandler_A(void) { motor2_encoder.handleInterrupt_U(); }
+void enc2InterruptHandler_B(void) { motor2_encoder.handleInterrupt_V(); }
+void enc2InterruptHandler_C(void) { motor2_encoder.handleInterrupt_W(); }
+
+#if LINO_BASE==1 // as defined in Kinematics.h --->>> {DIFFERENTIAL_DRIVE, SKID_STEER, ACKERMANN, ACKERMANN1, MECANUM};
+Encoder_BLDC motor3_encoder(MOTOR3_ENCODER_A, MOTOR3_ENCODER_B,MOTOR4_ENCODER_C, COUNTS_PER_REV);
+Encoder_BLDC motor4_encoder(MOTOR4_ENCODER_A, MOTOR4_ENCODER_B,MOTOR4_ENCODER_C, COUNTS_PER_REV);
+void enc3InterruptHandler_A(void) { motor3_encoder.handleInterrupt_U(); }
+void enc3InterruptHandler_B(void) { motor3_encoder.handleInterrupt_V(); }
+void enc3InterruptHandler_C(void) { motor3_encoder.handleInterrupt_W(); }
+void enc4InterruptHandler_A(void) { motor4_encoder.handleInterrupt_U(); }
+void enc4InterruptHandler_B(void) { motor4_encoder.handleInterrupt_V(); }
+void enc4InterruptHandler_C(void) { motor4_encoder.handleInterrupt_W(); }
+
+#endif //LINO_BASE
+#else
+#include "Encoder.h"
 Encoder motor1_encoder(MOTOR1_ENCODER_A, MOTOR1_ENCODER_B, COUNTS_PER_REV);
 Encoder motor2_encoder(MOTOR2_ENCODER_A, MOTOR2_ENCODER_B, COUNTS_PER_REV); 
+#if LINO_BASE==1 // as defined in Kinematics.h --->>> {DIFFERENTIAL_DRIVE, SKID_STEER, ACKERMANN, ACKERMANN1, MECANUM};
 Encoder motor3_encoder(MOTOR3_ENCODER_A, MOTOR3_ENCODER_B, COUNTS_PER_REV); 
 Encoder motor4_encoder(MOTOR4_ENCODER_A, MOTOR4_ENCODER_B, COUNTS_PER_REV); 
-
+#endif //LINO_BASE
+#endif//USE_ESC
 // as defined in Kinematics.h --->>> {DIFFERENTIAL_DRIVE, SKID_STEER, ACKERMANN, ACKERMANN1, MECANUM};
 #if LINO_BASE==2 || LINO_BASE==3
 Servo steering_servo;
-#endif
+#endif 
 
 Controller motor1_controller(Controller::MOTOR_DRIVER, MOTOR1_PWM, MOTOR1_IN_A, MOTOR1_IN_B);
 Controller motor2_controller(Controller::MOTOR_DRIVER, MOTOR2_PWM, MOTOR2_IN_A, MOTOR2_IN_B); 
@@ -92,6 +121,24 @@ void setup()
     nh.advertise(raw_vel_pub);
     nh.advertise(raw_imu_pub);
 
+// Init encoder
+#ifdef USE_ESC
+	motor1_encoder.setupInterruptHandler(MOTOR1_ENCODER_A, enc1InterruptHandler_A, CHANGE);
+	motor1_encoder.setupInterruptHandler(MOTOR1_ENCODER_B, enc1InterruptHandler_B, CHANGE);
+	motor1_encoder.setupInterruptHandler(MOTOR1_ENCODER_C, enc1InterruptHandler_C, CHANGE);
+	motor2_encoder.setupInterruptHandler(MOTOR2_ENCODER_A, enc2InterruptHandler_A, CHANGE);
+	motor2_encoder.setupInterruptHandler(MOTOR2_ENCODER_B, enc2InterruptHandler_B, CHANGE);
+	motor2_encoder.setupInterruptHandler(MOTOR2_ENCODER_C, enc2InterruptHandler_C, CHANGE);
+#if LINO_BASE==1 // as defined in Kinematics.h --->>> {DIFFERENTIAL_DRIVE, SKID_STEER, ACKERMANN, ACKERMANN1, MECANUM};
+	motor3_encoder.setupInterruptHandler(MOTOR3_ENCODER_A, enc1InterruptHandler_A, CHANGE);
+	motor3_encoder.setupInterruptHandler(MOTOR3_ENCODER_B, enc1InterruptHandler_B, CHANGE);
+	motor3_encoder.setupInterruptHandler(MOTOR3_ENCODER_C, enc1InterruptHandler_C, CHANGE);
+	motor4_encoder.setupInterruptHandler(MOTOR4_ENCODER_A, enc2InterruptHandler_A, CHANGE);
+	motor4_encoder.setupInterruptHandler(MOTOR4_ENCODER_B, enc2InterruptHandler_B, CHANGE);
+	motor4_encoder.setupInterruptHandler(MOTOR4_ENCODER_C, enc2InterruptHandler_C, CHANGE);
+#endif
+#endif	
+	
     while (!nh.connected())
     {
         nh.spinOnce();
@@ -193,12 +240,16 @@ int current_rpm1;
 int current_rpm2;
 int requested_current_rpm1;
 int requested_current_rpm2;
+int computed_pwm_1;
+int computed_pwm_2;
 // as defined in Kinematics.h --->>> {DIFFERENTIAL_DRIVE, SKID_STEER, ACKERMANN, ACKERMANN1, MECANUM};
 #if LINO_BASE==1
 int current_rpm3;
 int current_rpm4;
 int requested_current_rpm3;
 int requested_current_rpm4;
+int computed_pwm_3;
+int computed_pwm_4;
 #endif
 
 void moveBase()
@@ -209,8 +260,8 @@ void moveBase()
     //get the current speed of each motor and the requested. These are saved in a variable for debugging purposes
 	// TEST 20190323, changed motor but is seems the rotation must sensing has to be reversed
 	//current_rpm1 = motor1_encoder.getRPM();	
-	current_rpm1 = -motor1_encoder.getRPM();	
-	current_rpm2 = motor2_encoder.getRPM();
+	current_rpm1 = motor1_encoder.getRPM();	
+	current_rpm2 = -motor2_encoder.getRPM();
 	requested_current_rpm1 = req_rpm.motor1;
 	requested_current_rpm2 = req_rpm.motor2;
 #if LINO_BASE==1
@@ -222,11 +273,15 @@ void moveBase()
 
     //the required rpm is capped at -/+ MAX_RPM to prevent the PID from having too much error
     //the PWM value sent to the motor driver is the calculated PID based on required RPM vs measured RPM
-    motor1_controller.spin(motor1_pid.compute(requested_current_rpm1, current_rpm1));
-    motor2_controller.spin(motor2_pid.compute(requested_current_rpm2, current_rpm2));
+	computed_pwm_1 = motor1_pid.compute(requested_current_rpm1, current_rpm1);
+	computed_pwm_2 = -motor2_pid.compute(requested_current_rpm2, -current_rpm2);
+	motor1_controller.spin(computed_pwm_1);
+    motor2_controller.spin(computed_pwm_2);
 #if LINO_BASE==1
     motor3_controller.spin(motor3_pid.compute(requested_current_rpm3, current_rpm3));  
     motor4_controller.spin(motor4_pid.compute(requested_current_rpm4, current_rpm4));    
+	motor3_controller.spin(computed_pwm_3);
+    motor4_controller.spin(computed_pwm_4);
 #endif
 	
     Kinematics::velocities current_vel;
@@ -300,7 +355,8 @@ float mapFloat(float x, float in_min, float in_max, float out_min, float out_max
 
 int32_t  prev_read_motor1_encoder;
 int32_t  prev_read_motor2_encoder;
-
+int32_t read_motor1_encoder;
+int32_t read_motor2_encoder;
 #if LINO_BASE==1
 int32_t  prev_read_motor3_encoder;
 int32_t  prev_read_motor4_encoder;
@@ -308,17 +364,31 @@ int32_t  prev_read_motor4_encoder;
 
 void printDebug()
 {
-    char buffer[100];
+    static char buffer[150];
 	
-	int32_t read_motor1_encoder = motor1_encoder.read();
-	int32_t read_motor2_encoder = motor2_encoder.read();
+	read_motor1_encoder = motor1_encoder.read();
+	read_motor2_encoder = motor2_encoder.read();
+	
 	//int32_t read_motor3_encoder = motor3_encoder.read();
 	//int32_t read_motor4_encoder = motor4_encoder.read();
-	geometry_msgs::Vector3 gyro = readGyroscope();
-	geometry_msgs::Vector3 accel = readAccelerometer();
+	static geometry_msgs::Vector3 gyro = readGyroscope();
+	static geometry_msgs::Vector3 accel = readAccelerometer();
+// #ifdef USE_ESC
+	// static float* read_timing1 = motor1_encoder.read_timing();
+	// static float* read_timing2 = motor2_encoder.read_timing();
+	//// Timing Sensors
+	// sprintf (buffer, "Timing sensor 1    : avg=%.4f, U=%.4f, V=%.4f, W=%.4f", read_timing1[0], read_timing1[1], read_timing1[2], read_timing1[3]);
+	// nh.loginfo(buffer);
+	// sprintf (buffer, "Timing sensor 2    : avg=%.4f, U=%.4f, V=%.4f, W=%.4f", read_timing2[0], read_timing2[1], read_timing2[2], read_timing2[3]);
+    // nh.loginfo(buffer);
+// #endif	
 	
 	// Requested Speed
 	sprintf (buffer, "Required speed     : vel_x=%.2f, vel_y=%.2f, vel_z=%.2f", g_req_linear_vel_x, g_req_linear_vel_y, g_req_angular_vel_z);
+    nh.loginfo(buffer);
+	
+	// PWM generated
+	sprintf (buffer, "Calucated PWM speed : PWM_FL=%d, PWM_FR=%d", computed_pwm_1, computed_pwm_2);
     nh.loginfo(buffer);
 	
 	// ENCODER
