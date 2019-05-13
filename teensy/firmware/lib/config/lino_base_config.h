@@ -21,9 +21,12 @@
 
 #define DEBUG 1
 
+// #define K_P 0.6 // P constant
+// #define K_I 0.0 // I constant
+// #define K_D 0.0 // D constant
 #define K_P 0.6 // P constant
-#define K_I 0.0 // I constant
-#define K_D 0.0 // D constant
+#define K_I 0.0001 // I constant
+#define K_D 0.9 // D constant
 
 //define your robot' specs here
 #define MAX_RPM 2000               // motor's maximum RPM
@@ -33,6 +36,9 @@
 #define LR_WHEELS_DISTANCE 0.235  // distance between left and right wheels
 #define FR_WHEELS_DISTANCE 0.30   // distance between front and rear wheels. Ignore this if you're on 2WD/ACKERMANN
 #define MAX_STEERING_ANGLE 0.415  // max steering angle. This only applies to Ackermann steering
+
+//Added for ESC only, see in motor.h
+//#define NEUTRAL_BAND_WAIT_MS_PER_PWM 3 //Find by approximation, the time must spend the ESC in neutral to invert the direction, change in motor.h 
 
 //=================BIGGER ROBOT SPEC (BTS7960)=============================
 // #define K_P 0.05  // P constant
@@ -62,8 +68,8 @@ ROBOT ORIENTATION
 #define MOTOR1_ENCODER_B 14 
 #define MOTOR1_ENCODER_C 20 
 
-#define MOTOR2_ENCODER_A 11
-#define MOTOR2_ENCODER_B 10 
+#define MOTOR2_ENCODER_A 10//11
+#define MOTOR2_ENCODER_B 11//10 
 #define MOTOR2_ENCODER_C 6 
 
 #define MOTOR3_ENCODER_A 17
@@ -157,6 +163,8 @@ ROBOT ORIENTATION
 
   #define PWM_MAX 400
   #define PWM_MIN -PWM_MAX
+  #define PWM_MIN_THRESHOLD 20 	  // The minimum threshold for pwm in brushless control. An offset for the 0 to PWM MAX
+
 #endif
 
 #define STEERING_PIN 7

@@ -4,7 +4,8 @@ Controller::Controller(driver motor_driver, int pwm_pin, int motor_pinA, int mot
     motor_driver_(motor_driver),
     pwm_pin_(pwm_pin),
     motor_pinA_(motor_pinA),
-    motor_pinB_(motor_pinB)
+    motor_pinB_(motor_pinB),
+	prev_pwm_(0)
 {
     switch (motor_driver)
     {
@@ -38,8 +39,10 @@ Controller::Controller(driver motor_driver, int pwm_pin, int motor_pinA, int mot
     }
 }
 
-void Controller::spin(int pwm)
+int Controller::spin(int pwm)
 {
+	// return 0 if value is set, othwerwise a delay that has to be waited to re-set the value
+	int waitms = 0;
     switch (motor_driver_)
     {
         case L298:
@@ -54,7 +57,6 @@ void Controller::spin(int pwm)
                 digitalWrite(motor_pinB_, HIGH);
             }
             analogWrite(pwm_pin_, abs(pwm));
-
             break;
 
         case BTS7960:
@@ -73,12 +75,20 @@ void Controller::spin(int pwm)
                 analogWrite(motor_pinB_, 0);
                 analogWrite(motor_pinA_, 0);
             }
-
             break;
-        
+    
         case ESC:
-            motor_.writeMicroseconds(1500 + pwm);
-
+			// Check if the PWM must be reversed
+			if (pwm*this->prev_pwm_ < 0) { // sign change
+				waitms = abs(pwm-prev_pwm_) * NEUTRAL_BAND_WAIT_MS_PER_PWM; // TODO: Hardcoded for now, my undestanding is the difference in the pwm should stay in dead band of the ESC
+				pwm = 0;
+				motor_.writeMicroseconds(1500) ;
+			} else {
+				motor_.writeMicroseconds(1500 + pwm);
+			}
+			
             break;
     }
+	this->prev_pwm_ = pwm;
+	return waitms;
 }
