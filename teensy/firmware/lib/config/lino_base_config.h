@@ -19,7 +19,7 @@
 // #define USE_MPU9150_IMU
 // #define USE_MPU9250_IMU
 
-#define DEBUG 1
+#define DEBUG 0
 
 // #define K_P 0.6 // P constant
 // #define K_I 0.0 // I constant
@@ -30,7 +30,7 @@
 
 //define your robot' specs here
 #define MAX_RPM 2000               // motor's maximum RPM
-#define COUNTS_PER_REV 900 		  // wheel encoder's no of ticks per rev (e.g motors for one rotation should be 6, then multiplz for the number of the ration e.g 1:6 is 36 counts per rev???)
+#define COUNTS_PER_REV 900		  // wheel encoder's no of ticks per rev (e.g motors for one rotation should be 6, then multiplz for the number of the ration e.g 1:6 is 36 counts per rev???)
 #define WHEEL_DIAMETER 0.20       // wheel's diameter in meters
 #define PWM_BITS 8                // PWM Resolution of the microcontroller
 #define LR_WHEELS_DISTANCE 0.235  // distance between left and right wheels
@@ -161,7 +161,7 @@ ROBOT ORIENTATION
   #define MOTOR4_IN_A 4
   #define MOTOR4_IN_B 3 // Not use in case of ESC. Only for compatibility, PIN is reused for ENCODER!!
 
-  #define PWM_MAX 400
+  #define PWM_MAX 400   //Set lower PWM for better control (read as: avoid lost of control)
   #define PWM_MIN -PWM_MAX
   #define PWM_MIN_THRESHOLD 20 	  // The minimum threshold for pwm in brushless control. An offset for the 0 to PWM MAX
 

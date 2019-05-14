@@ -26,9 +26,9 @@
 #define ENCODER_OPTIMIZE_INTERRUPTS // comment this out on Non-Teensy boards
 
 
-#define IMU_PUBLISH_RATE 10 //hz
-#define COMMAND_RATE 10 //hz Number of time per second the velocity command is parsed. Used to filter out too many command to the ESC
-#define DEBUG_RATE 15
+#define IMU_PUBLISH_RATE 5 //hz
+#define COMMAND_RATE 5 //hz Number of time per second the velocity command is parsed. Used to filter out too many command to the ESC
+#define DEBUG_RATE 5 // mess per second
 
 #ifdef USE_ESC // Assuming using ESC uses needs to extract the RPM in the 
 #include "Encoder_BLDC.h"
@@ -268,10 +268,9 @@ void moveBase()
     Kinematics::rpm req_rpm = kinematics.getRPM(g_req_linear_vel_x, g_req_linear_vel_y, g_req_angular_vel_z);
 
     //get the current speed of each motor and the requested. These are saved in a variable for debugging purposes
-	// TEST 20190323, changed motor but is seems the rotation must sensing has to be reversed
-	//current_rpm1 = motor1_encoder.getRPM();	
+	// One motor is mounted inverted, motor 2 in this case	
 	current_rpm1 = motor1_encoder.getRPM();	
-	current_rpm2 = -motor2_encoder.getRPM();
+	current_rpm2 = -motor2_encoder.getRPM(); // The motor is rotating inverted
 	requested_current_rpm1 = req_rpm.motor1;
 	requested_current_rpm2 = req_rpm.motor2;
 #if LINO_BASE==1
@@ -283,7 +282,7 @@ void moveBase()
     //the required rpm is capped at -/+ MAX_RPM to prevent the PID from having too much error
     //the PWM value sent to the motor driver is the calculated PID based on required RPM vs measured RPM
 	computed_pwm_1 = motor1_pid.compute(requested_current_rpm1, current_rpm1);
-	computed_pwm_2 = motor2_pid.compute(-requested_current_rpm2, -current_rpm2);
+	computed_pwm_2 = motor2_pid.compute(-requested_current_rpm2, -current_rpm2); // The motor 2 must rotate inverted
 #ifdef USE_ESC
 	applied_pwm_motor1 = mapESC_PWM(computed_pwm_1); // needed to map an eventual min PWM 
 	applied_pwm_motor2 = mapESC_PWM(computed_pwm_2);
@@ -294,7 +293,7 @@ void moveBase()
     delay_btw_spin_motor_3 = motor3_controller.spin(motor3_pid.compute(requested_current_rpm3, current_rpm3));  
     delay_btw_spin_motor_4 = motor4_controller.spin(motor4_pid.compute(requested_current_rpm4, current_rpm4));    
 #endif
-	// if some of the spin has to go to 0 wait until it has finished. Should all the spin set to 0 and then set again?
+	// if some of the spin has to go to 0 wait until it has finished. Should all the spin set to 0 and then set again
 	wait_delay = max(delay_btw_spin_motor_1, max(delay_btw_spin_motor_2, max(delay_btw_spin_motor_3, delay_btw_spin_motor_4)));
 	if (wait_delay) {
 		motor1_controller.spin(0);

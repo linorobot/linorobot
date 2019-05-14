@@ -78,7 +78,7 @@ int Controller::spin(int pwm)
             break;
     
         case ESC:
-			// Check if the PWM must be reversed
+			// Check if the PWM must be reversed. Set to 0 as needed
 			if (pwm*this->prev_pwm_ < 0) { // sign change
 				waitms = abs(pwm-prev_pwm_) * NEUTRAL_BAND_WAIT_MS_PER_PWM; // TODO: Hardcoded for now, my undestanding is the difference in the pwm should stay in dead band of the ESC
 				pwm = 0;
