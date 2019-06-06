@@ -71,7 +71,7 @@ void setup() {
   // Init Serial
   Serial.begin(SERIAL_BAUD);
   // Initialize with log level and log output. 
-  Log.begin   (LOG_LEVEL_VERBOSE, &Serial);
+  Log.begin   (LOG_LEVEL_WARNING, &Serial); //LOG_LEVEL_NOTICE     
   Log.notice( "***\t\tLogging ESC_And_Encoder\t\t***" CR); 
   Log.notice( "***\t\tSerial BAUD %d \t\t***" CR, SERIAL_BAUD); 
   // In Monitor use end line Both NL&CR
@@ -191,20 +191,6 @@ void printDebug()
   read_motor1_encoder = motor1_encoder.read();
   read_motor2_encoder = motor2_encoder.read();
   
-// #ifdef USE_ESC
-  // static float* read_timing1 = motor1_encoder.read_timing();
-  // static float* read_timing2 = motor2_encoder.read_timing();
-  //// Timing Sensors
-  // sprintf (buffer, "Timing sensor 1    : avg=%.4f, U=%.4f, V=%.4f, W=%.4f", read_timing1[0], read_timing1[1], read_timing1[2], read_timing1[3]);
-  // nh.loginfo(buffer);
-  // sprintf (buffer, "Timing sensor 2    : avg=%.4f, U=%.4f, V=%.4f, W=%.4f", read_timing2[0], read_timing2[1], read_timing2[2], read_timing2[3]);
-    // nh.loginfo(buffer);
-// #endif 
-  
-  // Requested Speed
-  // sprintf (buffer, "Required speed     : vel_x=%.2f, vel_y=%.2f, vel_z=%.2f", g_req_linear_vel_x, g_req_linear_vel_y, g_req_angular_vel_z);
-  // nh.loginfo(buffer);
-  
   // PWM generated
   sprintf (buffer, "Calucated PWM speed : PWM_FL=%d, PWM_FR=%d" CR, computed_pwm_1, computed_pwm_2);
   // nh.loginfo(buffer);
@@ -219,24 +205,10 @@ void printDebug()
   Log.notice(buffer);
   
   // RPMs
-  //sprintf (buffer, "Encoder FrontLeft  : Requested RPM %d \t Read RPM: %d \t  diff RPM:  %d", requested_current_rpm1, current_rpm1, requested_current_rpm1 - current_rpm1);
-  //nh.loginfo(buffer);
-  //sprintf (buffer, "Encoder FrontRight : Requested RPM %d \t Read RPM: %d \t  diff RPM:  %d", requested_current_rpm2, current_rpm2, requested_current_rpm2 - current_rpm2);
-  //nh.loginfo(buffer);
   sprintf (buffer, "Encoder Front  : Left RPM %d \t Right RPM: %d " CR, current_rpm1, current_rpm2);
   // nh.loginfo(buffer);
   Log.notice(buffer);
-  
-  //IMU
-//  sprintf (buffer, "IMU Readings Accel : a_x=%2.2f, a_y=%2.2f, a_z=%2.2f", accel.x, accel.y, accel.z);
-//  nh.loginfo(buffer);
-//  sprintf (buffer, "IMU Readings Gyro  : g_x=%2.2f, g_y=%2.2f, g_z=%2.2f", gyro.x, gyro.y, gyro.z);
-//    nh.loginfo(buffer);
-  
-    //sprintf (buffer, "Encoder RearLeft   : %ld - RPM: %d - diff:  %ld", read_motor3_encoder, motor3_encoder.getRPM(), read_motor3_encoder - prev_read_motor3_encoder);
-    //nh.loginfo(buffer);
-    //sprintf (buffer, "Encoder RearRight  : %ld - RPM: %d - diff:  %ld", read_motor4_encoder, motor4_encoder.getRPM(), read_motor4_encoder - prev_read_motor4_encoder);
-    //nh.loginfo(buffer);
+
   prev_read_motor1_encoder = read_motor1_encoder;
   prev_read_motor2_encoder = read_motor2_encoder;
 }

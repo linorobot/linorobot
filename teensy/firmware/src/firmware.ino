@@ -27,7 +27,7 @@
 
 
 #define IMU_PUBLISH_RATE 5 //hz
-#define COMMAND_RATE 5 //hz Number of time per second the velocity command is parsed. Used to filter out too many command to the ESC
+#define COMMAND_RATE 8 //hz Number of time per second the velocity command is parsed. Used to filter out too many command to the ESC
 #define DEBUG_RATE 5 // mess per second
 
 #ifdef USE_ESC // Assuming using ESC uses needs to extract the RPM in the 

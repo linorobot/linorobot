@@ -32,6 +32,15 @@
 
 #include "Arduino.h"
 
+// Rotation Table
+// SENS_U | SENS_V | SENS_W
+//   1    |   1    |   0
+//   0    |   1    |   0
+//   0    |   1    |   1
+//   0    |   0    |   1
+//   1    |   0    |   1
+//   1    |   0    |   0
+
 
 #include "digitalWriteFast.h"
 
@@ -50,7 +59,10 @@ typedef struct {
   
   int direct;       // Integer variable to store BLDC rotation direction
   int32_t pulseCount;       // Integer variable to store the pulse count
-  
+  int32_t falsePulseCount;       // Integer variable to store the pulse count that are ignored
+#if defined(BLDC_ENC_DEBUG) && BLDC_ENC_DEBUG==1
+  long debugInterruptProcessed; // the number of time the interrupt calls are executed since last print
+#endif
   float startTime;      // Float variable to store the start time of the current interrupt 
   float prevTime;       // Float variable to store the start time of the previous interrupt 
   float pulseTimeW;       // Float variable to store the elapsed time between interrupts for hall sensor W 
@@ -145,6 +157,7 @@ Encoder_BLDC::Encoder_BLDC(uint8_t pinU, uint8_t pinV, uint8_t pinW, int counts_
       this->data.PPM = 0;
       this->data.RPM = 0;
       this->data.direct = CW;
+      this->data.falsePulseCount = 0;
 
       this->data.countsPerRev = counts_per_rev;
     }
@@ -156,6 +169,12 @@ inline void Encoder_BLDC::readAll() {
 }
 
 inline bool Encoder_BLDC::checkIsValidStatus() {
+//  if (this->data.HSU_Read==this->data.HSV_Read==this->data.HSW_Read){
+//    // If all are equal, this is not a valid status
+//    return false;
+//  } else {
+//    return true;  
+//  }
  return !((this->data.HSW_Read==this->data.HSU_Read) && (this->data.HSW_Read==this->data.HSV_Read)); // If all are equal, this is not a valid status
 }
 
@@ -177,11 +196,12 @@ inline void Encoder_BLDC::update_rpm() {
 void Encoder_BLDC::print_debug() {
   if ( this->_pstartTime!=this->data.startTime) { //If start time has changed this mean an interrupt function was called
     Serial.println("-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-"); 
-    Serial.print("Last computed is "); Serial.println(this->data.debug_interrupt_msg); 
+    Serial.print("Computed "); Serial.print(this->data.debugInterruptProcessed); Serial.print(" intterrupt calls since last print, LAST computed is "); Serial.println(this->data.debug_interrupt_msg); 
     Serial.print("Moving ");Serial.print(this->data.direct==CW ? "FWD" : "RWD");Serial.print(" - RPM=");Serial.print(this->data.RPM); Serial.print(" PPM="); Serial.print(this->data.PPM); Serial.print(" - UVW="); Serial.print(this->data.HSU_Val); Serial.print(this->data.HSV_Val); Serial.println(this->data.HSW_Val);   
-    Serial.print("Pulse Count= ");Serial.print(this->data.pulseCount);Serial.print(" - AvgPulseTime=");Serial.print(this->data.AvPulseTime); Serial.print(" - PulseTIme(U,V,W)="); Serial.print(this->data.pulseTimeU);Serial.print(","); Serial.print(this->data.pulseTimeV);Serial.print(","); Serial.println(this->data.pulseTimeW); 
+    Serial.print("Pulse Count= ");Serial.print(this->data.pulseCount);Serial.print(" False Count= ");Serial.print(this->data.falsePulseCount);Serial.print(" - AvgPulseTime=");Serial.print(this->data.AvPulseTime); Serial.print(" - PulseTIme(U,V,W)="); Serial.print(this->data.pulseTimeU);Serial.print(","); Serial.print(this->data.pulseTimeV);Serial.print(","); Serial.println(this->data.pulseTimeW); 
     Serial.println("-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-");  
     this->_pstartTime   = this->data.startTime;        // Store when the latest 
+    this->data.debugInterruptProcessed = 0;           // set to 0 the for next print
   }
 }
 #endif
@@ -194,6 +214,9 @@ void Encoder_BLDC::setupInterruptHandler(uint8_t irq_pin, void (*ISR)(void), int
 
 inline void Encoder_BLDC::handleInterrupt_W(void)
 {
+#if defined(BLDC_ENC_DEBUG) && BLDC_ENC_DEBUG==1
+  this->data.debugInterruptProcessed++; // Increment the counter
+#endif
   // 1. Take the time and Read Sensor
   this->data.startTime = millis();                   // Set startTime to current microcontroller elapsed time value
   this->readAll();                              // Update all the readings
@@ -202,7 +225,10 @@ inline void Encoder_BLDC::handleInterrupt_W(void)
 #endif 
 
   // 2. Continue if the status of sensor is valid, and continue updating the values
-  if (!this->checkIsValidStatus()) return;      // Check if this is a valid status
+  if (!this->checkIsValidStatus()) {  // Check if this is a valid status
+    this->data.falsePulseCount++;
+    return;     
+  }
   this->setAllReadValues();
 #if defined(BLDC_ENC_DEBUG) && BLDC_ENC_DEBUG==1
   sprintf(this->data.debug_interrupt_msg , "HallSensW-COMPUTE (%d,%d,%d)", this->data.HSU_Val, this->data.HSV_Val, this->data.HSW_Val);
@@ -216,6 +242,9 @@ inline void Encoder_BLDC::handleInterrupt_W(void)
 
 inline void Encoder_BLDC::handleInterrupt_U(void)
 {
+#if defined(BLDC_ENC_DEBUG) && BLDC_ENC_DEBUG==1
+  this->data.debugInterruptProcessed++; // Increment the counter
+#endif
    // 1. Take the time and Read Sensor
   this->data.startTime = millis();                   // Set startTime to current microcontroller elapsed time value
   this->readAll();                              // Update all the readings
@@ -224,7 +253,10 @@ inline void Encoder_BLDC::handleInterrupt_U(void)
 #endif
 
   // 2. Continue if the status of sensor is valid, and continue updating the values
-  if (!this->checkIsValidStatus()) return;
+  if (!this->checkIsValidStatus()) {  // Check if this is a valid status
+    this->data.falsePulseCount++;
+    return;     
+  }
   this->setAllReadValues();
 #if defined(BLDC_ENC_DEBUG) && BLDC_ENC_DEBUG==1 
   sprintf(this->data.debug_interrupt_msg , "HallSensU-COMPUTE (%d,%d,%d)", this->data.HSU_Val, this->data.HSV_Val, this->data.HSW_Val);
@@ -238,6 +270,9 @@ inline void Encoder_BLDC::handleInterrupt_U(void)
 
 inline void Encoder_BLDC::handleInterrupt_V(void)
 {
+#if defined(BLDC_ENC_DEBUG) && BLDC_ENC_DEBUG==1
+  this->data.debugInterruptProcessed++; // Increment the counter
+#endif  
   // 1. Take the time and Read Sensor
   this->data.startTime = millis();                   // Set startTime to current microcontroller elapsed time value
   this->readAll();                              // Update all the readings
@@ -246,7 +281,10 @@ inline void Encoder_BLDC::handleInterrupt_V(void)
 #endif
 
   // 2. Continue if the status of sensor is valid, and continue updating the values
-  if (!this->checkIsValidStatus()) return;
+  if (!this->checkIsValidStatus())  {  // Check if this is a valid status
+    this->data.falsePulseCount++;
+    return;     
+  }
   this->setAllReadValues();
 #if defined(BLDC_ENC_DEBUG) && BLDC_ENC_DEBUG==1
   sprintf(this->data.debug_interrupt_msg , "HallSensV-COMPUTE (%d,%d,%d)", this->data.HSU_Val, this->data.HSV_Val, this->data.HSW_Val);
