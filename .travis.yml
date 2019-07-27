@@ -1,0 +1,31 @@
+sudo: required
+dist: xenial
+language: generic
+
+compiler:
+  - gcc
+
+install:
+  - export ROSDISTRO=kinetic
+  - sudo apt-get update
+  - sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list'
+  - wget http://packages.ros.org/ros.key -O - | sudo apt-key add -
+  - sudo apt-get update
+  - sudo apt-get install -y dpkg
+  - sudo apt-get install -y ros-$ROSDISTRO-ros-base
+  - sudo apt-get install -y python-rosdep
+  - sudo `which rosdep` init
+  - rosdep update
+  - source /opt/ros/$ROSDISTRO/setup.bash
+  - export PYTHONPATH=$PYTHONPATH:/usr/lib/python2.7/dist-packages
+  - sudo apt-get install -y ros-$ROSDISTRO-tf2
+  - sudo apt-get install -y ros-$ROSDISTRO-tf2-ros 
+  - mkdir -p linorobot_ws/src && cd linorobot_ws/src
+  - git clone https://github.com/linorobot/linorobot
+  - git clone https://github.com/linorobot/lino_msgs
+  - cd ../
+  - catkin_make --pkg lino_msgs && catkin_make
+
+notifications:
+  email:
+    - jimenojmm@gmail.com
