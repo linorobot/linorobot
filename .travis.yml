@@ -16,7 +16,6 @@ install:
   - sudo apt-get install -y python-rosdep
   - sudo `which rosdep` init
   - rosdep update
-  - rosdep install --default-yes --from-paths . --ignore-src --rosdistro $ROSDISTRO
   - source /opt/ros/$ROSDISTRO/setup.bash
   - export PYTHONPATH=$PYTHONPATH:/usr/lib/python2.7/dist-packages
   - sudo apt-get install -y ros-$ROSDISTRO-tf2
