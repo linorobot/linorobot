@@ -24,7 +24,7 @@ install:
   - git clone https://github.com/linorobot/linorobot
   - git clone https://github.com/linorobot/lino_msgs
   - cd ../
-  - catkin_make --pkg lino_msgs && catkin_make
+  - catkin_make
 
 notifications:
   email:
