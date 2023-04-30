@@ -1,0 +1,191 @@
+ <?xml version="1.0"?>
+   <robot name="linorobot">
+
+    <link name="base_link">
+      <visual>
+        <geometry>
+          <box size="0.21 0.16 0.01"/>
+        </geometry>
+        <origin rpy="0 0 0" xyz="0.0 0.00 0.065"/>
+        <material name="blue">
+          <color rgba="0 0 .8 1"/>
+        </material>
+      </visual>
+    </link>
+
+    <link name="perception_deck">
+      <visual>
+        <geometry>
+          <box size="0.11 0.16 0.01"/>
+        </geometry>
+        <origin rpy="0 0 0" xyz="0.057 0 0.1695"/>
+        <material name="blue">
+          <color rgba="0 0 .8 1"/>
+        </material>
+      </visual>
+    </link>
+
+
+    <link name="wheel_left">
+      <visual>
+        <geometry>
+          <cylinder length="0.027" radius="0.0345"/>
+        </geometry>
+        <origin rpy="1.57 0 0" xyz="-0.085 0.11 0.0345"/>
+        <material name="black">
+          <color rgba="0 0 0 1"/>
+        </material>
+      </visual>
+    </link>
+
+    <link name="wheel_right">
+      <visual>
+        <geometry>
+          <cylinder length="0.027" radius="0.0345"/>
+        </geometry>
+        <origin rpy="1.57 0 0" xyz="-0.085 -0.11 0.0345"/>
+        <material name="black">
+          <color rgba="0 0 0 1"/>
+        </material>
+      </visual>
+    </link>
+
+    <link name="caster_wheel">
+      <visual>
+        <geometry>
+          <cylinder length="0.012" radius="0.025"/>
+        </geometry>
+        <origin rpy="1.57 0 0" xyz="0.07 0.00 0.025"/>
+        <material name="black">
+          <color rgba="0 0 0 1"/>
+        </material>
+      </visual>
+    </link>
+
+    <link name="wheel_track">
+      <visual>
+        <geometry>
+          <box size="0.04 0.19 0.002"/>
+        </geometry>
+        <origin rpy="0 0 0" xyz="-0.085 0.0 0.06"/>
+        <material name="white"/>
+      </visual>
+    </link>
+
+    <link name="laser">
+      <visual>
+        <geometry>
+          <cylinder length="0.04" radius="0.04"/>
+        </geometry>
+        <material name="black"/>
+      </visual>
+    </link>
+
+    <link name="left_pole_one">
+      <visual>
+        <geometry>
+          <box size="0.01 0.01 0.095"/>
+        </geometry>
+        <origin rpy="0 0 0" xyz="0.017 0.075 0.1175"/>
+        <material name="silver">
+          <color rgba="192 192 192 0.6"/>
+        </material>
+      </visual>
+    </link>
+
+    <link name="left_pole_two">
+      <visual>
+        <geometry>
+          <box size="0.01 0.01 0.095"/>
+        </geometry>
+        <origin rpy="0 0 0" xyz="0.08 0.075 0.1175"/>
+        <material name="silver">
+          <color rgba="192 192 192 0.6"/>
+        </material>
+      </visual>
+    </link>
+
+    <link name="right_pole_one">
+      <visual>
+        <geometry>
+          <box size="0.01 0.01 0.095"/>
+        </geometry>
+        <origin rpy="0 0 0" xyz="0.017 -0.075 0.1175"/>
+        <material name="silver">
+          <color rgba="192 192 192 0.6"/>
+        </material>
+      </visual>
+    </link>
+
+    <link name="right_pole_two">
+      <visual>
+        <geometry>
+          <box size="0.01 0.01 0.095"/>
+        </geometry>
+        <origin rpy="0 0 0" xyz="0.08 -0.075 0.1175"/>
+        <material name="silver">
+          <color rgba="192 192 192 0.6"/>
+        </material>
+      </visual>
+    </link>
+
+    <joint name="base_to_wheel_left" type="fixed">
+      <parent link="base_link"/>
+      <child link="wheel_left"/>
+      <origin xyz="0 0 0"/>
+    </joint>
+
+    <joint name="base_to_wheel_right" type="fixed">
+      <parent link="base_link"/>
+      <child link="wheel_right"/>
+      <origin xyz="0 0 0"/>
+    </joint>
+
+    <joint name="base_to_wheel_track" type="fixed">
+      <parent link="base_link"/>
+      <child link="wheel_track"/>
+      <origin xyz="0 0 0"/>
+    </joint>
+
+    <joint name="base_to_caster_wheel" type="fixed">
+      <parent link="base_link"/>
+      <child link="caster_wheel"/>
+      <origin xyz="0 0 0"/>
+    </joint>
+
+    <joint name="base_to_laser" type="fixed">
+      <parent link="base_link"/>
+      <child link="laser"/>
+      <origin xyz="0.065 0.0 0.1960"/>
+    </joint>
+
+    <joint name="base_to_left_pole_one" type="fixed">
+      <parent link="base_link"/>
+      <child link="left_pole_one"/>
+      <origin xyz="0 0 0"/>
+    </joint>
+
+    <joint name="base_to_left_pole_two" type="fixed">
+      <parent link="base_link"/>
+      <child link="left_pole_two"/>
+      <origin xyz="0 0 0"/>
+    </joint>
+
+    <joint name="base_to_right_pole_one" type="fixed">
+      <parent link="base_link"/>
+      <child link="right_pole_one"/>
+      <origin xyz="0 0 0"/>
+    </joint>
+
+    <joint name="base_to_right_pole_two" type="fixed">
+      <parent link="base_link"/>
+      <child link="right_pole_two"/>
+      <origin xyz="0 0 0"/>
+    </joint>
+
+    <joint name="base_to_perception_deck" type="fixed">
+      <parent link="base_link"/>
+      <child link="perception_deck"/>
+      <origin xyz="0 0 0"/>
+    </joint>
+  </robot>

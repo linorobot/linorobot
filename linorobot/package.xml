@@ -1,0 +1,45 @@
+<?xml version="1.0.0"?>
+    <package>
+    <name>linorobot</name>
+    <version>1.4.1</version>
+    <description>ROS compatible ground robots</description>
+    <maintainer email="jimenojmm@gmail.com">t</maintainer>
+
+    <license>BSD</license>
+
+    <url type="website">http://www.linorobot.org</url>
+
+    <author email="jimenojmm@gmail.com">Juan Miguel Jimeno</author>
+
+    <buildtool_depend>catkin</buildtool_depend>
+    <build_depend>roscpp</build_depend>
+    <build_depend>rospy</build_depend>
+    <build_depend>tf2</build_depend>
+		<build_depend>tf2_ros</build_depend>
+    <build_depend>nav_msgs</build_depend>
+    <build_depend>lino_msgs</build_depend>
+    <build_depend>sensor_msgs</build_depend>
+    <build_depend>geometry_msgs</build_depend>
+    <build_depend>std_msgs</build_depend>
+    
+    <run_depend>roscpp</run_depend>
+    <run_depend>rospy</run_depend>
+    <run_depend>rosserial_python</run_depend>
+    <run_depend>tf2</run_depend>
+		<run_depend>tf2_ros</run_depend>
+    <run_depend>nav_msgs</run_depend>
+    <run_depend>lino_msgs</run_depend>
+    <run_depend>sensor_msgs</run_depend>
+    <run_depend>geometry_msgs</run_depend>
+    <run_depend>std_msgs</run_depend>
+    <run_depend>gmapping</run_depend>
+    <run_depend>map_server</run_depend>  
+    <run_depend>move_base</run_depend>
+    <run_depend>amcl</run_depend>
+    <run_depend>imu-filter-madgwick</run_depend>
+    <run_depend>imu_calib</run_depend>
+    <run_depend>lino_pid</run_depend>
+
+    <export>
+    </export>
+</package>
