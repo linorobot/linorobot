@@ -1,0 +1,47 @@
+digraph G{
+label = "Effect of publishing Inverted Parent Child Relationship on TF tree";
+subgraph cluster0{
+a [label="A"];
+aa [label="AA"];
+b [label="B"];
+bb [label="BB"];
+c [ label="C"];
+d [ label="D"];
+a -> b;
+aa -> b;
+bb -> c;
+b -> c;
+c -> d;
+label = "a) Example Tree";
+color=black;
+}
+subgraph cluster1{
+a1 [label="A"];
+aa1 [label="AA"];
+b1 [label="B"];
+bb1 [label="BB"];
+c1 [ label="C"];
+d1 [ label="D"];
+a1 -> b1;
+aa1 -> b1;
+bb1 -> c1;
+c1 -> b1;
+label = "b) C-B Inverted Case1 (Part of the time)";
+color=black;
+}
+subgraph cluster2{
+a2 [label="A"];
+aa2 [label="AA"];
+b2 [label="B"];
+bb2 [label="BB"];
+c2 [ label="C"];
+d2 [ label="D"];
+
+a2 -> b2;
+aa2 -> b2;
+bb2 -> c2;
+c2 -> d2;
+label = "c) C-B Inverted Case2 (part of the time)";
+color=black;
+}
+}

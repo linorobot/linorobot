@@ -1,0 +1,23 @@
+/** \mainpage
+
+@htmlinclude manifest.html
+
+The tf conversions package provide methods to convert between
+datatypes used by tf, and semantically identical data types of
+other libraries. The package now supports KDL and Eigen.
+
+The supported KDL data types are:
+ \li Frame
+ \li Vector
+ \li Rotation
+ \li Twist
+
+The supported Eigen data types are:
+ \li Affine3d
+ \li Vector3d
+ \li Quaterniond
+
+For a complete list of available conversion methods, follow this link:
+tf
+
+*/
