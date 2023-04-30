@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<package>
+  <name>kinect2_registration</name>
+  <version>0.0.1</version>
+  <description>The kinect2_registration package</description>
+
+  <maintainer email="wiedemeyer@informatik.uni-bremen.de">Thiemo Wiedemeyer</maintainer>
+
+  <license>Apache 2.0</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>roscpp</build_depend>
+  <build_depend>cv_bridge</build_depend><!-- Depend on cv_bridge instead of libopencv-dev to support ROS Hydro.-->
+
+  <run_depend>roscpp</run_depend>
+  <run_depend>cv_bridge</run_depend><!-- Depend on cv_bridge instead of libopencv-dev to support ROS Hydro.-->
+
+  <export>
+  </export>
+</package>

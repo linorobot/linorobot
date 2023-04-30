@@ -1,0 +1,21 @@
+<package>
+  <name>octomap_mapping</name>
+  <version>0.6.7</version>
+  <description>
+    Mapping tools to be used with the <a href="https://octomap.github.io/">OctoMap library</a>, implementing a 3D occupancy grid mapping.
+  </description>
+  <author>Armin Hornung</author>
+  <maintainer email="opensource@wolfgangmerkt.com">Wolfgang Merkt</maintainer>
+  <license>BSD</license>
+
+  <url>http://ros.org/wiki/octomap_mapping</url>
+  <url type="bugtracker">https://github.com/OctoMap/octomap_mapping/issues</url>
+  <url type="repository">https://github.com/OctoMap/octomap_mapping</url>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <run_depend>octomap_server</run_depend>
+
+  <export>
+    <metapackage/>
+  </export>
+</package>

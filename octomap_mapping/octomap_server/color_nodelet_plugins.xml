@@ -1,0 +1,7 @@
+<library path="lib/liboctomap_color_server_nodelet">
+  <class name="octomap_color_server/OctomapServerNodelet" type="octomap_server::OctomapServerNodelet" base_class_type="nodelet::Nodelet">
+    <description>
+      Nodelet for running the color Octomap server
+    </description>
+  </class>
+</library>

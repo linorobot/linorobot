@@ -1,0 +1,26 @@
+<launch>
+
+  <arg name="manager" />
+  <arg name="depth" default="depth" />
+  <arg name="projector" default="projector" />
+  <arg name="queue_size" default="5" />
+
+  <arg name="respawn" default="false" />
+  <arg     if="$(arg respawn)" name="bond" value="" />
+  <arg unless="$(arg respawn)" name="bond" value="--no-bond" />
+
+  <!-- Disparity image -->
+  <node pkg="nodelet" type="nodelet" name="disparity_$(arg depth)"
+        args="load depth_image_proc/disparity $(arg manager) $(arg bond)"
+        respawn="$(arg respawn)">
+    <param name="queue_size" value="$(arg queue_size)" />
+    <!-- Use raw image for efficiency -->
+    <remap from="left/image_rect" to="$(arg depth)/image_rect_raw" />
+    <remap from="right" to="$(arg projector)" />
+    <remap from="left/disparity" to="$(arg depth)/disparity" />
+
+    <param name="min_range" value="0.5" />
+    <param name="max_range" value="4.0" />
+  </node>
+
+</launch>

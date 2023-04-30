@@ -1,0 +1,4 @@
+- git:
+    local-name: lino_pid
+    uri: 'https://github.com/grassjelly/lino_pid.git
+    version: indigo
