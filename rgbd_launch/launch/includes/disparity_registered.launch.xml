@@ -1,0 +1,45 @@
+<launch>
+
+  <arg name="manager" />
+  <arg name="depth_registered" default="depth_registered" />
+  <arg name="projector" default="projector" />
+  <arg name="queue_size" default="5" />
+
+  <arg name="respawn" default="false" />
+  <arg     if="$(arg respawn)" name="bond" value="" />
+  <arg unless="$(arg respawn)" name="bond" value="--no-bond" />
+
+  <arg name="sw_registered_processing" default="true" />
+  <arg name="hw_registered_processing" default="true" />
+
+  <!-- Disparity image from s/w registered source-->
+  <node if="$(arg sw_registered_processing)"
+        pkg="nodelet" type="nodelet" name="disparity_registered_sw"
+        args="load depth_image_proc/disparity $(arg manager) $(arg bond)"
+        respawn="$(arg respawn)">
+    <!-- Use raw image for efficiency -->
+    <remap from="left/image_rect" to="$(arg depth_registered)/sw_registered/image_rect_raw" />
+    <remap from="right" to="$(arg projector)" />
+    <remap from="left/disparity" to="$(arg depth_registered)/disparity" />
+
+    <param name="min_range" value="0.5" />
+    <param name="max_range" value="4.0" />
+    <param name="queue_size" value="$(arg queue_size)" />
+  </node>
+
+  <!-- Disparity image from h/w registered source-->
+  <node if="$(arg hw_registered_processing)"
+        pkg="nodelet" type="nodelet" name="disparity_registered_hw"
+        args="load depth_image_proc/disparity $(arg manager) $(arg bond)"
+        respawn="$(arg respawn)">
+    <!-- Use raw image for efficiency -->
+    <remap from="left/image_rect" to="$(arg depth_registered)/hw_registered/image_rect_raw" />
+    <remap from="right" to="$(arg projector)" />
+    <remap from="left/disparity" to="$(arg depth_registered)/disparity" />
+
+    <param name="min_range" value="0.5" />
+    <param name="max_range" value="4.0" />
+    <param name="queue_size" value="$(arg queue_size)" />
+  </node>
+
+</launch>

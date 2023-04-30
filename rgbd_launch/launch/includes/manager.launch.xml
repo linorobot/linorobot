@@ -1,0 +1,27 @@
+<!-- Start nodelet manager -->
+<launch>
+
+  <!-- Name here should NOT be globally qualified (node names cannot contain /) -->
+  <arg name="name" />
+
+  <!-- Optionally launch manager in GDB, for debugging -->
+  <arg name="debug" default="false" />
+  <arg if="$(arg debug)" name="launch_prefix" value="xterm -e gdb --args" />
+  <arg unless="$(arg debug)" name="launch_prefix" value="" />
+  <!-- Worker threads -->
+  <arg name="num_worker_threads" />
+
+  <arg name="respawn" default="false" />
+
+  <!-- Also globally disable bond heartbeat timeout in debug mode, so everything
+       doesn't die when you hit a break point -->
+  <param if="$(arg debug)" name="/bond_disable_heartbeat_timeout" value="true" />
+
+  <!-- Nodelet manager -->
+  <node pkg="nodelet" type="nodelet" name="$(arg name)" args="manager"
+        output="screen" launch-prefix="$(arg launch_prefix)"
+        respawn="$(arg respawn)">
+     <param name="num_worker_threads" value="$(arg num_worker_threads)" />
+  </node>
+
+</launch>

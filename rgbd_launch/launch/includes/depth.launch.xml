@@ -1,0 +1,53 @@
+<!-- Load processing nodelets for the depth camera -->
+<launch>
+
+  <arg name="manager" />
+  <arg name="points_xyz" default="true" />
+  <arg name="rectify" default="true" />
+  <arg name="respawn" default="false" />
+  <arg     if="$(arg respawn)" name="bond" value="" />
+  <arg unless="$(arg respawn)" name="bond" value="--no-bond" />
+  <arg name="depth" />
+  <arg name="queue_size" default="5" />
+
+  <!-- Rectified raw image (internal use) -->
+  <node if="$(arg rectify)" pkg="nodelet" type="nodelet" name="$(arg depth)_rectify_depth"
+        args="load image_proc/rectify $(arg manager) $(arg bond)"
+        respawn="$(arg respawn)">
+    <param name="queue_size" value="$(arg queue_size)" />
+    <remap from="image_mono"  to="$(arg depth)/image_raw" />
+    <remap from="image_rect"  to="$(arg depth)/image_rect_raw" />
+    <!-- Use nearest neighbor (0) interpolation so we don't streak across
+         depth boundaries -->
+    <param name="interpolation" value="0" />
+  </node>
+
+  <!-- Rectified depth image -->
+  <node pkg="nodelet" type="nodelet" name="$(arg depth)_metric_rect"
+        args="load depth_image_proc/convert_metric $(arg manager) $(arg bond)"
+        respawn="$(arg respawn)">
+    <param name="queue_size" value="$(arg queue_size)" />
+    <remap from="image_raw" to="$(arg depth)/image_rect_raw" />
+    <remap from="image"     to="$(arg depth)/image_rect" />
+  </node>
+
+  <!-- Unrectified depth image -->
+  <node pkg="nodelet" type="nodelet" name="$(arg depth)_metric"
+        args="load depth_image_proc/convert_metric $(arg manager) $(arg bond)"
+        respawn="$(arg respawn)">
+    <param name="queue_size" value="$(arg queue_size)" />
+    <remap from="image_raw" to="$(arg depth)/image_raw" />
+    <remap from="image"     to="$(arg depth)/image" />
+  </node>
+
+  <!-- XYZ point cloud (optional, disable if publishing XYZRGB instead) -->
+  <node if="$(arg points_xyz)"
+        pkg="nodelet" type="nodelet" name="$(arg depth)_points"
+        args="load depth_image_proc/point_cloud_xyz $(arg manager) $(arg bond)"
+        respawn="$(arg respawn)">
+    <param name="queue_size" value="$(arg queue_size)" />
+    <remap from="image_rect" to="$(arg depth)/image_rect_raw"/>  <!-- Use raw image for efficiency -->
+    <remap from="points"     to="$(arg depth)/points" />
+  </node>
+
+</launch>

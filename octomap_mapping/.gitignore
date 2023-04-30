@@ -1,0 +1,17 @@
+# Compiled Object files
+*.slo
+*.lo
+*.o
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+
+octomap_server/docs
+octomap_server/cfg
+octomap_server/src/octomap_server
