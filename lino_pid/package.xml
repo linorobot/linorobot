@@ -1,0 +1,19 @@
+<package format="2">
+    <name>lino_pid</name>
+    <version>0.0.1</version>
+    <description>lino_robot PID dynamic_reconfigure</description>
+    <author>Juan Jimeno</author>
+    <maintainer email="jimenojmm@gmail.com">Juan Jimeno</maintainer>
+    <license>BSD</license>
+    <url>https://github.com/grassjelly/lino_pid</url>
+
+    <buildtool_depend>catkin</buildtool_depend>
+    <build_depend>message_generation</build_depend>
+    <exec_depend>message_runtime</exec_depend>
+
+    <depend>dynamic_reconfigure</depend>
+    <depend>roscpp</depend>
+    <depend>rospy</depend>
+    <depend>std_msgs</depend>
+    <depend>lino_msgs</depend>
+</package>

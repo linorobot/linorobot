@@ -1,0 +1,8 @@
+<library path="lib/liboctomap_server_nodelet">
+  <class name="octomap_server/OctomapServerNodelet" type="octomap_server::OctomapServerNodelet" base_class_type="nodelet::Nodelet">
+    <description>
+      Nodelet for running the Octomap server
+    </description>
+  </class>
+</library>
+

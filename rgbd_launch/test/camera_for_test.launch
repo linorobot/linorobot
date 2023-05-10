@@ -1,0 +1,26 @@
+<launch>
+  <arg name="manager" default="camera_nodelet_manager" />
+
+  <!-- for testing manager.launch.xml -->
+  <include file="$(find rgbd_launch)/launch/includes/manager.launch.xml">
+    <arg name="name" value="$(arg manager)" />
+    <arg name="num_worker_threads"  value="4" />
+  </include>
+
+  <!-- for testing processing.launch.xml -->
+  <!-- this also includes all other launch.xml files in launch/includes -->
+  <include file="$(find rgbd_launch)/launch/includes/processing.launch.xml">
+    <arg name="manager" value="$(arg manager)" />
+    <arg name="rgb_processing"                  value="true"/>
+    <arg name="ir_processing"                   value="true"/>
+    <arg name="depth_processing"                value="true"/>
+    <arg name="depth_registered_processing"     value="true"/>
+    <arg name="disparity_processing"            value="true"/>
+    <arg name="disparity_registered_processing" value="true"/>
+    <arg name="hw_registered_processing"        value="true" />
+    <arg name="sw_registered_processing"        value="true" />
+  </include>
+
+  <!-- for testing kinect_frames.launch -->
+  <include file="$(find rgbd_launch)/launch/kinect_frames.launch" />
+</launch>

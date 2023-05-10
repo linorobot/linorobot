@@ -1,0 +1,20 @@
+<!-- Load processing nodelets for the IR camera -->
+<launch>
+
+  <arg name="manager" />
+  <arg name="respawn" default="false" />
+  <arg     if="$(arg respawn)" name="bond" value="" />
+  <arg unless="$(arg respawn)" name="bond" value="--no-bond" />
+  <arg name="ir" />
+  <arg name="queue_size" default="5" />
+
+  <!-- Rectified image -->
+  <node pkg="nodelet" type="nodelet" name="$(arg ir)_rectify_ir"
+        args="load image_proc/rectify $(arg manager) $(arg bond)"
+        respawn="$(arg respawn)">
+    <param name="queue_size" value="$(arg queue_size)" />
+    <remap from="image_mono" to="$(arg ir)/image_raw" />
+    <remap from="image_rect" to="$(arg ir)/image_rect_ir" />
+  </node>
+
+</launch>

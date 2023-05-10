@@ -1,0 +1,4 @@
+<launch>
+  <node name="test_broadcaster" pkg="tf" type="testBroadcaster"/>
+  <test test-name="test_broadcaster_reciept" pkg="tf" type="testListener"/>
+</launch>

@@ -1,0 +1,109 @@
+<!-- Register a depth camera with an RGB camera -->
+<!-- TODO: Should be able to remap namespaces in nodelet load with current roscpp -->
+<launch>
+
+  <arg name="manager" />
+
+  <arg name="queue_size" default="5" />
+  <arg name="respawn" default="false" />
+  <arg     if="$(arg respawn)" name="bond" value="" />
+  <arg unless="$(arg respawn)" name="bond" value="--no-bond" />
+
+  <arg name="sw_registered_processing" default="true" />
+  <arg name="hw_registered_processing" default="true" />
+
+  <!-- TODO: Instead "rgb", "depth" and "depth_registered" should be remapped as
+       necessary by top-level launch file -->
+  <arg name="rgb"              default="rgb" />
+  <arg name="depth"            default="depth" />
+  <arg name="depth_registered" default="depth_registered" />
+  <!-- For distinguishing multiple register/XYZRGB nodelets. Default fails if rgb
+       or depth contains a namespace. -->
+  <arg name="suffix" default="$(arg depth)_$(arg rgb)" />
+  <!-- For filtering depth images, set depth_registered_filtered to the
+       filtered depth image topic -->
+  <arg name="depth_registered_filtered" default="depth_registered" />
+
+
+  <!-- Registration nodelet, projecting depth to RGB camera -->
+  <group if="$(arg sw_registered_processing)">
+    <node pkg="nodelet" type="nodelet" name="register_$(arg suffix)"
+          args="load depth_image_proc/register $(arg manager) $(arg bond)"
+          respawn="$(arg respawn)">
+      <param name="queue_size" value="$(arg queue_size)" />
+      <!-- Explicit topic remappings, shouldn't need all of these -->
+      <remap from="rgb/camera_info"             to="$(arg rgb)/camera_info" />
+      <remap from="depth/camera_info"           to="$(arg depth)/camera_info" />
+      <remap from="depth/image_rect"            to="$(arg depth)/image_rect_raw" />
+      <remap from="depth_registered/image_rect" to="$(arg depth_registered)/sw_registered/image_rect_raw" />
+    </node>
+
+    <!-- Publish registered XYZRGB point cloud with software registered input -->
+    <node pkg="nodelet" type="nodelet" name="points_xyzrgb_sw_registered"
+          args="load depth_image_proc/point_cloud_xyzrgb $(arg manager) $(arg bond)"
+          respawn="$(arg respawn)">
+      <param name="queue_size" value="$(arg queue_size)" />
+      <!-- Explicit topic remappings, shouldn't need all of these -->
+      <remap from="rgb/image_rect_color"        to="$(arg rgb)/image_rect_color" />
+      <remap from="rgb/camera_info"             to="$(arg rgb)/camera_info" />
+      <remap from="depth_registered/image_rect" to="$(arg depth_registered_filtered)/sw_registered/image_rect_raw" />
+      <remap from="depth_registered/points"     to="$(arg depth_registered)/points" />
+    </node>
+
+    <!-- Rectified depth image -->
+    <node pkg="nodelet" type="nodelet" name="$(arg depth_registered)_sw_metric_rect"
+      args="load depth_image_proc/convert_metric $(arg manager) $(arg bond)"
+      respawn="$(arg respawn)">
+      <param name="queue_size" value="$(arg queue_size)" />
+      <remap from="image_raw" to="$(arg depth_registered)/sw_registered/image_rect_raw" />
+      <remap from="image"     to="$(arg depth_registered)/sw_registered/image_rect" />
+    </node>
+
+  </group>
+
+  <!-- for device enabled registration, simply rectify the raw image -->
+  <group if="$(arg hw_registered_processing)">
+    <node pkg="nodelet" type="nodelet" name="$(arg depth_registered)_rectify_depth"
+          args="load image_proc/rectify $(arg manager) $(arg bond)"
+          respawn="$(arg respawn)">
+      <param name="queue_size" value="$(arg queue_size)" />
+      <remap from="image_mono"  to="$(arg depth_registered)/image_raw" />
+      <remap from="image_rect"  to="$(arg depth_registered)/hw_registered/image_rect_raw" />
+      <!-- Use nearest neighbor (0) interpolation so we don't streak across
+           depth boundaries -->
+      <param name="interpolation" value="0" />
+    </node>
+
+    <!-- Publish registered XYZRGB point cloud with hardware registered input -->
+    <node pkg="nodelet" type="nodelet" name="points_xyzrgb_hw_registered"
+          args="load depth_image_proc/point_cloud_xyzrgb $(arg manager) $(arg bond)"
+          respawn="$(arg respawn)">
+      <param name="queue_size" value="$(arg queue_size)" />
+      <!-- Explicit topic remappings, shouldn't need all of these -->
+      <remap from="rgb/image_rect_color"        to="$(arg rgb)/image_rect_color" />
+      <remap from="rgb/camera_info"             to="$(arg rgb)/camera_info" />
+      <remap from="depth_registered/image_rect" to="$(arg depth_registered_filtered)/hw_registered/image_rect_raw" />
+      <remap from="depth_registered/points"     to="$(arg depth_registered)/points" />
+    </node>
+
+    <!-- Rectified depth image -->
+    <node pkg="nodelet" type="nodelet" name="$(arg depth_registered)_hw_metric_rect"
+      args="load depth_image_proc/convert_metric $(arg manager) $(arg bond)"
+      respawn="$(arg respawn)">
+      <param name="queue_size" value="$(arg queue_size)" />
+      <remap from="image_raw" to="$(arg depth_registered)/hw_registered/image_rect_raw" />
+      <remap from="image"     to="$(arg depth_registered)/hw_registered/image_rect" />
+    </node>
+
+    <!-- Unrectified depth image -->
+    <node pkg="nodelet" type="nodelet" name="$(arg depth_registered)_metric"
+          args="load depth_image_proc/convert_metric $(arg manager) $(arg bond)"
+          respawn="$(arg respawn)">
+      <param name="queue_size" value="$(arg queue_size)" />
+      <remap from="image_raw" to="$(arg depth_registered)/image_raw" />
+      <remap from="image"     to="$(arg depth_registered)/image" />
+    </node>
+
+  </group>
+
+</launch>

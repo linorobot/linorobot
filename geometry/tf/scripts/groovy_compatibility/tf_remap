@@ -1,0 +1,5 @@
+#!/bin/sh
+
+echo "Please use the package local script inside tf not the global one, this is deprecated."
+echo "Running [rosrun tf tf_remap] for you"
+exec rosrun tf tf_remap "$@"

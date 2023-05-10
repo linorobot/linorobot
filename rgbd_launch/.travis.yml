@@ -1,0 +1,33 @@
+# This config file for Travis CI utilizes ros-industrial/industrial_ci package.
+# For more info for the package, see https://github.com/ros-industrial/industrial_ci/blob/master/README.rst
+sudo: required 
+services:
+  - docker
+language: generic 
+compiler:
+  - gcc
+notifications:
+  email:
+    on_success: always
+    on_failure: always
+    recipients:
+      - gm130s@gmail.com
+env:
+  matrix:
+    - ROS_DISTRO="kinetic" ROS_REPOSITORY_PATH=http://packages.ros.org/ros/ubuntu  USE_DEB=true
+    - ROS_DISTRO="kinetic" PRERELEASE=true PRERELEASE_DOWNSTREAM_DEPTH=1
+    - ROS_DISTRO="melodic" ROS_REPOSITORY_PATH=http://packages.ros.org/ros/ubuntu  USE_DEB=true
+    - ROS_DISTRO="melodic" PRERELEASE=true PRERELEASE_DOWNSTREAM_DEPTH=1
+    - ROS_DISTRO="noetic" ROS_REPOSITORY_PATH=http://packages.ros.org/ros/ubuntu  USE_DEB=true
+    - ROS_DISTRO="noetic" PRERELEASE=true PRERELEASE_DOWNSTREAM_DEPTH=1
+matrix:
+  allow_failures:
+    # Run docker-based ROS prerelease test http://wiki.ros.org/bloom/Tutorials/PrereleaseTest Because we might not want to run prerelease test for all PRs, it's omitted from pass-fail criteria.
+    - env: ROS_DISTRO="kinetic" PRERELEASE=true PRERELEASE_DOWNSTREAM_DEPTH=1
+    - env: ROS_DISTRO="melodic" PRERELEASE=true PRERELEASE_DOWNSTREAM_DEPTH=1
+    - env: ROS_DISTRO="noetic" PRERELEASE=true PRERELEASE_DOWNSTREAM_DEPTH=1
+before_script:
+  - git clone https://github.com/ros-industrial/industrial_ci.git -b master .ci_config
+script:
+  - source .ci_config/travis.sh
+#  - source ./travis.sh  # Enable this when you have a package-local script 

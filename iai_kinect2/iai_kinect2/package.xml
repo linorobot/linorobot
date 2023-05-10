@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<package>
+  <name>iai_kinect2</name>
+  <version>0.0.1</version>
+  <description>
+    The iai_kinect2 metapackage
+  </description>
+
+  <maintainer email="wiedemeyer@informatik.uni-bremen.de">Thiemo Wiedemeyer</maintainer>
+  <license>Apache 2.0</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <run_depend>kinect2_calibration</run_depend>
+  <run_depend>kinect2_viewer</run_depend>
+  <run_depend>kinect2_bridge</run_depend>
+  <run_depend>kinect2_registration</run_depend>
+
+  <export>
+    <metapackage/>
+  </export>
+</package>

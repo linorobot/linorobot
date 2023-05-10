@@ -1,0 +1,5 @@
+<library path="lib/libkinect2_bridge_nodelet">
+  <class name="kinect2_bridge/kinect2_bridge_nodelet" type="Kinect2BridgeNodelet" base_class_type="nodelet::Nodelet">
+  <description>Kinect2Bridge nodelet</description>
+  </class>
+</library>

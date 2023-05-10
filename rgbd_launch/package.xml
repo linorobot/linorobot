@@ -1,0 +1,32 @@
+<package>
+  <name>rgbd_launch</name>
+  <version>2.4.0</version>
+    <description>
+     Launch files to open an RGBD device and load all nodelets to 
+     convert raw depth/RGB/IR streams to depth images, disparity images, 
+     and (registered) point clouds.
+    </description>
+  <author>Patrick Mihelich and others</author>
+  <maintainer email="piyushk@gmail.com">Piyush Khandelwal</maintainer>
+  <maintainer email="gm130s@gmail.com">Isaac I.Y. Saito</maintainer>
+  <license>BSD</license>
+
+  <url type="website">http://www.ros.org/wiki/rgbd_launch</url>
+  <url type="repository">https://github.com/ros-drivers/rgbd_launch</url>
+  <url type="bugtracker">https://github.com/ros-drivers/rgbd_launch/issues</url>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  
+  <build_depend>depth_image_proc</build_depend>
+  <build_depend>image_proc</build_depend>
+  <build_depend>nodelet</build_depend>
+  <build_depend>tf2_ros</build_depend>
+
+  <run_depend>depth_image_proc</run_depend>
+  <run_depend>image_proc</run_depend>
+  <run_depend>nodelet</run_depend>
+  <run_depend>tf2_ros</run_depend>
+
+  <test_depend>rostest</test_depend>
+
+</package>

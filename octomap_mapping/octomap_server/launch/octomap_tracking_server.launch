@@ -1,0 +1,19 @@
+<launch>
+
+  <arg name="path" default=""/>
+  <arg name="changeIdFrame" default="/talker/changes"/>
+
+	<!-- you can load an exisiting tree with <node ... args="tree.bt"> !-->
+	<node pkg="octomap_server" type="octomap_tracking_server_node" name="octomap_talker" output="screen" args="$(arg path)">
+		<param name="resolution" value="0.02" />
+		<param name="frame_id" type="string" value="map" />
+		<param name="sensor_model/max_range" value="4.0" />
+		<param name="save_directory" value="$(optenv OCTOMAP_SAVE_DIR ./)" />
+		<param name="track_changes" value="true"/>
+		<param name="listen_changes" value="false"/>
+		<param name="topic_changes" value="/octomap_tracking_server/changeset" />
+    <param name="change_id_frame" value="$(arg changeIdFrame)" />
+    <param name="min_change_pub" value="0" />
+		<!--remap from="cloud_in" to="/rgbdslam/batch_clouds" /-->
+	</node>
+</launch>

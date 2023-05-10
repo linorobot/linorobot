@@ -1,0 +1,13 @@
+<launch>
+	<!-- you can load an exisiting tree with <node ... args="tree.bt"> !-->
+	<node pkg="octomap_server" type="octomap_tracking_server_node" name="octomap_listener" output="screen">
+		<param name="resolution" value="0.02" />
+		<param name="frame_id" type="string" value="dev0" />
+		<param name="sensor_model/max_range" value="4.0" />
+		<param name="save_directory" value="$(optenv OCTOMAP_SAVE_DIR2 ./)" />
+		<param name="track_changes" value="false"/>
+		<param name="listen_changes" value="true"/>
+		<param name="topic_changes" value="/octomap_tracking_server/changeset" />
+		<!--remap from="cloud_in" to="/rgbdslam/void" /-->
+	</node>
+</launch>

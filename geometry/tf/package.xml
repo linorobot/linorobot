@@ -1,0 +1,55 @@
+<package>
+  <name>tf</name>
+  <version>1.13.2</version>
+  <description>
+
+tf is a package that lets the user keep track of multiple coordinate
+frames over time. tf maintains the relationship between coordinate
+frames in a tree structure buffered in time, and lets the user
+transform points, vectors, etc between any two coordinate frames at
+any desired point in time.
+
+    <p><b>Migration</b>: Since ROS Hydro, tf has been "deprecated" in favor of <a href = "http://wiki.ros.org/tf2">tf2</a>. tf2 is an iteration on tf providing generally the same feature set more efficiently. As well as adding a few new features.<br/>
+    As tf2 is a major change the tf API has been maintained in its current form. Since tf2 has a superset of the tf features with a subset of the dependencies the tf implementation has been removed and replaced with calls to tf2 under the hood. This will mean that all users will be compatible with tf2. It is recommended for new work to use tf2 directly as it has a cleaner interface. However tf will continue to be supported for through at least J Turtle.
+    </p>
+  </description>
+  <author>Tully Foote</author>
+  <author>Eitan Marder-Eppstein</author>
+  <author>Wim Meeussen</author>
+  <maintainer email="tfoote@osrfoundation.org">Tully Foote</maintainer>
+
+  <license>BSD</license>
+  <url>http://www.ros.org/wiki/tf</url>
+
+  <buildtool_depend version_gte="0.6.4">catkin</buildtool_depend>
+
+  <build_depend>angles</build_depend>
+  <build_depend>geometry_msgs</build_depend>
+  <build_depend>message_filters</build_depend>
+  <build_depend>message_generation</build_depend>
+  <build_depend>rosconsole</build_depend>
+  <build_depend>roscpp</build_depend>
+  <build_depend>rostime</build_depend>
+  <build_depend>sensor_msgs</build_depend>
+  <build_depend>std_msgs</build_depend>
+  <build_depend version_gte="0.5.16">tf2_ros</build_depend>
+
+  <run_depend>geometry_msgs</run_depend>
+  <run_depend>graphviz</run_depend>
+  <run_depend version_gte="1.11.1">message_filters</run_depend>
+  <run_depend>message_runtime</run_depend>
+  <run_depend>rosconsole</run_depend>
+  <run_depend>roscpp</run_depend>
+  <run_depend>roswtf</run_depend>
+  <run_depend>sensor_msgs</run_depend>
+  <run_depend>std_msgs</run_depend>
+  <run_depend version_gte="0.5.16">tf2_ros</run_depend>
+
+  <test_depend>rostest</test_depend>
+  <test_depend>rosunit</test_depend>
+
+  <export>
+    <roswtf plugin="tf.tfwtf" />
+    <rosdoc config="rosdoc.yaml" />
+  </export>
+</package>
