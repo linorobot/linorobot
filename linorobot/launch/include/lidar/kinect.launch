@@ -1,14 +1,11 @@
 <launch>
-	<include file="$(find kinect2_bridge)/launch/kinect2_bridge.launch"/>
-   <!-- <include file="$(find freenect_launch)/launch/freenect.launch"/> -->
+    <include file="$(find kinect2_bridge)/launch/kinect2_bridge.launch"/>
 
     <node pkg="tf" type="static_transform_publisher" name="laser_to_kinect" args="0 0 0 0 0 0 /laser /camera_link 100" />
 
     <node name="depthimage_to_laserscan" pkg="depthimage_to_laserscan" type="depthimage_to_laserscan" output="screen">
-       	 <remap from="image" to="/kinect2/qhd/points"/>
-	 <remap from="camera_info" to="/kinect2/qhd/camera_info"/>
-	 <!--<remap from="image" to="/camera/depth/image_raw"/>-->
-         <!--<remap from="camera_info" to="/camera/depth/camera_info"/>-->
+        <remap from="image" to="/camera/depth/image_raw"/>
+        <remap from="camera_info" to="/camera/depth/camera_info"/>
         <param name="output_frame_id" value="laser" />
     </node>
 </launch>
